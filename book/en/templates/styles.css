@@ -1,0 +1,104 @@
+/* Styles for El Arte de Construir Software — HTML & EPUB */
+
+/* Drop cap: first letter of the first paragraph after the summary box */
+.dropcap::first-letter {
+  font-size: 3.5em;
+  float: left;
+  line-height: 0.8;
+  padding-right: 0.08em;
+  margin-top: 0.05em;
+  font-family: "Georgia", "Palatino Linotype", "Book Antiqua", serif;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Summary box */
+div.resumen {
+  border: 1px solid #333;
+  border-left: 4px solid #333;
+  padding: 1em 1.2em;
+  margin-bottom: 1.5em;
+  background-color: #fff;
+}
+
+div.resumen::before {
+  content: "Resumen del Capítulo";
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  font-size: 1.05em;
+}
+
+/* Exercise box */
+div.ejercicio {
+  border: 1px solid #999;
+  border-left: 4px solid #999;
+  padding: 1em 1.2em;
+  margin: 1em 0;
+  background-color: #f9f9f9;
+}
+
+div.ejercicio > .ejercicio-title {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+/* Review questions box */
+div.repaso {
+  border: 1px solid #6b9bd2;
+  border-left: 4px solid #6b9bd2;
+  padding: 1em 1.2em;
+  margin: 1em 0;
+  background-color: #f0f5fb;
+}
+
+div.repaso::before {
+  content: "🎓 Preguntas de repaso";
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  font-size: 1.05em;
+}
+
+/* Note box */
+div.nota {
+  border: 1px solid #c9a800;
+  border-left: 4px solid #c9a800;
+  padding: 1em 1.2em;
+  margin: 1em 0;
+  background-color: #fffde6;
+}
+
+div.nota::before {
+  content: "🔍 Nota";
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  font-size: 1.05em;
+}
+
+/* Bidirectional links between review questions and their solutions. */
+/* Each question item is wrapped in a div.pregunta with anchor id      */
+/* q-sec-<chapter>-<n>; each solution item in div.solucion with id     */
+/* sol-sec-<chapter>-<n>. The leading link reproduces the N.M. label.  */
+div.pregunta,
+div.solucion {
+  margin: 0.5em 0;
+}
+
+div.pregunta > p:first-child,
+div.solucion > p:first-child {
+  margin-top: 0;
+}
+
+a.pregunta-num,
+a.solucion-num {
+  text-decoration: none;
+  color: inherit;
+}
+
+a.pregunta-num:hover,
+a.solucion-num:hover {
+  text-decoration: underline;
+  color: #1a5490;
+}

@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>2&nbsp; Hands on – Strange Tech: Homomorphic Encryption</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./03.html" rel="next">
+<link href="./01.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9e09d2eb63ca372e5c6aa0cd7f5bad22.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="templates/styles.css">
+<link rel="stylesheet" href="templates/standalone-book.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Strange Tech: Homomorphic Encryption</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./../es/index.html"> 
+<span class="menu-text">Español</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Hands on</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-prologo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prologue</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Hands on</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Applications</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Current limitations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Foundations</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Recommended Readings</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Solutions</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar"><div class="quarto-margin-header"><div class="margin-header-item">
+<p><strong>Strange Tech: Homomorphic Encryption</strong></p>
+</div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#recipe-1-encrypted-mean" id="toc-recipe-1-encrypted-mean" class="nav-link active" data-scroll-target="#recipe-1-encrypted-mean"><span class="header-section-number">2.1</span> Recipe 1: Encrypted mean</a></li>
+  <li><a href="#recipe-2-encrypted-variance" id="toc-recipe-2-encrypted-variance" class="nav-link" data-scroll-target="#recipe-2-encrypted-variance"><span class="header-section-number">2.2</span> Recipe 2: Encrypted variance</a></li>
+  <li><a href="#recipe-3-encrypted-linear-regression" id="toc-recipe-3-encrypted-linear-regression" class="nav-link" data-scroll-target="#recipe-3-encrypted-linear-regression"><span class="header-section-number">2.3</span> Recipe 3: Encrypted linear regression</a></li>
+  <li><a href="#sec-muro-del-ruido" id="toc-sec-muro-del-ruido" class="nav-link" data-scroll-target="#sec-muro-del-ruido"><span class="header-section-number">2.4</span> Recipe 4: The noise wall</a></li>
+  <li><a href="#sec-bootstrapping-receta" id="toc-sec-bootstrapping-receta" class="nav-link" data-scroll-target="#sec-bootstrapping-receta"><span class="header-section-number">2.5</span> Recipe 5: Breaking through the wall</a></li>
+  <li><a href="#sec-busqueda-cifrada" id="toc-sec-busqueda-cifrada" class="nav-link" data-scroll-target="#sec-busqueda-cifrada"><span class="header-section-number">2.6</span> Recipe 6: Encrypted search</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Hands on</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Before diving into the theory, let’s see FHE in action with six simple recipes: we’ll start by computing a mean over encrypted data, move on to variance — which requires multiplications — attempt a linear regression, hit the noise wall, break through it with <em>bootstrapping</em>, and close with an encrypted search where the server answers without knowing what it was asked. Each recipe poses a small problem and solves it step by step. By the end of this section you’ll know what FHE can and cannot do <em>today</em>, before understanding the <em>why</em>.</p>
+<p>All recipes use Python with <a href="https://github.com/OpenMined/TenSEAL">TenSEAL</a>, a library that implements the CKKS scheme — best suited for real-number arithmetic — except Recipe 5, which uses <a href="https://github.com/openfheorg/openfhe-development">OpenFHE</a> because TenSEAL does not expose <em>bootstrapping</em>.</p>
+<p>The first step, common to all recipes, is to create the <em>cryptographic context</em> — the equivalent of preparing the “glove box” from the analogy. Each parameter has a reason that we’ll see in <a href="05.html" class="quarto-xref"><span>Chapter 5</span></a>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tenseal <span class="im">as</span> ts</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>contexto <span class="op">=</span> ts.context(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    ts.SCHEME_TYPE.CKKS,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    poly_modulus_degree<span class="op">=</span><span class="dv">8192</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    coeff_mod_bit_sizes<span class="op">=</span>[<span class="dv">60</span>, <span class="dv">40</span>, <span class="dv">40</span>, <span class="dv">60</span>],</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>contexto.global_scale <span class="op">=</span> <span class="dv">2</span><span class="op">**</span><span class="dv">40</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>contexto.generate_galois_keys()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For now, here’s what you need to know:</p>
+<ul>
+<li><code>CKKS</code> is the scheme for operating on approximate real numbers. Other schemes work with integers or bits — see <a href="05.html#tbl-fhe-schemes" class="quarto-xref">Table&nbsp;<span>5.2</span></a>.</li>
+<li><code>poly_modulus_degree = 8192</code> sets the degree <span class="math inline">\(N\)</span> of the polynomial underlying the scheme. <span class="math inline">\(N\)</span> is not chosen based on how much data we have, but on security requirements, circuit depth (how many chained multiplications we need), and the desired degree of parallelism. A larger <span class="math inline">\(N\)</span> gives more security and more parallelism — each ciphertext can hold up to <span class="math inline">\(N_{\text{slot}} = N/2\)</span> independent values, called <em>slots</em> — but each operation is proportionally slower. With <span class="math inline">\(N = 8192\)</span> we have <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots available, although our examples use far fewer.</li>
+<li><code>coeff_mod_bit_sizes = [60, 40, 40, 60]</code> determines how many chained multiplications can be performed before the accumulated noise destroys the result. Here, the two intermediate 40-bit values give two levels of multiplication — see <a href="05.html#sec-ruido-niveles" class="quarto-xref"><span>Section 5.4</span></a>.</li>
+<li><code>global_scale = 2**40</code> sets the precision with which real numbers are represented inside the ciphertext. A larger scale means less approximation noise — but less room remains for chained multiplications. With <span class="math inline">\(2^{40}\)</span>, the absolute error for a simple operation like computing the mean is on the order of <span class="math inline">\(10^{-7}\)</span>, constant regardless of whether the operands are thousands or decimals.</li>
+<li><code>generate_galois_keys()</code> generates the keys needed for <em>rotations</em> — operations that combine values from different <em>slots</em> within the ciphertext. Without them, <code>sum()</code> would fail. They are generated explicitly because they occupy hundreds of megabytes — see <a href="05.html#sec-packing-simd" class="quarto-xref"><span>Section 5.6</span></a>.</li>
+</ul>
+<p>With this context ready, let’s look at the first recipe.</p>
+<section id="recipe-1-encrypted-mean" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="recipe-1-encrypted-mean"><span class="header-section-number">2.1</span> Recipe 1: Encrypted mean</h2>
+<p>Daniel decides to start with the simplest case: computing the mean salary over encrypted data and verifying that the result matches the plaintext calculation. We encrypt the data and, from this point on, all operations run on the ciphertext — the plaintext data is no longer involved:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>salarios <span class="op">=</span> [<span class="dv">3200</span>, <span class="dv">4100</span>, <span class="dv">2800</span>, <span class="dv">5500</span>, <span class="dv">3900</span>]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>salarios_cifrados <span class="op">=</span> ts.ckks_vector(contexto, salarios)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># In a real deployment, this would run in the cloud,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># with no access to the plaintext data</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>media_cifrada <span class="op">=</span> salarios_cifrados.<span class="bu">sum</span>() <span class="op">/</span> <span class="bu">len</span>(salarios)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The five salaries are packed into a single ciphertext thanks to <em>packing</em> (<a href="05.html#sec-packing-simd" class="quarto-xref"><span>Section 5.6</span></a>). The <code>sum()</code> operation uses internal rotations to add all the <em>slots</em>, and the division by 5 is a multiplication by a constant — cheap in FHE.</p>
+<p>Finally, we decrypt the result:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>media <span class="op">=</span> media_cifrada.decrypt()[<span class="dv">0</span>]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>media_claro <span class="op">=</span> <span class="bu">sum</span>(salarios) <span class="op">/</span> <span class="bu">len</span>(salarios)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media (FHE):   </span><span class="sc">{</span>media<span class="sc">:.2f}</span><span class="ss"> €"</span>)        <span class="co"># 3900.00 €</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media (claro): </span><span class="sc">{</span>media_claro<span class="sc">:.2f}</span><span class="ss"> €"</span>)  <span class="co"># 3900.00 €</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The result is practically identical — the absolute difference is on the order of <span class="math inline">\(10^{-7}\)</span>, inherent noise from the CKKS scheme that remains constant regardless of the operands’ magnitude (we’ll see why in <a href="05.html#sec-ruido-niveles" class="quarto-xref"><span>Section 5.4</span></a>), along with the execution time. Our example runs locally, but the operations on the ciphertext would be identical in a real deployment: the cloud provider would have calculated the mean salary without ever seeing a single actual number. Exactly what Elena needed.</p>
+<p>The context parameters seem arbitrary at first glance — why 8192 and not 4096? Why <code>[60, 40, 40, 60]</code>? Why <span class="math inline">\(2^{40}\)</span>? Every decision has a precise mathematical reason that we’ll see in <a href="05.html" class="quarto-xref"><span>Chapter 5</span></a>. But first, the following recipes show what FHE allows — and what it doesn’t.</p>
+<div class="repaso">
+<ol type="1">
+<li>Ask an LLM: <em>“What’s the difference between the BFV and CKKS schemes? When would you use each one?”</em></li>
+<li>What happens if you increase <code>poly_modulus_degree</code> to 16384? And if you reduce it to 4096? Experiment with the execution time.</li>
+</ol>
+</div>
+</section>
+<section id="recipe-2-encrypted-variance" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="recipe-2-encrypted-variance"><span class="header-section-number">2.2</span> Recipe 2: Encrypted variance</h2>
+<p>Daniel sends the mean to Elena, but she wants more: <em>“I need the spread — are the salaries homogeneous or are there outliers?”</em> The population variance is <span class="math inline">\(\text{Var} = E[X^2] - (E[X])^2\)</span>, and computing it over encrypted data forces us to use the most expensive operation in FHE: multiplication between ciphertexts.</p>
+<p>There’s a subtle detail that deserves attention. The <em>naive</em> translation of the formula would be:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ⚠ This does NOT work correctly in CKKS</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ct <span class="op">=</span> ts.ckks_vector(contexto, salarios)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>cuadrados <span class="op">=</span> ct <span class="op">*</span> ct                         <span class="co"># ciphertext × ciphertext</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>media_cuadrados <span class="op">=</span> cuadrados.<span class="bu">sum</span>() <span class="op">*</span> (<span class="dv">1</span><span class="op">/</span>n)   <span class="co"># × constant</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>media <span class="op">=</span> ct.<span class="bu">sum</span>() <span class="op">*</span> (<span class="dv">1</span><span class="op">/</span>n)                    <span class="co"># × constant</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>media_al_cuadrado <span class="op">=</span> media <span class="op">*</span> media           <span class="co"># ciphertext × ciphertext</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>varianza <span class="op">=</span> media_cuadrados <span class="op">-</span> media_al_cuadrado  <span class="co"># → garbage</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The code is mathematically correct, but produces a completely wrong result (in our example, a <em>negative</em> variance). Why? In CKKS, each fresh ciphertext starts at an initial level <span class="math inline">\(L\)</span> with a fixed operation budget — the chain of rings in <code>coeff_mod_bit_sizes</code>. Every multiplication, whether between two ciphertexts or by a constant, consumes part of that budget. And for two ciphertexts to be combined (added or subtracted), they must be <strong>at the same level</strong>. Let’s see what level each branch reaches:</p>
+<p><strong>Branch <span class="math inline">\(E[X^2]\)</span>:</strong> <code>ct * ct</code> (consumes 1 level) → <code>.sum()</code> (free) → <code>* (1/n)</code> (consumes 1 level) → reaches level <span class="math inline">\(L-2\)</span>.</p>
+<p><strong>Branch <span class="math inline">\((E[X])^2\)</span>:</strong> <code>ct.sum()</code> (free) → <code>* (1/n)</code> (consumes 1 level) → <code>media * media</code> (consumes 1 level) → reaches level <span class="math inline">\(L-2\)</span>.</p>
+<p>Apparently both end up at the same level, but the order of operations matters. In the second branch, by the time we reach <code>media * media</code>, both factors have already gone through a previous <code>* (1/n)</code>, so the multiplication between ciphertexts operates on <em>degraded</em> operands. The result doesn’t overflow — but the noise and internal scale no longer match those of the first branch. When subtracting, CKKS doesn’t throw an error: it simply combines two ciphertexts whose internal state (effective scale, noise) is incompatible, and returns garbage.</p>
+<p>The practical rule is: <strong>the order and symmetry of operations matters more than the mathematical formula</strong>. The solution is to move all constants to plaintext <em>before</em> encrypting, so that each branch consists of exactly one multiplication between two <em>fresh</em> ciphertexts, both at the initial level <span class="math inline">\(L\)</span>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ct <span class="op">=</span> ts.ckks_vector(contexto, salarios)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>norm <span class="op">=</span> [x <span class="op">/</span> <span class="bu">len</span>(salarios) <span class="cf">for</span> x <span class="kw">in</span> salarios]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ct_n <span class="op">=</span> ts.ckks_vector(contexto, norm)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># E[X²] = sum(xᵢ · xᵢ/n): one ct×ct mult (level 1)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>media_cuadrados <span class="op">=</span> (ct <span class="op">*</span> ct_n).<span class="bu">sum</span>()</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># (E[X])² = (sum(xᵢ/n))²: one ct×ct mult (level 1)</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>media <span class="op">=</span> ct_n.<span class="bu">sum</span>()</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>media_al_cuadrado <span class="op">=</span> media <span class="op">*</span> media</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Both at the same level and scale — the subtraction works</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>varianza_cifrada <span class="op">=</span> media_cuadrados <span class="op">-</span> media_al_cuadrado</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Varianza (FHE): </span><span class="sc">{</span>varianza_cifrada<span class="sc">.</span>decrypt()[<span class="dv">0</span>]<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This is a real example of what makes FHE programming hard: it’s not enough to translate a mathematically correct formula into code. Every multiplication — between ciphertexts or by a constant — consumes part of the operation budget, and combining two ciphertexts requires that they’ve gone through <em>symmetric</em> sequences. The programmer must design the circuit thinking not just about <em>what</em> it computes, but <em>how</em> it chains operations: the order of operations is part of the algorithm.</p>
+<div class="repaso">
+<ol type="1">
+<li>In Recipe 2, why does the formula <span class="math inline">\(E[X^2] - (E[X])^2\)</span> require two multiplications between ciphertexts while the alternative formula <span class="math inline">\(\frac{1}{n}\sum(x_i - \bar{x})^2\)</span> might require more? Which is more efficient in FHE?</li>
+<li>The naive version of Recipe 2 translates the mathematical formula literally and produces garbage, while the corrected version gives the right result. The difference between the two isn’t the formula, but the order and symmetry of the operations in each branch. What specific property must the two branches share for the final subtraction to work? Why does the naive version break it?</li>
+</ol>
+</div>
+</section>
+<section id="recipe-3-encrypted-linear-regression" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="recipe-3-encrypted-linear-regression"><span class="header-section-number">2.3</span> Recipe 3: Encrypted linear regression</h2>
+<p>Elena needs something more ambitious: a predictive model that assigns a risk score to each patient. The vendor has an already-trained linear regression model (the weights are public), but the patient data is confidential. FHE allows exactly this: encrypt the patient data, multiply by the plaintext weights, and sum — a homomorphic dot product.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Patient data (encrypted) — the vendor cannot see it</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> [<span class="fl">1.2</span>, <span class="fl">0.7</span>, <span class="fl">3.1</span>, <span class="fl">0.4</span>, <span class="fl">2.8</span>]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>features_cifrados <span class="op">=</span> ts.ckks_vector(contexto, features)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Model weights (plaintext) — not confidential</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>pesos <span class="op">=</span> [<span class="fl">0.5</span>, <span class="op">-</span><span class="fl">1.2</span>, <span class="fl">0.8</span>, <span class="fl">0.3</span>, <span class="op">-</span><span class="fl">0.6</span>]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Prediction: homomorphic dot product</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>prediccion <span class="op">=</span> (features_cifrados <span class="op">*</span> pesos).<span class="bu">sum</span>()</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Riesgo (FHE): </span><span class="sc">{</span>prediccion<span class="sc">.</span>decrypt()[<span class="dv">0</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Note that no multiplicative level is consumed here: <code>features_cifrados * pesos</code> is a multiplication by constants (cheap), and <code>sum()</code> only uses rotations. The same context we already created would serve for a model with thousands of features — thanks to <em>packing</em> (<a href="05.html#sec-packing-simd" class="quarto-xref"><span>Section 5.6</span></a>), the <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots of the ciphertext would process them all in parallel. This is the basis of real-world deployments of <em>ML on encrypted data</em> that we’ll see in the next section.</p>
+<div class="repaso">
+<ol type="1">
+<li>In the linear regression recipe, why doesn’t the multiplication <code>features_cifrados * pesos</code> consume multiplicative levels? What would happen if the weights were also encrypted?</li>
+<li>If the model had 10,000 features and <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, how many ciphertexts would you need for a prediction? How would you combine the partial results?</li>
+</ol>
+</div>
+</section>
+<section id="sec-muro-del-ruido" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="sec-muro-del-ruido"><span class="header-section-number">2.4</span> Recipe 4: The noise wall</h2>
+<p>What happens if we ask for more operations than the modulus chain allows? Let’s create a context with a single multiplicative level and attempt two chained multiplications:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ctx_1nivel <span class="op">=</span> ts.context(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    ts.SCHEME_TYPE.CKKS,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    poly_modulus_degree<span class="op">=</span><span class="dv">8192</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    coeff_mod_bit_sizes<span class="op">=</span>[<span class="dv">60</span>, <span class="dv">40</span>, <span class="dv">60</span>],  <span class="co"># only 1 level</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>ctx_1nivel.global_scale <span class="op">=</span> <span class="dv">2</span><span class="op">**</span><span class="dv">40</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>ctx_1nivel.generate_galois_keys()</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> ts.ckks_vector(ctx_1nivel, [<span class="fl">3.0</span>, <span class="fl">7.0</span>, <span class="fl">2.0</span>])</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>resultado <span class="op">=</span> datos <span class="op">*</span> datos   <span class="co"># OK — consumes the only level</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(resultado.decrypt())  <span class="co"># [9.0, 49.0, 4.0] ✓</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>resultado <span class="op">=</span> resultado <span class="op">*</span> resultado  <span class="co"># FAILS — no levels left</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co"># → Error: scale out of bounds</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The library throws an exception on the second multiplication. It doesn’t produce “approximate” results or corrupted data: it simply refuses to continue. This is a deliberate design decision — better an explicit error than silent garbage.</p>
+<p>This wall is the practical manifestation of everything we’ll see in <a href="05.html#sec-ruido-niveles" class="quarto-xref"><span>Section 5.4</span></a>: each 40-bit level in <code>coeff_mod_bit_sizes</code> is a link that gets consumed with each multiplication. When they run out, there’s no way forward — unless you resort to <em>bootstrapping</em>, which restores the levels at enormous cost (see <a href="#sec-bootstrapping-receta" class="quarto-xref"><span>Section 2.5</span></a> for a practical example and <a href="05.html" class="quarto-xref"><span>Chapter 5</span></a> for the theoretical explanation).</p>
+<div class="repaso">
+<ol type="1">
+<li>If you need to compute a degree-3 polynomial over encrypted data (<span class="math inline">\(ax^3 + bx^2 + cx + d\)</span>), how many multiplicative levels do you need? What <code>coeff_mod_bit_sizes</code> would you configure?</li>
+<li>Why does the library throw an error instead of returning an approximate result? What consequences would there be if it silently produced garbage in a medical or financial system?</li>
+</ol>
+</div>
+</section>
+<section id="sec-bootstrapping-receta" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="sec-bootstrapping-receta"><span class="header-section-number">2.5</span> Recipe 5: Breaking through the wall</h2>
+<p>Recipe 4 ended with an error — we ran out of multiplicative levels. But <em>bootstrapping</em> can restore them and let us keep operating. TenSEAL does not expose this functionality, so for this recipe we use <a href="https://github.com/openfheorg/openfhe-development">OpenFHE</a>, another reference library that does implement bootstrapping in CKKS.</p>
+<p>The first step is to configure a CKKS context with bootstrapping enabled. This requires extra levels to evaluate its own internal circuit. To keep the demo fast, we use a small ring (<span class="math inline">\(N = 4096\)</span>) with security validation disabled — with <code>HEStd_128_classic</code> (128-bit security against classical computers, the usual standard), OpenFHE would require <span class="math inline">\(N = 2^{16}\)</span> to support the bootstrapping depth. More demanding levels exist (192, 256 bits) and quantum variants that assume quantum computer attacks and require even larger <span class="math inline">\(N\)</span>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openfhe <span class="im">as</span> fhe</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> fhe.CCParamsCKKSRNS()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>params.SetSecretKeyDist(fhe.SecretKeyDist.UNIFORM_TERNARY)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Small ring for a fast demo; in production use</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># HEStd_128_classic with a larger N.</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>params.SetSecurityLevel(fhe.SecurityLevel.HEStd_NotSet)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>params.SetRingDim(<span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">12</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Bootstrapping consumes its own levels to evaluate</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># the decryption circuit homomorphically.</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># level_budget = [collapsing_levels, raising_levels]</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>level_budget <span class="op">=</span> [<span class="dv">2</span>, <span class="dv">2</span>]</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>niveles_utiles <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>profundidad <span class="op">=</span> niveles_utiles <span class="op">+</span> fhe.FHECKKSRNS.GetBootstrapDepth(</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    level_budget, fhe.SecretKeyDist.UNIFORM_TERNARY</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>params.SetMultiplicativeDepth(profundidad)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>params.SetScalingModSize(<span class="dv">48</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>params.SetFirstModSize(<span class="dv">60</span>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>num_slots <span class="op">=</span> <span class="dv">4</span>  <span class="co"># slots occupied in the ciphertext</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>params.SetBatchSize(num_slots)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>cc <span class="op">=</span> fhe.GenCryptoContext(params)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>cc.Enable(fhe.PKESchemeFeature.PKE)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>cc.Enable(fhe.PKESchemeFeature.KEYSWITCH)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>cc.Enable(fhe.PKESchemeFeature.LEVELEDSHE)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>cc.Enable(fhe.PKESchemeFeature.ADVANCEDSHE)</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>cc.Enable(fhe.PKESchemeFeature.FHE)</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>keys <span class="op">=</span> cc.KeyGen()</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>cc.EvalMultKeyGen(keys.secretKey)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>cc.EvalBootstrapSetup(level_budget, [<span class="dv">0</span>, <span class="dv">0</span>], num_slots)</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>cc.EvalBootstrapKeyGen(keys.secretKey, num_slots)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>OpenFHE’s parameterization is different from TenSEAL’s, but the concepts are the same. In TenSEAL we specified the full modulus chain as a list of bit sizes: <code>coeff_mod_bit_sizes=[60, 40, 40, 60]</code> — two intermediate levels of 40 bits each. OpenFHE separates that information: <code>SetMultiplicativeDepth</code> indicates <em>how many</em> levels there are (an integer), and <code>SetScalingModSize(48)</code> indicates <em>how many bits</em> each intermediate level has. <code>SetFirstModSize(60)</code> sets the size of the first link, just like the initial 60 in TenSEAL.</p>
+<p><code>SetBatchSize(num_slots)</code> indicates how many <em>slots</em> the ciphertext occupies. This is needed so the context correctly aligns the bootstrapping’s internal rotations with the ciphertext length.</p>
+<p>The novelty here is <code>level_budget</code> and <code>GetBootstrapDepth</code>. Bootstrapping consumes its own multiplicative levels when internally evaluating the decryption circuit: <code>level_budget = [2, 2]</code> indicates how many levels to dedicate to each of its two internal phases — we’ll see what these phases do in <a href="05.html" class="quarto-xref"><span>Chapter 5</span></a>. <code>GetBootstrapDepth</code> takes these budgets and calculates how many extra levels the bootstrapping circuit needs in total, which are added to the programmer’s <code>niveles_utiles</code>.</p>
+<p><code>EvalBootstrapSetup(level_budget, [0, 0], num_slots)</code> prepares bootstrapping internally. <code>num_slots</code> must match the earlier <code>SetBatchSize</code>. <code>EvalBootstrapKeyGen</code> generates the rotation keys needed for bootstrapping.</p>
+<p>Finally, we enable <code>PKESchemeFeature.FHE</code> (full FHE, not just <em>leveled</em>) — without this, <code>EvalBootstrap</code> would not be available.</p>
+<p>Now we encrypt the same data from Recipe 4 and repeat the experiment:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>datos <span class="op">=</span> [<span class="fl">3.0</span>, <span class="fl">7.0</span>, <span class="fl">2.0</span>, <span class="fl">5.0</span>]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ptxt <span class="op">=</span> cc.MakeCKKSPackedPlaintext(datos)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ctxt <span class="op">=</span> cc.Encrypt(keys.publicKey, ptxt)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>ctxt <span class="op">=</span> cc.EvalMult(ctxt, ctxt)   <span class="co"># x² — consumes 1 level</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>ctxt <span class="op">=</span> cc.EvalMult(ctxt, ctxt)   <span class="co"># x⁴ — consumes another level</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Levels exhausted. In Recipe 4 this was the end.</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Here: bootstrapping to the rescue.</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>ctxt <span class="op">=</span> cc.EvalBootstrap(ctxt)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can keep operating!</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>ctxt <span class="op">=</span> cc.EvalMult(ctxt, ctxt)   <span class="co"># x⁸</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> cc.Decrypt(ctxt, keys.secretKey)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>result.SetLength(<span class="bu">len</span>(datos))</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co"># → [6561.0, 5764801.0, 256.0, 390625.0]  (3⁸, 7⁸, 2⁸, 5⁸)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The call to <code>EvalBootstrap</code> is where the magic happens: it takes the exhausted ciphertext, homomorphically evaluates the decryption circuit (the process we’ll detail in <a href="05.html" class="quarto-xref"><span>Chapter 5</span></a>), and produces a fresh ciphertext with restored levels. The operation takes on the order of one second — compared to the milliseconds of a normal multiplication — and the resulting ciphertext carries somewhat more approximation error. But it works: the multiplication that in Recipe 4 threw “scale out of bounds” now completes without problems, and we can even chain a third one.</p>
+<div class="repaso">
+<ol type="1">
+<li>Bootstrapping restores multiplicative levels but takes ~1 s compared to ~1 ms for a normal multiplication. If you need to evaluate a circuit of depth 20, which strategy is better: dimensioning 20 levels from the start, or using 5 levels with bootstrapping every 5 multiplications?</li>
+<li>Ask an LLM: <em>“What is circular security in FHE and why is it necessary for bootstrapping?”</em></li>
+</ol>
+</div>
+</section>
+<section id="sec-busqueda-cifrada" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="sec-busqueda-cifrada"><span class="header-section-number">2.6</span> Recipe 6: Encrypted search</h2>
+<p>Elena is satisfied with the risk models, but now she has another need: <em>“I need to look up the score of a specific patient in the vendor’s database. But I don’t want them to know which patients I’m interested in — that reveals clinical information.”</em></p>
+<p>This is a <em>Private Information Retrieval</em> (PIR) problem: retrieving a record from a database without the server knowing which one was requested. With FHE, the solution is surprisingly simple.</p>
+<p>The trick is to encrypt a <em>one-hot</em> vector — a vector of zeros with a single 1 in the position of the desired record. The server multiplies that encrypted vector by its database (in plaintext) and sums all the products. Since multiplying by an encrypted 0 “nullifies” all positions except the queried one, the encrypted result contains only the sought value. The server has processed <em>all</em> the records, but only one survived the multiplication — and the server doesn’t know which.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vendor's database (plaintext on their server)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> [<span class="fl">85.2</span>, <span class="fl">62.0</span>, <span class="fl">91.7</span>, <span class="fl">45.3</span>, <span class="fl">78.9</span>, <span class="fl">33.1</span>, <span class="fl">70.4</span>, <span class="fl">56.8</span>]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Elena wants the score of the patient at position 3,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># without the vendor knowing it's patient 3</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>indice <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>consulta <span class="op">=</span> [<span class="fl">1.0</span> <span class="cf">if</span> i <span class="op">==</span> indice <span class="cf">else</span> <span class="fl">0.0</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(scores))]</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>consulta_cifrada <span class="op">=</span> ts.ckks_vector(contexto, consulta)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># The server executes this — it only sees the ciphertext</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>resultado_cifrado <span class="op">=</span> (consulta_cifrada <span class="op">*</span> scores).<span class="bu">sum</span>()</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Elena decrypts</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(resultado_cifrado.decrypt()[<span class="dv">0</span>])  <span class="co"># → 45.3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The operation <code>consulta_cifrada * scores</code> is a multiplication by constants — it doesn’t consume multiplicative levels, just like in Recipe 3. And <code>sum()</code> uses rotations, just like in Recipe 1. We don’t need any new operations; we just combine the primitives we already know in a different way. This is a pattern that appears over and over in FHE: the same two basic operations (multiplication and addition) give rise to very different applications depending on how the circuit is designed.</p>
+<p>But there’s an inescapable cost: <strong>the server must process all records for each query</strong>. It can’t “skip” the positions that are zero, because it doesn’t know which ones they are — the vector is encrypted. If the database has 10,000 records, the server multiplies and sums all 10,000, even though only one contains useful information. That’s the price of privacy: the query is hidden precisely because it’s indistinguishable from any other. If the server could process only a subset, it could deduce by elimination which position was queried.</p>
+<p>With <span class="math inline">\(N = 8192\)</span>, each ciphertext stores up to <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots — enough for a database of that size without needing multiple ciphertexts. For larger databases, the programmer must divide the records into blocks of <span class="math inline">\(N_{\text{slot}}\)</span>, send one query ciphertext per block, and sum the partial results.</p>
+<div class="repaso">
+<ol type="1">
+<li>In the encrypted search, why must the server process <em>all</em> records to answer a single query? What information would leak if it processed only a subset?</li>
+<li>If the vendor’s database has 10,000 records and <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, how many ciphertexts does the client need for a query? And how many must the server process?</li>
+</ol>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./01.html" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./03.html" class="pagination-link" aria-label="Applications">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Applications</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

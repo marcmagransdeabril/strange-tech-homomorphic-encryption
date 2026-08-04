@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Soluciones – Tecnologías Extrañas: Cifrado Homomórfico</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./07.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9e09d2eb63ca372e5c6aa0cd7f5bad22.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="templates/styles.css">
+<link rel="stylesheet" href="templates/standalone-book.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Tecnologías Extrañas: Cifrado Homomórfico</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./../en/index.html"> 
+<span class="menu-text">English</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08.html">Soluciones</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-prologo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prólogo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Manos a la obra</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Aplicaciones</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Limitaciones actuales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Fundamentos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lecturas Recomendadas</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Soluciones</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar"><div class="quarto-margin-header"><div class="margin-header-item">
+<p><strong>Tecnologías Extrañas: Cifrado Homomórfico</strong></p>
+</div></div>
+        
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Soluciones</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="solucion">
+<ol type="1">
+<li><p>BFV opera sobre enteros exactos (el descifrado recupera el valor exacto mediante redondeo) y es adecuado para consultas sobre bases de datos o conteos. CKKS opera sobre números reales aproximados (acepta un pequeño error de <span class="math inline">\(\sim 10^{-6}\)</span>) y es el esquema de referencia para machine learning y estadística. Verifica que el LLM mencione que ambos comparten la base RLWE y que la diferencia clave está en la codificación del mensaje.</p></li>
+<li><p><code>poly_modulus_degree=16384</code> duplica la seguridad y permite más niveles multiplicativos, pero cada operación tarda más (los polinomios son el doble de grandes). Con <code>4096</code>, las operaciones son más rápidas pero se obtienen menos niveles multiplicativos y menor seguridad. El tiempo de ejecución escala aproximadamente con <span class="math inline">\(O(n \log n)\)</span> por operación NTT.</p></li>
+<li><p>La fórmula <span class="math inline">\(E[X^2] - (E[X])^2\)</span> necesita una multiplicación element-wise (<span class="math inline">\(x_i^2\)</span>) y una multiplicación del resultado de la media por sí mismo — dos multiplicaciones cifrotexto×cifrotexto. La alternativa <span class="math inline">\(\frac{1}{n}\sum(x_i - \bar{x})^2\)</span> requiere primero calcular <span class="math inline">\(\bar{x}\)</span> (sumas y rotaciones), luego restar a cada <span class="math inline">\(x_i\)</span> (una suma por constante), y finalmente elevar al cuadrado cada diferencia — parece similar en multiplicaciones, pero exige primero materializar la media en cada slot (rotaciones extra). En CKKS, la primera fórmula es generalmente más eficiente: menos rotaciones y el mismo número de niveles multiplicativos.</p></li>
+<li><p>Las dos ramas deben llegar al punto de la resta habiendo recorrido secuencias <em>simétricas</em> de operaciones — el mismo tipo y orden de multiplicaciones — de modo que sus cifrotextos terminen en el mismo nivel y con escalas e historiales de ruido equivalentes. En la versión ingenua, una rama hace <code>ct*ct</code> seguido de <code>*(1/n)</code> mientras la otra hace <code>*(1/n)</code> seguido de <code>media*media</code>: aunque ambas consumen dos niveles, la segunda multiplica entre sí dos cifrotextos ya degradados por la <code>*(1/n)</code> previa, así que su estado interno no encaja con el de la primera. CKKS no detecta el desajuste y la resta produce basura. La solución mueve las constantes al texto claro: ambas ramas pasan por exactamente una <code>ct*ct</code> entre cifrotextos <em>frescos</em>.</p></li>
+<li><p>Porque <code>features_cifrados * pesos</code> multiplica un cifrotexto por constantes en claro, lo que no consume niveles — es equivalente a escalar el polinomio interno. Si los pesos también estuvieran cifrados, sería una multiplicación cifrotexto × cifrotexto, que sí consume un nivel y requiere relinearización.</p></li>
+<li><p>Con 10 000 features y <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, necesitas <span class="math inline">\(\lceil 10\,000 / 4096 \rceil = 3\)</span> cifrotextos para empaquetar todas las features. La predicción requiere 3 multiplicaciones por constantes (una por cifrotexto) y 3 sumas por rotación (una por cifrotexto), y finalmente sumar los 3 resultados escalares — una operación trivial sobre textos descifrados o una suma homomórfica adicional.</p></li>
+<li><p>Se necesitan 2 niveles: uno para <span class="math inline">\(x^2 = x \cdot x\)</span> y otro para <span class="math inline">\(x^3 = x^2 \cdot x\)</span> (las multiplicaciones por constantes <span class="math inline">\(a, b, c, d\)</span> y las sumas no consumen niveles). La configuración sería <code>coeff_mod_bit_sizes=[60, 40, 40, 60]</code> con <code>poly_modulus_degree=8192</code>.</p></li>
+<li><p>El error explícito es una decisión de seguridad: en un sistema médico, un resultado «aproximado» silencioso podría causar un diagnóstico erróneo; en finanzas, una transacción con datos corruptos podría pasar desapercibida. El principio <em>fail-fast</em> garantiza que los errores se detecten en desarrollo, no en producción. Es preferible un sistema que se detiene a uno que produce resultados plausibles pero incorrectos.</p></li>
+<li><p>Con profundidad 20: dimensionar 20 niveles requiere un <code>poly_modulus_degree</code> enorme (≥32768) para mantener la seguridad, lo que hace cada operación muy lenta. Con 5 niveles + bootstrapping cada 5 multiplicaciones, se necesitan 4 bootstrappings (~4 s extra) pero cada multiplicación individual es más rápida (polinomios más pequeños). Para circuitos profundos, el bootstrapping periódico suele ser más eficiente que dimensionar estáticamente, especialmente cuando la profundidad no se conoce de antemano.</p></li>
+<li><p>El bootstrapping evalúa homomórficamente el circuito de descifrado (<span class="math inline">\(b - a \cdot s\)</span>), lo que requiere cifrar la clave secreta <span class="math inline">\(s\)</span> bajo sí misma. La <em>seguridad circular</em> es la hipótesis de que publicar <span class="math inline">\(\text{Enc}_s(s)\)</span> no debilita el esquema. No está demostrada en general — es una suposición adicional que todos los esquemas FHE asumen. Verifica que el LLM distinga entre esta hipótesis y la seguridad estándar IND-CPA.</p></li>
+<li><p>El servidor debe procesar <em>todos</em> los registros porque el vector de consulta está cifrado — no puede distinguir los ceros del uno. Si procesara solo un subconjunto, revelaría por eliminación que la posición consultada está en ese subconjunto, rompiendo la privacidad de la consulta.</p></li>
+<li><p>Con <span class="math inline">\(N_{\text{slot}} = N/2 = 4096\)</span> slots por cifrotexto y 10 000 registros, el cliente necesita <span class="math inline">\(\lceil 10\,000 / 4096 \rceil = 3\)</span> cifrotextos (uno con el 1 en la posición correcta, los otros dos con solo ceros). El servidor debe procesar los 3 cifrotextos — no puede descartar ninguno sin filtrar información sobre la consulta.</p></li>
+<li><p>Alternativas actuales insatisfactorias: (1) En sanidad se anonimiza o se recurre a acuerdos de confidencialidad, pero la anonimización es frágil (se pueden re-identificar pacientes cruzando variables) y los acuerdos no impiden que el proveedor vea datos en claro. (2) En finanzas se usan entornos controlados (<em>data clean rooms</em>) y acuerdos legales, pero el receptor sigue accediendo a los datos reales. (3) En ML multiorganización se centraliza la recopilación, exponiendo datos individuales. FHE eliminaría estas exposiciones al operar siempre sobre datos cifrados.</p></li>
+<li><p>Empresas y librerías: Microsoft SEAL (C++, BFV/CKKS), IBM HELib (BGV/CKKS), Zama (Concrete, TFHE), Google (FHE transpiler para C++), Duality Technologies. El estado de madurez en 2024 es <em>producción limitada</em>: hay casos de uso reales (ML sobre datos cifrados, computación financiera) pero el overhead es aún elevado (<span class="math inline">\(10^4\)</span>–<span class="math inline">\(10^5\times\)</span>) para la mayoría de aplicaciones.</p></li>
+<li><p>El coste es aceptable cuando el valor de la privacidad supera el coste computacional: datos genómicos, modelos financieros propietarios, votación electrónica, computación sobre datos médicos regulados. No es aceptable para aplicaciones de baja latencia (videojuegos, trading de alta frecuencia) o donde los datos no son sensibles.</p></li>
+<li><p>Los avances principales entre 2015 y 2024 fueron: bootstrapping más rápido (TFHE genera evaluaciones de milisegundos), CKKS para aritmética aproximada (2017), compiladores FHE que transforman código normal a código homomórfico (Google, Zama), y aceleración hardware (Intel HEXL, proyectos DARPA DPRIVE). La brecha de rendimiento se redujo de ~<span class="math inline">\(10^6\times\)</span> a ~<span class="math inline">\(10^4\times\)</span> para muchas operaciones.</p></li>
+<li><p>Los esquemas FHE basados en RLWE solo ofrecen dos operaciones nativas: suma y multiplicación de polinomios. Una comparación como <code>x &gt; y</code> no es una operación aritmética — requiere evaluar una función no lineal (signo). Para implementarla, se aproxima la función signo mediante un polinomio de grado alto (típicamente grado 10-30), y cada multiplicación de ese polinomio consume un nivel del presupuesto. Un simple <code>if (x &gt; y)</code> puede costar entre 4 y 10 niveles multiplicativos.</p></li>
+<li><p>SVP pide encontrar el vector no nulo más corto del retículo; CVP pide encontrar el punto del retículo más cercano a un punto dado del espacio. CVP es al menos tan difícil como SVP porque, si se pudiera resolver CVP eficientemente, se podría usar para resolver SVP: basta con consultar CVP con el punto origen y descartar el vector nulo. La intuición de por qué SVP puede ser más fácil es que su punto de referencia (el origen) pertenece al propio retículo, lo que permite explotar simetrías internas de la estructura (invariancia por traslación, por ejemplo). En CVP, el punto objetivo es arbitrario y «rompe» esas simetrías — es un problema parametrizado por una entrada externa sin relación con la estructura periódica del retículo.</p></li>
+<li><p>RSA se basa en la factorización de enteros, que el algoritmo de Shor resuelve en tiempo polinomial en un ordenador cuántico. Los problemas de retículos (SVP, CVP) no tienen un análogo cuántico eficiente conocido: los mejores algoritmos cuánticos siguen siendo exponenciales en la dimensión del retículo. Por eso los retículos son la base de la criptografía post-cuántica y, por extensión, del FHE.</p></li>
+<li><p>En el anillo <span class="math inline">\(R_q = \mathbb{Z}_q[x]/(x^n+1)\)</span>, multiplicar por un polinomio <span class="math inline">\(a(x)\)</span> es equivalente a multiplicar por una matriz anticirculante determinada por los coeficientes de <span class="math inline">\(a(x)\)</span>. Esto permite reemplazar la matriz aleatoria <span class="math inline">\(A\)</span> de LWE (<span class="math inline">\(n^2\)</span> enteros, multiplicación <span class="math inline">\(O(n^2)\)</span>) por un solo polinomio (<span class="math inline">\(n\)</span> enteros, multiplicación <span class="math inline">\(O(n \log n)\)</span> vía NTT). Con <span class="math inline">\(n = 8192\)</span>, las claves se reducen ~<span class="math inline">\(8\,000\times\)</span> y las operaciones se aceleran ~<span class="math inline">\(1\,000\times\)</span>.</p></li>
+<li><p>La ecuación RLWE es <span class="math inline">\(b = a \cdot s + e\)</span>, donde <span class="math inline">\(e\)</span> es un error pequeño. Sin el error, recuperar <span class="math inline">\(s\)</span> sería álgebra lineal trivial (dividir polinomios). Con él, <span class="math inline">\(b\)</span> es un punto <em>cercano</em> al retículo generado por el anillo <span class="math inline">\(R_q\)</span>, pero no exactamente en él — recuperar <span class="math inline">\(s\)</span> equivale a encontrar el punto más cercano, que es CVP. Formalmente, Lyubashevsky, Peikert y Regev demostraron que resolver RLWE en el caso medio permite resolver SVP aproximado en retículos ideales en el caso peor. Verifica que el LLM mencione que la reducción aplica a retículos ideales (los que tienen la estructura de anillo <span class="math inline">\(R_q\)</span>, no retículos generales) y que es el ruido <span class="math inline">\(e\)</span> lo que convierte un problema trivial en uno intratable.</p></li>
+<li><p>Sin el polinomio aleatorio <span class="math inline">\(a\)</span>, dos cifrotextos <span class="math inline">\(c_1 = s + e_1 + m_1\)</span> y <span class="math inline">\(c_2 = s + e_2 + m_2\)</span> permitirían al atacante calcular <span class="math inline">\(c_1 - c_2 \approx m_1 - m_2\)</span>, revelando la diferencia entre los mensajes. El polinomio <span class="math inline">\(a\)</span>, distinto en cada cifrado, actúa como máscara que hace cada cifrotexto indistinguible de ruido aleatorio.</p></li>
+<li><p>En la suma homomórfica, los errores se suman: <span class="math inline">\(e_{\text{sum}} = e_1 + e_2\)</span>. Si los errores iniciales son del orden de <span class="math inline">\(\epsilon\)</span>, tras <span class="math inline">\(k\)</span> sumas el error es <span class="math inline">\(k\epsilon\)</span>. En la multiplicación, los errores se multiplican con los mensajes: <span class="math inline">\(e_{\text{mult}} \approx e_1 \cdot m_2 + e_2 \cdot m_1\)</span>, creciendo proporcionalmente al tamaño de los mensajes. Esto limita drásticamente el número de multiplicaciones encadenadas antes de que el ruido desborde el módulo.</p></li>
+<li><p>La multiplicación homomórfica produce un triplete <span class="math inline">\((d_0, d_1, d_2)\)</span> que depende de <span class="math inline">\(s^2\)</span>, en vez del par estándar <span class="math inline">\((a, b)\)</span> que depende solo de <span class="math inline">\(s\)</span>. La relinearización usa una clave pública que cifra <span class="math inline">\(s^2\)</span> para convertir el triplete en un par estándar. Sin ella, cada multiplicación aumentaría el grado del cifrotexto en <span class="math inline">\(s\)</span>, haciéndolo inmanejable tras pocas operaciones.</p></li>
+<li><p>La lógica <code>if (m &lt; 0) then m = -m</code> calcula el valor absoluto: <span class="math inline">\(|m| = m \cdot \text{sign}(m)\)</span>. Como CKKS no soporta ramas condicionales, la función signo debe aproximarse mediante un polinomio (por ejemplo, la aproximación de Chebyshev de grado 15–27). La implementación evalúa ese polinomio sobre el cifrotexto — <span class="math inline">\(\text{Enc}(\text{sign}(m)) \approx p(\text{Enc}(m))\)</span> — y luego multiplica el resultado por <span class="math inline">\(\text{Enc}(m)\)</span>: <code>enc_abs = enc_m * poly_sign(enc_m)</code>. Evaluar el polinomio consume <span class="math inline">\(\lceil \log_2(\text{grado}) \rceil \approx 4\)</span>–<span class="math inline">\(5\)</span> niveles mediante el algoritmo de Paterson–Stockmeyer, más un nivel adicional para la multiplicación final: entre <strong>5 y 10 niveles multiplicativos</strong> en total, frente a una instrucción en código convencional.</p></li>
+<li><p>En CKKS, cada multiplicación duplica la escala del mensaje de <span class="math inline">\(\Delta\)</span> a <span class="math inline">\(\Delta^2\)</span> y amplifica el error por un factor <span class="math inline">\(\Delta\)</span>. El rescaling divide todo el cifrotexto por <span class="math inline">\(\Delta\)</span>, restaurando la escala estándar y eliminando los 40 bits extra de error. Sin rescaling, la escala crecería exponencialmente y el módulo <span class="math inline">\(q\)</span> se agotaría tras una sola multiplicación.</p></li>
+<li><p>El circuito <span class="math inline">\(a \cdot b + c \cdot d\)</span> tiene dos multiplicaciones independientes (paralelas, no encadenadas) seguidas de una suma. La profundidad multiplicativa es 1. Basta con un solo nivel: <code>coeff_mod_bit_sizes=[60, 40, 60]</code> sería suficiente.</p></li>
+<li><p>El bootstrapping evalúa el circuito de descifrado (<span class="math inline">\(b - a \cdot s\)</span>) homomórficamente, lo que requiere operar con <span class="math inline">\(s\)</span> dentro del dominio cifrado. Para ello se necesita un cifrado de <span class="math inline">\(s\)</span> bajo la propia clave <span class="math inline">\(s\)</span>. Esto requiere la hipótesis de <em>seguridad circular</em>: que cifrar la clave bajo sí misma no debilita el esquema. Todos los esquemas FHE actuales asumen esta propiedad, aunque no está demostrada en general.</p></li>
+<li><p>Dimensionar los parámetros para evitar el bootstrapping requiere un módulo <span class="math inline">\(q\)</span> proporcional al número de multiplicaciones, lo que exige un <code>poly_modulus_degree</code> cada vez mayor para mantener la seguridad. Para circuitos muy profundos, los polinomios serían tan grandes que cada operación sería más lenta que hacer bootstrapping periódico. El bootstrapping es inevitable cuando la profundidad del circuito no se conoce de antemano o es demasiado grande para dimensionar estáticamente.</p></li>
+<li><p>El polinomio <span class="math inline">\(x^N + 1\)</span> tiene <span class="math inline">\(N\)</span> raíces complejas, pero como los coeficientes del polinomio mensaje son reales, las evaluaciones en raíces conjugadas son también conjugadas: <span class="math inline">\(m(\bar{\omega}) = \overline{m(\omega)}\)</span>. Las raíces se agrupan en <span class="math inline">\(N/2\)</span> pares conjugados, y cada par aporta un solo valor independiente. Por eso hay <span class="math inline">\(N/2\)</span> slots, no <span class="math inline">\(N\)</span>.</p></li>
+<li><p>Los 4091 slots restantes contienen ceros. El coste de las operaciones no se ve afectado: una suma o multiplicación homomórfica procesa <em>todos</em> los <span class="math inline">\(N/2 = 4096\)</span> slots en paralelo, estén o no ocupados. El coste es por cifrotexto, no por dato — los slots vacíos simplemente suman o multiplican ceros sin coste adicional.</p></li>
+<li><p>Los slots no coinciden con los coeficientes del polinomio: están codificados mediante una variante de la DFT (la <em>canonical embedding</em>). El descifrado homomórfico del bootstrapping produce el polinomio en su representación de coeficientes, pero la reducción modular debe aplicarse a cada slot por separado. <em>CoeffsToSlots</em> convierte de coeficientes a slots mediante una multiplicación matricial homomórfica, lo que consume varios niveles multiplicativos adicionales — niveles que se restan del presupuesto recién restaurado.</p></li>
+<li><p>El árbol de sumas necesita <span class="math inline">\(\log_2(4096) = 12\)</span> rotaciones y 12 sumas homomórficas. En cada paso se rota por una potencia de 2 (<span class="math inline">\(1, 2, 4, \ldots, 2048\)</span>) y se suma el resultado con el vector original, de modo que tras 12 pasos cada slot contiene la suma de todos los elementos.</p></li>
+<li><p>La sustitución <span class="math inline">\(x \to x^k\)</span> que implementa la rotación transforma el cifrotexto <span class="math inline">\((a(x), b(x))\)</span> en <span class="math inline">\((a(x^k), b(x^k))\)</span>, que queda cifrado bajo la clave <span class="math inline">\(s(x^k)\)</span> en lugar de <span class="math inline">\(s(x)\)</span>. Para poder descifrar con la clave original, se necesita un <em>key-switching</em> que requiere material precalculado — la clave de Galois — específico para cada valor de <span class="math inline">\(k\)</span>. Distintas cantidades de rotación corresponden a distintos exponentes <span class="math inline">\(k\)</span>, y cada uno necesita su propia clave.</p></li>
+<li><p>En un registro SIMD de CPU, un shift circular reordena las posiciones del registro sin coste criptográfico — es una operación directa sobre bits. En FHE, la rotación logra el mismo efecto lógico (desplazar posiciones del vector), pero requiere un automorfismo sobre el polinomio seguido de key-switching, lo que añade ruido y necesita una clave de Galois precalculada. La similitud es funcional: ambos mueven datos dentro de un «registro ancho». La diferencia es el coste: nanosegundos en CPU, milisegundos en FHE, más la necesidad de claves adicionales.</p></li>
+<li><p>Parcial: soporta UN SOLO tipo de operación sin límite (RSA→multiplicaciones, Paillier→sumas). Somewhat (SHE): soporta sumas Y multiplicaciones pero con un número limitado de operaciones antes de que el ruido imposibilite el descifrado. Fully (FHE): soporta sumas y multiplicaciones sin límite, gracias al bootstrapping que resetea el ruido periódicamente. Verifica que el LLM no confunda SHE con FHE.</p></li>
+<li><p>Los niveles intermedios (<code>40, 40, 40</code>) consumen un nivel de profundidad multiplicativa cada uno. Con tres niveles intermedios de 40 bits, el esquema soporta <strong>3 multiplicaciones encadenadas</strong>. Los niveles extremos (<code>60</code>) se reservan para la escala (encoding) y el descifrado.</p></li>
+<li><p><em>Codificación</em>: BFV escala el mensaje entero por <span class="math inline">\(\lfloor q/t \rfloor\)</span> y recupera el resultado exacto por redondeo; BGV hace lo mismo con gestión inversa de módulos; CKKS escala por <span class="math inline">\(\Delta\)</span> y acepta un error de aproximación para representar reales. <em>Fortalezas</em>: BFV/BGV garantizan aritmética entera exacta; CKKS permite punto flotante y es natural para ML. <em>Limitaciones</em>: BFV/BGV no representan reales; CKKS acumula error. TFHE se distingue en ambos ejes: usa LWE (no RLWE) — vectores de enteros en lugar de polinomios — y codifica un solo bit por cifrotexto en un toro. Su modelo de cómputo es por puertas lógicas con bootstrapping automático tras cada puerta (~10 ms), lo que lo hace ideal para comparaciones y condicionales pero ineficiente para aritmética masiva (sin paralelismo SIMD).</p></li>
+</ol>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./07.html" class="pagination-link" aria-label="Referencias">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Referencias</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

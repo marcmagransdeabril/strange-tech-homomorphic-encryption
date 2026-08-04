@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; Fundamentos – Tecnologías Extrañas: Cifrado Homomórfico</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./06.html" rel="next">
+<link href="./04.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9e09d2eb63ca372e5c6aa0cd7f5bad22.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="templates/styles.css">
+<link rel="stylesheet" href="templates/standalone-book.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Tecnologías Extrañas: Cifrado Homomórfico</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./../en/index.html"> 
+<span class="menu-text">English</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Fundamentos</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00-prologo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prólogo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Manos a la obra</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Aplicaciones</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Limitaciones actuales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Fundamentos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lecturas Recomendadas</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Soluciones</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar"><div class="quarto-margin-header"><div class="margin-header-item">
+<p><strong>Tecnologías Extrañas: Cifrado Homomórfico</strong></p>
+</div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#retículos" id="toc-retículos" class="nav-link active" data-scroll-target="#retículos"><span class="header-section-number">5.1</span> Retículos</a></li>
+  <li><a href="#de-los-retículos-a-los-anillos-lwe-y-rlwe" id="toc-de-los-retículos-a-los-anillos-lwe-y-rlwe" class="nav-link" data-scroll-target="#de-los-retículos-a-los-anillos-lwe-y-rlwe"><span class="header-section-number">5.2</span> De los retículos a los anillos: LWE y RLWE</a></li>
+  <li><a href="#cifrado-y-operaciones-homomórficas" id="toc-cifrado-y-operaciones-homomórficas" class="nav-link" data-scroll-target="#cifrado-y-operaciones-homomórficas"><span class="header-section-number">5.3</span> Cifrado y operaciones homomórficas</a></li>
+  <li><a href="#sec-ruido-niveles" id="toc-sec-ruido-niveles" class="nav-link" data-scroll-target="#sec-ruido-niveles"><span class="header-section-number">5.4</span> Ruido y niveles</a></li>
+  <li><a href="#bootstrapping" id="toc-bootstrapping" class="nav-link" data-scroll-target="#bootstrapping"><span class="header-section-number">5.5</span> Bootstrapping</a></li>
+  <li><a href="#sec-packing-simd" id="toc-sec-packing-simd" class="nav-link" data-scroll-target="#sec-packing-simd"><span class="header-section-number">5.6</span> Packing y SIMD</a></li>
+  <li><a href="#sec-rotaciones-fhe" id="toc-sec-rotaciones-fhe" class="nav-link" data-scroll-target="#sec-rotaciones-fhe"><span class="header-section-number">5.7</span> Rotaciones</a></li>
+  <li><a href="#otros-esquemas-de-encriptado" id="toc-otros-esquemas-de-encriptado" class="nav-link" data-scroll-target="#otros-esquemas-de-encriptado"><span class="header-section-number">5.8</span> Otros esquemas de encriptado</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-fundamentos-fhe" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Fundamentos</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Hemos visto que el código funciona y que las aplicaciones potenciales son reales, pero a costa de un rendimiento entre <span class="math inline">\(10^4\)</span> y <span class="math inline">\(10^6\)</span> veces peor que en claro por operación individual en CPU — una brecha que el <em>packing</em> SIMD (<a href="#sec-packing-simd" class="quarto-xref"><span>Sección 5.6</span></a>), las GPU y los aceleradores hardware reducen considerablemente ¿Cómo es posible que un ordenador ejecute cálculos sobre datos que no puede ver, y por qué es tan caro incluso con estas optimizaciones? Recordemos la analogía de la caja con guantes para manipular joyas o la de cocinar sin tocar los ingredientes: Alice mete sus materiales dentro de una caja cerrada con llave, y un trabajador los manipula a través de los guantes sin tocarlos jamás. En FHE, los datos son los materiales, el cifrado es la caja, y las operaciones homomórficas son los guantes. Vamos a ver cómo se construye esa «caja» matemáticamente, y de paso entenderemos cada parámetro del código que acabamos de ejecutar. La clave está en una rama de las matemáticas que poca gente asocia con criptografía: los retículos.</p>
+<section id="retículos" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="retículos"><span class="header-section-number">5.1</span> Retículos</h2>
+<p>La seguridad de los esquemas de cifrado homomórfico no depende de la factorización de números primos — como RSA — sino de la dificultad de resolver problemas geométricos en estructuras llamadas <em>retículos</em>. Un retículo (<em>lattice</em>) es un conjunto discreto de puntos en un espacio <span class="math inline">\(n\)</span>-dimensional, generado por combinaciones lineales enteras de una base de vectores <span class="math inline">\(B = \{b_1, \dots, b_n\}\)</span>:</p>
+<p><span class="math display">\[L(B) = \left\{ \sum_{i=1}^{n} a_i b_i : a_i \in \mathbb{Z} \right\}\]</span></p>
+<p>En la definición general, los vectores base <span class="math inline">\(b_i\)</span> pueden ser reales, pero en criptografía trabajamos siempre con vectores de enteros módulo <span class="math inline">\(q\)</span> — es decir, <span class="math inline">\(b_i \in \mathbb{Z}_q^n\)</span> — de modo que todos los puntos del retículo también son enteros. Piensa en una cuadrícula regular, pero en cientos de dimensiones (véase el capítulo sobre criptografía de retículos para un tratamiento completo).</p>
+<div id="fig-lattice" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lattice-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/lattice.png" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lattice-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.1: Retículo bidimensional generado por dos vectores base <span class="math inline">\(b_1\)</span> y <span class="math inline">\(b_2\)</span>. La región sombreada es el <em>dominio fundamental</em> (paralelogramo definido por la base). El punto <span class="math inline">\(t\)</span> está fuera del retículo: encontrar el punto del retículo más cercano (CVP) o el vector no nulo más corto (SVP) es computacionalmente intratable en dimensiones altas.
+</figcaption>
+</figure>
+</div>
+<p>La criptografía moderna se apoya en dos problemas fundamentales sobre estas estructuras:</p>
+<ul>
+<li><strong>SVP</strong> (<em>Shortest Vector Problem</em>): hallar el vector no nulo más corto del retículo.</li>
+<li><strong>CVP</strong> (<em>Closest Vector Problem</em>): dado un punto cualquiera del espacio, hallar el punto del retículo más cercano. Si se exige el punto <em>exacto</em> más cercano, el problema es NP-hard. En su versión aproximada ya no es NP-hard, pero los mejores algoritmos conocidos siguen teniendo un coste exponencial en la dimensión <span class="math inline">\(n\)</span> del retículo.</li>
+</ul>
+<p>CVP es al menos tan difícil como SVP, y ambos son la base de la criptografía de retículos. En criptografía se usan precisamente las versiones aproximadas, lo bastante relajadas para no ser NP-hard, pero lo bastante estrictas para que ningún algoritmo conocido, clásico o cuántico, las resuelva en tiempo razonable. En las dimensiones típicas de FHE (<span class="math inline">\(n \geq 1024\)</span>), eso es intratable. Esa dificultad es la que protege los datos. Pero un retículo por sí solo no cifra nada — necesitamos traducir esta dificultad geométrica en un mecanismo que permita cifrar y operar.</p>
+<div class="repaso">
+<ol type="1">
+<li>¿Cuál es la diferencia entre SVP y CVP? ¿Por qué CVP es al menos tan difícil como SVP?</li>
+<li>La seguridad de FHE se basa en que los problemas de retículos son difíciles «incluso para ordenadores cuánticos». ¿Qué distingue estos problemas de los que usa RSA (factorización) frente a ataques cuánticos?</li>
+</ol>
+</div>
+</section>
+<section id="de-los-retículos-a-los-anillos-lwe-y-rlwe" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="de-los-retículos-a-los-anillos-lwe-y-rlwe"><span class="header-section-number">5.2</span> De los retículos a los anillos: LWE y RLWE</h2>
+<p>Una vez comprendido que la seguridad reside en la dificultad de encontrar puntos en un retículo, necesitamos una forma de implementarlo eficientemente. El esquema <em>Learning With Errors</em> (LWE), que veremos en más detalle en el capítulo sobre criptografía de retículos, traslada la geometría de retículos al álgebra lineal. La clave secreta <span class="math inline">\(s\)</span> es un vector de <span class="math inline">\(n\)</span> enteros, la parte pública incluye una matriz aleatoria <span class="math inline">\(A\)</span> de <span class="math inline">\(n \times n\)</span> enteros, y cifrar consiste en calcular:</p>
+<p><span class="math display">\[b = A \cdot s + e \pmod{q}\]</span></p>
+<p>donde <span class="math inline">\(e\)</span> es un vector de errores pequeños — ruido inyectado deliberadamente. Sin ese ruido, recuperar <span class="math inline">\(s\)</span> a partir de <span class="math inline">\(A\)</span> y <span class="math inline">\(b\)</span> sería álgebra lineal de primer curso (eliminación gaussiana). Pero con el error, <span class="math inline">\(b\)</span> es un punto <em>cercano</em> al retículo generado por las columnas de <span class="math inline">\(A\)</span>, pero no exactamente <em>en</em> el retículo — y encontrar el punto más cercano es CVP. Esa es la trampa: el ruido convierte un problema trivial en uno intratable.</p>
+<p>LWE funciona, pero tiene un problema de rendimiento: cada operación sobre un cifrotexto implica un producto matriz-vector — <span class="math inline">\(O(n^2)\)</span> multiplicaciones de enteros. Con las dimensiones necesarias para FHE (<span class="math inline">\(n \geq 1024\)</span>), eso son millones de operaciones por cada suma o multiplicación homomórfica. Además, la matriz <span class="math inline">\(A\)</span> tiene <span class="math inline">\(n^2\)</span> enteros: con <span class="math inline">\(n = 8192\)</span>, almacenarla requiere más de 67 millones de enteros. Demasiado lento y pesado para ser práctico.</p>
+<p>La solución consiste en reemplazar vectores y matrices por <strong>polinomios</strong>. Un polinomio de grado menor que <span class="math inline">\(n\)</span> — por ejemplo, <span class="math inline">\(3x^2 + 5x + 1\)</span> — no es más que un vector de <span class="math inline">\(n\)</span> coeficientes (<span class="math inline">\(1, 5, 3, 0, \ldots, 0\)</span>) escrito con otra notación. Hasta aquí no hemos ganado nada. Pero si restringimos los polinomios a un <em>anillo</em> concreto ocurre algo notable.</p>
+<p>¿Pero qué es ese anillo? En notación algebraica se escribe <span class="math inline">\(R_q = \mathbb{Z}_q[x]/(x^n + 1)\)</span>, polinomios con coeficientes enteros módulo <span class="math inline">\(q\)</span> (i.e., <span class="math inline">\(\mathbb{Z}_q[x]\)</span>, la misma aritmética modular de LWE), con la restricción adicional de que <span class="math inline">\(x^n + 1 = 0\)</span>, es decir, <span class="math inline">\(x^n = -1\)</span>. Esta restricción sirve para que el grado nunca crezca: cuando al multiplicar dos polinomios algún término supera el grado <span class="math inline">\(n-1\)</span>, la regla lo «pliega» de vuelta al rango <span class="math inline">\([0, n-1]\)</span>. Veamos un ejemplo con <span class="math inline">\(n = 4\)</span> y <span class="math inline">\(q = 7\)</span>. Partimos de dos polinomios en <span class="math inline">\(R_7\)</span>:</p>
+<p><span class="math display">\[a(x) = 2x^3 + x + 3, \qquad b(x) = x^3 + 4x^2 + 1\]</span></p>
+<p>Al multiplicarlos aparecen términos de grado superior a 3. El truco del anillo es aplicar <span class="math inline">\(x^4 = -1\)</span>: por ejemplo, <span class="math inline">\(2x^3 \cdot x^3 = 2x^6 = 2 \cdot x^2 \cdot x^4 = -2x^2 = 5x^2 \pmod{7}\)</span>. Tras plegar todos los términos, el resultado es <span class="math inline">\(2x^3 + 3x^2 + 2\)</span> — siempre un polinomio de 4 coeficientes, igual que los vectores de LWE. Lo crucial es que esta restricción tiene exactamente el mismo efecto que restringir el conjunto de posibles matrices <span class="math inline">\(A\)</span> al de matrices <em>anticirculantes</em> (cuyas filas son rotaciones de un único vector con signos alternados). Es decir, toda la información de la matriz <span class="math inline">\(A\)</span> queda codificada en los coeficientes de un solo polinomio <span class="math inline">\(a(x)\)</span>.</p>
+<div id="fig-ring-folding" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ring-folding-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/ring-folding.png" class="img-fluid figure-img" style="width:90.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ring-folding-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.2: Plegado en el anillo <span class="math inline">\(R_q\)</span>. Al multiplicar polinomios, los términos de grado mayor o igual que <span class="math inline">\(n\)</span> se pliegan al rango <span class="math inline">\([0, n-1]\)</span> mediante la regla <span class="math inline">\(x^n = -1\)</span>. Esta restricción equivale a trabajar con matrices anticirculantes, codificando una matriz de <span class="math inline">\(n \times n\)</span> enteros en solo <span class="math inline">\(n\)</span> coeficientes.
+</figcaption>
+</figure>
+</div>
+<p>El resultado es <em>Ring Learning With Errors</em> (RLWE): la versión de LWE donde vectores y matrices se reemplazan por polinomios en <span class="math inline">\(R_q\)</span>. Una sola ecuación polinómica:</p>
+<p><span class="math display">\[b(x) = a(x) \cdot s(x) + e(x) \pmod{q,\; x^n + 1}\]</span></p>
+<p>codifica la misma información que el sistema matricial de LWE. La ganancia es doble. Primero, en almacenamiento: la matriz <span class="math inline">\(A\)</span> de LWE tiene <span class="math inline">\(n^2\)</span> enteros; el polinomio <span class="math inline">\(a(x)\)</span> de RLWE tiene solo <span class="math inline">\(n\)</span>. Con <span class="math inline">\(n = 8192\)</span>, pasamos de 67 millones de enteros a 8192 — una reducción de <span class="math inline">\(8\,000\times\)</span> en el tamaño de las claves. Segundo, en velocidad: multiplicar una matriz por un vector cuesta <span class="math inline">\(O(n^2)\)</span>; multiplicar dos polinomios en <span class="math inline">\(R_q\)</span> cuesta solo <span class="math inline">\(O(n \log n)\)</span> gracias a la <em>Number Theoretic Transform</em> (NTT), la versión modular de la FFT (<em>Fast Fourier Transform</em>). Con <span class="math inline">\(n = 8192\)</span>, eso es ~100,000 operaciones frente a ~67 millones — tres órdenes de magnitud más rápido. Esta eficiencia es lo que hace el FHE viable.</p>
+<p>El nombre RLWE resume el mecanismo. <em>Ring</em> se refiere al anillo de polinomios — la fuente de la eficiencia. <em>Learning With Errors</em> describe el problema subyacente: dado <span class="math inline">\(b = a \cdot s + e\)</span>, ¿se puede «aprender» el secreto <span class="math inline">\(s\)</span>? Sin el error, bastaría con álgebra lineal. Con él, recuperar <span class="math inline">\(s\)</span> equivale a resolver CVP en un retículo formado por polinomios — justo la dificultad de la subsección anterior.</p>
+<p>CKKS se construye directamente sobre RLWE, y la conexión es profunda. A diferencia de otros esquemas que tratan el error <span class="math inline">\(e\)</span> como algo que debe eliminarse por completo, CKKS lo interpreta como un <em>error de precisión</em> — similar a lo que ocurre en la aritmética de punto flotante. Como RLWE ya incluye un error inherente, el esquema lo reutiliza para representar números reales como valores aproximados: el ruido criptográfico y el error de aproximación se gestionan juntos mediante las técnicas de re-escalado que veremos en <a href="#sec-ruido-niveles" class="quarto-xref"><span>Sección 5.4</span></a>.</p>
+<p>El parámetro <code>poly_modulus_degree</code> del código fija exactamente esa <span class="math inline">\(n\)</span>. Debe ser potencia de 2 (4096, 8192, 16384…) porque la NTT — como la FFT — requiere tamaños potencia de 2. La elección de <span class="math inline">\(n\)</span> implica un compromiso: un <span class="math inline">\(n\)</span> mayor da más seguridad y más <em>slots</em> de paralelismo (<span class="math inline">\(N_{\text{slot}} = n/2\)</span> valores por cifrotexto, como veremos en <a href="#sec-packing-simd" class="quarto-xref"><span>Sección 5.6</span></a>), pero cada operación sobre polinomios más largos es proporcionalmente más cara. Duplicar <span class="math inline">\(n\)</span> de 8192 a 16384 duplica <span class="math inline">\(N_{\text{slot}}\)</span>, pero también duplica (aproximadamente) el tiempo de cada suma, multiplicación o rotación.</p>
+<p>Esta representación polinómica tiene un coste directo en memoria. Cada cifrotexto es un par de polinomios <span class="math inline">\((a, b)\)</span>, cada uno con <span class="math inline">\(n\)</span> coeficientes enteros módulo <span class="math inline">\(q\)</span>. El tamaño total es <span class="math inline">\(2 \times n \times \lceil\log_2 q\rceil\)</span> bits. Con los parámetros de nuestro ejemplo (<span class="math inline">\(n = 8192\)</span> y un módulo total <span class="math inline">\(q \approx 2^{200}\)</span>, suma de los 60+40+40+60 bits de <code>coeff_mod_bit_sizes</code>), un solo cifrotexto ocupa aproximadamente <span class="math inline">\(2 \times 8192 \times 200 / 8 \approx 400\)</span> KB. Un <em>double</em> en claro ocupa 8 bytes; su versión cifrada, 400,000 bytes — una expansión de <span class="math inline">\(50\,000\times\)</span>. El <em>packing</em> (<a href="#sec-packing-simd" class="quarto-xref"><span>Sección 5.6</span></a>) amortiza este coste al empaquetar hasta <span class="math inline">\(N_{\text{slot}} = n/2 = 4096\)</span> valores en un solo cifrotexto, reduciendo el coste a unos 100 bytes por valor. Pero las claves criptográficas adicionales — especialmente las de Galois y las de bootstrapping — pueden alcanzar cientos de megabytes o incluso gigabytes, como veremos más adelante. Con la estructura matemática lista — anillo eficiente, ruido que garantiza la seguridad, NTT que acelera las operaciones —, falta la pieza central: ¿cómo se cifra un mensaje concreto, y por qué sumar o multiplicar cifrotextos produce el resultado correcto?</p>
+<div id="fig-lwe-vs-rlwe" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lwe-vs-rlwe-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/lwe-vs-rlwe.png" class="img-fluid figure-img" style="width:85.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lwe-vs-rlwe-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.3: LWE frente a RLWE. A la izquierda, LWE requiere una matriz <span class="math inline">\(A\)</span> de <span class="math inline">\(n \times n\)</span> enteros. A la derecha, RLWE codifica la misma información en un polinomio de <span class="math inline">\(n\)</span> coeficientes, reduciendo el coste de <span class="math inline">\(O(n^2)\)</span> a <span class="math inline">\(O(n \log n)\)</span> vía la NTT.
+</figcaption>
+</figure>
+</div>
+<div class="repaso">
+<ol type="1">
+<li>En LWE estándar, la parte pública es una matriz <span class="math inline">\(A\)</span> de <span class="math inline">\(n \times n\)</span> enteros. En RLWE se reemplaza por un solo polinomio de <span class="math inline">\(n\)</span> coeficientes. ¿Qué propiedad algebraica del anillo <span class="math inline">\(R_q\)</span> permite esta compresión? ¿Qué ganancia en velocidad proporciona?</li>
+<li>Pídele a un LLM: <em>«En criptografía basada en retículos, ¿por qué se considera que resolver RLWE es al menos tan difícil como resolver el problema del vector más cercano (CVP)? Explica la reducción de forma intuitiva.»</em> Verifica que mencione el papel del ruido <span class="math inline">\(e\)</span> en la conexión con CVP.</li>
+</ol>
+</div>
+</section>
+<section id="cifrado-y-operaciones-homomórficas" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="cifrado-y-operaciones-homomórficas"><span class="header-section-number">5.3</span> Cifrado y operaciones homomórficas</h2>
+<p>Ya tenemos la estructura algebraica — el anillo <span class="math inline">\(R_q\)</span> con sus operaciones eficientes vía NTT — y sabemos que la seguridad reside en la dificultad de resolver problemas de retículos. Ahora veamos cómo se usa esta maquinaria para cifrar mensajes y, sobre todo, por qué las operaciones aritméticas sobre cifrotextos producen resultados correctos sin necesidad de descifrar.</p>
+<p>La mecánica del cifrado es elegante. La clave secreta <span class="math inline">\(s\)</span> es un polinomio con coeficientes pequeños. Para cifrar un mensaje <span class="math inline">\(m\)</span>, se genera un polinomio aleatorio <span class="math inline">\(a\)</span> y un <em>error</em> pequeño <span class="math inline">\(e\)</span> — ruido deliberadamente inyectado para hacer el problema de descifrado más difícil — y se produce un par:</p>
+<p><span class="math display">\[\text{Enc}(m) = (a,\; b = a \cdot s + e + m)\]</span></p>
+<p>¿Por qué hace falta <span class="math inline">\(a\)</span>? ¿No bastaría con cifrar como <span class="math inline">\(c = s + e + m\)</span> y descifrar como <span class="math inline">\(c - s\)</span>? El problema es que sin <span class="math inline">\(a\)</span>, si alguien intercepta dos cifrotextos <span class="math inline">\(c_1 = s + e_1 + m_1\)</span> y <span class="math inline">\(c_2 = s + e_2 + m_2\)</span>, puede restarlos: <span class="math inline">\(c_1 - c_2 \approx m_1 - m_2\)</span>. La clave <span class="math inline">\(s\)</span> se cancela y el atacante aprende la diferencia entre los mensajes. El polinomio aleatorio <span class="math inline">\(a\)</span>, distinto en cada cifrado, actúa como una máscara que hace cada cifrotexto indistinguible de ruido aleatorio. Quien conoce <span class="math inline">\(s\)</span> descifra — <span class="math inline">\(\text{Dec}(c) = b - a \cdot s = e + m\)</span> — y recupera <span class="math inline">\(m\)</span> (el error <span class="math inline">\(e\)</span> es pequeño y se puede eliminar). Sin conocer <span class="math inline">\(s\)</span>, la presencia de <span class="math inline">\(a\)</span> y <span class="math inline">\(e\)</span> hace que recuperar <span class="math inline">\(m\)</span> sea equivalente a resolver un problema de retículos.</p>
+<div id="fig-encryption" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-encryption-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/encryption.png" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-encryption-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.4: Anatomía de un cifrotexto. El par <span class="math inline">\((a, b)\)</span> contiene el mensaje <span class="math inline">\(m\)</span> oculto tras una máscara <span class="math inline">\(a \cdot s\)</span> y un ruido <span class="math inline">\(e\)</span>. Quien conoce <span class="math inline">\(s\)</span> elimina la máscara y recupera <span class="math inline">\(m\)</span>; sin <span class="math inline">\(s\)</span>, el cifrotexto es indistinguible de ruido aleatorio.
+</figcaption>
+</figure>
+</div>
+<p>La propiedad homomórfica surge de forma natural. Veamos por qué. Sean dos cifrotextos <span class="math inline">\(c_1 = (a_1, b_1)\)</span> y <span class="math inline">\(c_2 = (a_2, b_2)\)</span> que cifran <span class="math inline">\(m_1\)</span> y <span class="math inline">\(m_2\)</span> respectivamente, donde <span class="math inline">\(b_i = a_i \cdot s + e_i + m_i\)</span>.</p>
+<p><strong>Suma.</strong> Basta sumar componente a componente:</p>
+<p><span class="math display">\[\text{Enc}(m_1 + m_2) = c_1 + c_2 = (a_1 + a_2,\; b_1 + b_2)\]</span></p>
+<p>Si descifras este resultado con la clave <span class="math inline">\(s\)</span>, obtienes:</p>
+<p><span class="math display">\[\begin{aligned}
+\text{Dec}(c_1 + c_2) &amp;= (b_1 + b_2) - (a_1 + a_2) \cdot s \\
+  &amp;= (e_1 + e_2) + (m_1 + m_2)
+\end{aligned}\]</span></p>
+<p>Es decir, el mensaje descifrado es <span class="math inline">\(m_1 + m_2\)</span> con un error de <span class="math inline">\((e_1 + e_2)\)</span>. El error crece, pero solo como una suma — si cada <span class="math inline">\(e_i\)</span> es pequeño, la suma sigue siendo pequeña.</p>
+<p><strong>Suma con constante en claro.</strong> ¿Qué ocurre si uno de los operandos no está cifrado? Sea <span class="math inline">\(c = (a, b)\)</span> un cifrotexto que cifra <span class="math inline">\(m\)</span>, y <span class="math inline">\(k\)</span> una constante en claro. La suma es aún más sencilla:</p>
+<p><span class="math display">\[\text{Enc}(m + k) = c + k = (a,\; b + k)\]</span></p>
+<p>Solo se modifica la segunda componente. Al descifrar:</p>
+<p><span class="math display">\[\text{Dec}(c + k) = (b + k) - a \cdot s = e + m + k\]</span></p>
+<p>El error <span class="math inline">\(e\)</span> no cambia en absoluto — la constante se suma directamente al mensaje sin afectar al ruido. Esta es la operación más barata del repertorio: ni siquiera hay crecimiento de error.</p>
+<p><strong>Multiplicación por constante.</strong> Ahora multipliquemos el cifrotexto <span class="math inline">\(c = (a, b)\)</span> por una constante en claro <span class="math inline">\(k\)</span>:</p>
+<p><span class="math display">\[\text{Enc}(k \cdot m) = k \cdot c = (k \cdot a,\; k \cdot b)\]</span></p>
+<p>Al descifrar:</p>
+<p><span class="math display">\[\begin{aligned}
+\text{Dec}(k \cdot c) &amp;= k \cdot b - k \cdot a \cdot s = k \cdot (e + m) \\
+  &amp;= k \cdot m + k \cdot e
+\end{aligned}\]</span></p>
+<p>El mensaje es <span class="math inline">\(k \cdot m\)</span> — correcto — y el error pasa de <span class="math inline">\(e\)</span> a <span class="math inline">\(k \cdot e\)</span>, proporcional a la constante. El ruido crece, pero de forma controlada. Además, multiplicar por una constante simplemente escala ambas componentes del par: la estructura <span class="math inline">\((a, b)\)</span> se preserva intacta, sin complicaciones adicionales. Veremos enseguida que la multiplicación entre <em>dos cifrotextos</em> es mucho más costosa — requiere maquinaria extra y consume parte del presupuesto del esquema.</p>
+<p>Esto explica por qué en las recetas anteriores se insistía en que operaciones como <code>features_cifrados * pesos</code> (Receta 3) o <code>consulta_cifrada * scores</code> (Receta 6) eran «baratas»: al multiplicar un cifrotexto por valores en claro, el coste es mínimo. Solo la multiplicación entre <em>dos cifrotextos</em> — que veremos a continuación — tiene un coste significativo.</p>
+<p><strong>Multiplicación entre cifrotextos.</strong> Las operaciones con constantes en claro eran directas — sumas y multiplicaciones componente a componente, sin coste adicional. Para la multiplicación entre dos cifrotextos no es tan sencillo.</p>
+<p>Queremos definir <span class="math inline">\(\text{Enc}(m_1 \cdot m_2) = c_1 \otimes c_2 = (a, b)\)</span> — usamos <span class="math inline">\(\otimes\)</span> en lugar de <span class="math inline">\(\cdot\)</span> porque, como veremos, esta operación sobre cifrotextos es estructuralmente distinta de la multiplicación por constantes — tal que <span class="math inline">\(\text{Dec}(c_1 \otimes c_2) = b - a \cdot s \approx m_1 \cdot m_2\)</span>. La pregunta es: ¿qué deben ser <span class="math inline">\(a\)</span> y <span class="math inline">\(b\)</span>?</p>
+<p>Para descubrirlo, trabajamos hacia atrás. Sabemos que descifrar cada cifrotexto da <span class="math inline">\(b_i - a_i \cdot s = m_i + e_i\)</span>, así que el producto de ambos descifrados es <span class="math inline">\((m_1 + e_1)(m_2 + e_2) \approx m_1 \cdot m_2\)</span> — justo lo que queremos. Expandimos <span class="math inline">\((b_1 - a_1 s)(b_2 - a_2 s)\)</span> para ver qué forma tiene:</p>
+<p><span class="math display">\[(b_1 - a_1 s)(b_2 - a_2 s) = \underbrace{b_1 b_2}_{d_0}\; - \;\underbrace{(a_1 b_2 + a_2 b_1)}_{d_1} \cdot s\; + \;\underbrace{a_1 a_2}_{d_2} \cdot s^2\]</span></p>
+<p>Los tres coeficientes — <span class="math inline">\(d_0 = b_1 b_2\)</span>, <span class="math inline">\(d_1 = a_1 b_2 + a_2 b_1\)</span> y <span class="math inline">\(d_2 = a_1 a_2\)</span> — se calculan exclusivamente con las componentes públicas, sin necesidad de <span class="math inline">\(s\)</span>. Hasta aquí todo bien.</p>
+<p>Pero hay un problema: la expresión no tiene la forma <span class="math inline">\(b - a \cdot s\)</span> que necesitamos para descifrar con un par. Tiene <em>tres</em> términos y depende de <span class="math inline">\(s^2\)</span>. No podemos encontrar un par <span class="math inline">\((a, b)\)</span> que encaje directamente — necesitamos eliminar ese <span class="math inline">\(s^2\)</span>.</p>
+<div id="fig-multiplication" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-multiplication-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/multiplication.png" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-multiplication-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.5: Multiplicación entre cifrotextos. El producto genera un triplete <span class="math inline">\((d_0, d_1, d_2)\)</span> que depende de <span class="math inline">\(s^2\)</span>. La relinearización, usando una clave pública que cifra <span class="math inline">\(s^2\)</span>, lo reduce a un par estándar <span class="math inline">\((a', b')\)</span> descifrable con <span class="math inline">\(s\)</span>.
+</figcaption>
+</figure>
+</div>
+<p>Aquí entra la <em>relinearización</em>. Se publica de antemano una <em>clave de relinearización</em>: un cifrado de <span class="math inline">\(s^2\)</span> bajo la propia clave <span class="math inline">\(s\)</span>, es decir, un par <span class="math inline">\((a_r, b_r)\)</span> donde <span class="math inline">\(b_r \approx a_r \cdot s + s^2\)</span>. Con ella, absorbemos el término <span class="math inline">\(d_2 \cdot s^2\)</span> y construimos el par que buscábamos:</p>
+<p><span class="math display">\[a = d_1 + d_2 \cdot a_r, \qquad b = d_0 + d_2 \cdot b_r\]</span></p>
+<p>¿Funciona? Comprobemos: <span class="math inline">\(b - a \cdot s = d_0 + d_2 b_r - (d_1 + d_2 a_r) s = d_0 - d_1 s + d_2(b_r - a_r s) \approx d_0 - d_1 s + d_2 s^2\)</span>, que es exactamente el producto original. Ahora sí tenemos un par con la forma estándar que se descifra solo con <span class="math inline">\(s\)</span> y produce <span class="math inline">\(m_1 \cdot m_2\)</span>.</p>
+<p>Esto resuelve la pregunta que nos planteábamos: la multiplicación homomórfica es <span class="math inline">\(\text{Enc}(m_1 \cdot m_2) = c_1 \otimes c_2 = (a, b)\)</span> con <span class="math inline">\(a\)</span> y <span class="math inline">\(b\)</span> definidos arriba. En librerías como TenSEAL la relinearización se aplica internamente cada vez que multiplicas dos cifrotextos, así que el usuario solo escribe <code>c1 * c2</code>.</p>
+<p>Pero una vez que somos capaces de multiplicar, aparece un segundo problema: el error crece mucho más rápidamente. Fijémonos que si sustituimos <span class="math inline">\(b_i = a_i s + e_i + m_i\)</span>, el producto descifrado es:</p>
+<p><span class="math display">\[(e_1 + m_1)(e_2 + m_2) = m_1 \cdot m_2 + e_1 \cdot m_2 + e_2 \cdot m_1 + e_1 \cdot e_2\]</span></p>
+<p>El resultado contiene <span class="math inline">\(m_1 \cdot m_2\)</span> — lo que buscábamos — pero el error resultante <span class="math inline">\(e_{\text{mult}} = e_1 \cdot m_2 + e_2 \cdot m_1 + e_1 \cdot e_2\)</span> es mucho mayor que en la suma. Los errores ya no se <em>suman</em> sino que se <em>multiplican</em> con los mensajes, creciendo mucho más rápido. Tras pocas multiplicaciones encadenadas, el error acumulado puede superar al mensaje y el descifrado produce basura. Esta es la razón fundamental por la que el FHE tiene un presupuesto limitado de operaciones.</p>
+<p>Hay un punto sutil que conviene hacer explícito: las dos únicas operaciones que el esquema proporciona de forma nativa son la suma y la multiplicación de polinomios. La estructura algebraica de RLWE — un anillo de polinomios — solo define estas dos operaciones. Cualquier otro cálculo — comparaciones (<span class="math inline">\(x &gt; y\)</span>), máximos, mínimos, funciones no lineales como sigmoide o ReLU — debe <em>aproximarse</em> mediante un polinomio de grado suficientemente alto, y cada multiplicación de ese polinomio consume un nivel del presupuesto. Un simple <code>if (x &gt; 0)</code> que en código normal es una instrucción, en FHE requiere evaluar un polinomio de grado 10 a 30 que aproxime la función signo, consumiendo entre 4 y 10 niveles multiplicativos. Esta restricción — a veces llamada modelo de <em>circuito aritmético</em> — es la que convierte la programación sobre datos cifrados en un ejercicio de diseño cuidadoso, como vimos en <a href="04.html" class="quarto-xref"><span>Capítulo 4</span></a>. Y cada una de esas multiplicaciones tiene un coste que no hemos cuantificado aún: el ruido acumulado.</p>
+<div class="repaso">
+<ol type="1">
+<li><p>En el cifrado RLWE, ¿por qué es necesario el polinomio aleatorio <span class="math inline">\(a\)</span> en cada cifrado? ¿Qué ataque permite su ausencia?</p></li>
+<li><p>Explica con tus palabras por qué la suma homomórfica es «barata» (el error crece linealmente) mientras que la multiplicación es «cara» (el error crece mucho más rápido).</p></li>
+<li><p>¿Qué papel juega la <em>relinearización</em> después de una multiplicación homomórfica? ¿Qué pasaría si no se aplicara?</p></li>
+<li><p>CKKS no soporta ramas condicionales. ¿Cómo implementarías la siguiente lógica utilizando CKKS? ¿Cuántos niveles multiplicativos consume aproximadamente?</p>
+<pre><code>if (m &lt; 0) then m = -m</code></pre></li>
+</ol>
+</div>
+</section>
+<section id="sec-ruido-niveles" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="sec-ruido-niveles"><span class="header-section-number">5.4</span> Ruido y niveles</h2>
+<p>Acabamos de ver que cada multiplicación entre cifrotextos hace crecer el error de forma dramática — los errores se multiplican con los mensajes en lugar de simplemente sumarse. Y adelantamos que, tras pocas multiplicaciones encadenadas, el error puede superar al mensaje y el descifrado produce basura. Pero ¿cuántas operaciones podemos encadenar exactamente, y cómo controla el esquema ese deterioro?</p>
+<p>La clave está en el módulo <span class="math inline">\(q\)</span>. Todas las operaciones aritméticas del esquema se realizan módulo un número grande <span class="math inline">\(q\)</span>, llamado <em>módulo del cifrotexto</em>. Tras cifrar un mensaje fresco, el error <span class="math inline">\(e\)</span> es pequeño — del orden de unos pocos bits. El descifrado funciona correctamente siempre que el error acumulado sea menor que <span class="math inline">\(q/2\)</span>. Podemos pensar en <span class="math inline">\(\log_2(q)\)</span> — el número de bits de <span class="math inline">\(q\)</span> — como el tamaño del «depósito de combustible», y en <span class="math inline">\(\log_2(e)\)</span> como el combustible ya consumido.</p>
+<p>¿Cuánto crece el error en cada multiplicación? En CKKS, los mensajes no se almacenan directamente sino escalados por un factor <span class="math inline">\(\Delta\)</span> (en nuestro código, <span class="math inline">\(\Delta = 2^{40}\)</span>). Un cifrotexto que almacena el mensaje <span class="math inline">\(m\)</span> contiene internamente <span class="math inline">\(\Delta \cdot m + e\)</span>, donde <span class="math inline">\(e\)</span> es el error. Al multiplicar dos cifrotextos:</p>
+<p><span class="math display">\[(\Delta \, m_1 + e_1)(\Delta \, m_2 + e_2) = \Delta^2 \, m_1 m_2 + \Delta(m_1 e_2 + m_2 e_1) + e_1 e_2\]</span></p>
+<p>El término deseado es <span class="math inline">\(\Delta^2 m_1 m_2\)</span> y el error es <span class="math inline">\(\Delta(m_1 e_2 + m_2 e_1) + e_1 e_2\)</span>. Dado que <span class="math inline">\(e_1, e_2\)</span> son pequeños, el término <span class="math inline">\(e_1 e_2\)</span> es despreciable y el error dominante es <span class="math inline">\(\Delta(m_1 e_2 + m_2 e_1)\)</span>. Hay dos problemas: la escala del mensaje ha pasado de <span class="math inline">\(\Delta\)</span> a <span class="math inline">\(\Delta^2\)</span>, y el error se ha multiplicado por <span class="math inline">\(\Delta\)</span>.</p>
+<p>El <em>rescaling</em> resuelve ambos de un golpe: dividimos todo el cifrotexto por <span class="math inline">\(\Delta\)</span>:</p>
+<p><span class="math display">\[\frac{\Delta^2 m_1 m_2 + \Delta(m_1 e_2 + m_2 e_1)}{\Delta} = \Delta \, m_1 m_2 + (m_1 e_2 + m_2 e_1)\]</span></p>
+<p>Tras el rescaling, el mensaje vuelve a estar escalado por <span class="math inline">\(\Delta\)</span> — la forma estándar — y el error es ahora <span class="math inline">\(e_{\text{resc}} = m_1 e_2 + m_2 e_1\)</span>. Los 40 bits extra de error que había introducido la multiplicación se han eliminado al dividir por <span class="math inline">\(\Delta = 2^{40}\)</span>. El error resultante es mayor que los originales <span class="math inline">\(e_1, e_2\)</span> (por el factor <span class="math inline">\(m_i\)</span>), pero ya no crece de forma catastrófica. Sin rescaling, cada multiplicación añadiría 40 bits de error y en dos o tres operaciones se desbordaría <span class="math inline">\(q\)</span>; con rescaling, el error crece moderadamente y lo que se consume es un eslabón del módulo.</p>
+<div id="fig-rescaling" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rescaling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/rescaling.png" class="img-fluid figure-img" style="width:85.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rescaling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.6: Rescaling: dividir por <span class="math inline">\(\Delta\)</span> corrige simultáneamente la escala duplicada y el error amplificado, a cambio de consumir un eslabón de la cadena de módulos.
+</figcaption>
+</figure>
+</div>
+<p>En concreto, un esquema <em>leveled</em> (por niveles) gestiona este presupuesto con una cadena de módulos decrecientes <span class="math inline">\(q_0 &gt; q_1 &gt; \cdots &gt; q_L\)</span>. Cada rescaling divide el cifrotexto por <span class="math inline">\(\Delta\)</span> y reduce el módulo al siguiente de la cadena: <span class="math inline">\(q_i \to q_{i+1} = q_i / \Delta\)</span>. Cuando se agotan los eslabones, no quedan más niveles para multiplicar.</p>
+<p>Esto es exactamente lo que configura <code>coeff_mod_bit_sizes</code> en el código. Veámoslo con nuestro ejemplo:</p>
+<pre><code>coeff_mod_bit_sizes = [60, 40, 40, 60]</code></pre>
+<ul>
+<li>El <strong>último valor</strong> (60 bits) es un módulo auxiliar reservado para la relinearización que vimos antes — el paso que convierte el triplete <span class="math inline">\((d_0, d_1, d_2)\)</span> en un par. La librería necesita un módulo extra de gran tamaño para ejecutar esa operación con precisión, pero no cuenta como nivel de multiplicación.</li>
+<li>El <strong>primer valor</strong> (60 bits) fija la escala inicial <span class="math inline">\(\Delta\)</span> del cifrado. Recordemos que CKKS almacena <span class="math inline">\(\Delta \cdot m + e\)</span>; un <span class="math inline">\(\Delta\)</span> más grande (más bits) da más decimales de precisión en los números reales, pero ocupa más espacio en el módulo total. Un valor de 60 bits proporciona aproximadamente 18 dígitos decimales de precisión.</li>
+<li>Los <strong>valores intermedios</strong> (40, 40) son los eslabones de la cadena de <em>rescaling</em>: cada uno representa un nivel de multiplicación disponible. Con dos valores de 40 bits, el esquema soporta hasta dos multiplicaciones encadenadas.</li>
+</ul>
+<p>El número 40 no es arbitrario: coincide con <code>global_scale = 2**40</code> que fijamos al crear el contexto. Cada <em>rescaling</em> divide por la escala (<span class="math inline">\(2^{40}\)</span>), lo que requiere consumir exactamente un módulo de 40 bits de la cadena.</p>
+<p>¿Cómo decide un ingeniero estos valores? La regla práctica es: cuenta cuántas multiplicaciones encadenadas necesita tu circuito (llamémoslo <span class="math inline">\(L\)</span>) y configura <span class="math inline">\(L\)</span> valores intermedios de 40 bits, más un 60 al principio y otro al final. Para calcular una media (suma + división por constante) basta con una multiplicación, así que <span class="math inline">\(L = 1\)</span> sería suficiente. Nuestro ejemplo usa <span class="math inline">\(L = 2\)</span> para tener margen. Si necesitaras, por ejemplo, calcular un polinomio de grado 4, usarías <code>[60, 40, 40, 40, 40, 60]</code> — cuatro niveles intermedios. Más niveles implican un módulo <span class="math inline">\(q\)</span> total más grande, lo que a su vez requiere un <code>poly_modulus_degree</code> mayor para mantener la seguridad.</p>
+<p>¿Por qué? Recordemos que la seguridad de RLWE descansa en que el error <span class="math inline">\(e\)</span> inyectado al cifrar es lo bastante pequeño para ser eliminado al descifrar, pero lo bastante grande para «ocultar» el mensaje a un atacante. Un atacante que intenta romper el esquema debe distinguir un cifrotexto RLWE — <span class="math inline">\(b = a \cdot s + e + m\)</span> — de un par de polinomios puramente aleatorios. Cuanto mayor sea <span class="math inline">\(q\)</span> relativo al error <span class="math inline">\(e\)</span>, más fácil le resulta: el error ocupa una fracción menor del espacio de posibles valores módulo <span class="math inline">\(q\)</span>, y el cifrotexto se parece cada vez más a un producto exacto <span class="math inline">\(a \cdot s\)</span> sin ruido, que sería trivial de invertir. Aumentar <span class="math inline">\(N\)</span> — la dimensión del retículo subyacente — compensa ese debilitamiento al hacer el problema exponencialmente más difícil por la misma razón que vimos al introducir RLWE: los mejores algoritmos de reducción de retículos tienen coste exponencial en la dimensión. Como regla práctica, los <em>bits de seguridad</em> — el logaritmo en base 2 del coste mínimo para romper el esquema por fuerza bruta, es decir, el exponente <span class="math inline">\(\lambda\)</span> tal que el atacante necesita <span class="math inline">\(\approx 2^\lambda\)</span> operaciones — son aproximadamente proporcionales a <span class="math inline">\(N / \log_2 q\)</span>: si duplicas el tamaño de <span class="math inline">\(q\)</span> añadiendo niveles a la cadena, necesitas aumentar <span class="math inline">\(N\)</span> proporcionalmente para que el coste de ataque siga siendo exponencial. Con 4 niveles, la cadena <code>[60, 40, 40, 40, 40, 60]</code> suma 280 bits de módulo total frente a los 200 de nuestro ejemplo, y para mantener 128 bits de seguridad típicamente necesitarás <span class="math inline">\(N = 16384\)</span> en vez de 8192.</p>
+<div id="fig-noise-levels" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-noise-levels-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/noise-levels.png" class="img-fluid figure-img" style="width:90.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-noise-levels-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.7: Cadena de módulos y consumo de niveles. Cada multiplicación consume un eslabón de 40 bits mediante rescaling. Cuando se agotan los eslabones intermedios, la siguiente multiplicación falla.
+</figcaption>
+</figure>
+</div>
+<p>Pero si el presupuesto es finito, algo no cuadra: llamamos al esquema <em>completamente</em> homomórfico, y sin embargo solo permite un número fijo de multiplicaciones — no muy diferente, en principio, de los esquemas parciales que mencionamos al inicio del capítulo.</p>
+<div class="repaso">
+<ol type="1">
+<li>¿Por qué el <em>rescaling</em> es necesario después de cada multiplicación en CKKS? ¿Qué ocurre con la escala del mensaje si no se aplica?</li>
+<li>Para un circuito que calcula <span class="math inline">\((a \cdot b) \cdot c\)</span>, ¿cuántos niveles se necesitan? Compáralo con <span class="math inline">\(a \cdot b + c \cdot d\)</span>. ¿Qué determina el número de niveles necesarios: la cantidad total de multiplicaciones o la profundidad del circuito?</li>
+</ol>
+</div>
+</section>
+<section id="bootstrapping" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="bootstrapping"><span class="header-section-number">5.5</span> Bootstrapping</h2>
+<p>Hemos recorrido un camino que va de los retículos a RLWE, del cifrado a las operaciones homomórficas, y del crecimiento del ruido a la cadena de módulos que lo gestiona. Pero todo lo descrito hasta aquí define un esquema <em>leveled</em> — capaz de un número prefijado de multiplicaciones. Para merecer el nombre de <em>fully</em> homomorphic, necesitamos una forma de restaurar el presupuesto agotado. Esa es la contribución clave de Craig Gentry, que ya mencionamos en la historia del FHE: el <em>bootstrapping</em>.</p>
+<p>Supongamos que tras <span class="math inline">\(L\)</span> multiplicaciones hemos agotado la cadena de módulos: cada <em>rescaling</em> ha dividido el módulo por <span class="math inline">\(\Delta\)</span>, dejando el cifrotexto en el último eslabón <span class="math inline">\(q_L = q_0 / \Delta^L\)</span>, sin niveles para seguir operando. El error es pequeño gracias al <em>rescaling</em>, pero no hay más eslabones que consumir.</p>
+<p>La idea del bootstrapping es contraintuitiva: tomamos ese cifrotexto «agotado» y lo desciframos <em>homomórficamente</em>. Es decir, el propio circuito de descifrado (<span class="math inline">\(b - a \cdot s\)</span>) se evalúa como una operación sobre cifrotextos. Para ello, la clave secreta <span class="math inline">\(s\)</span> se cifra de antemano bajo la propia clave <span class="math inline">\(s\)</span> y se publica como <em>clave de bootstrapping</em> (CB). El sistema ejecuta el descifrado «dentro de la caja de guantes» — retomando la analogía de Gentry que vimos al inicio del capítulo: el cifrotexto agotado entra, se descifra internamente y se vuelve a cifrar, todo sin salir nunca del dominio cifrado. El resultado es un cifrotexto <em>fresco</em> — con el módulo restaurado a <span class="math inline">\(q_0\)</span> y el presupuesto de niveles completo — que contiene el mismo mensaje.</p>
+<p>Veamos paso a paso cómo funciona. Partimos del cifrotexto agotado <span class="math inline">\(c = (a, b)\)</span> en el último nivel <span class="math inline">\(L\)</span>, con módulo <span class="math inline">\(q_L\)</span>. Sabemos que:</p>
+<p><span class="math display">\[b - a \cdot s \equiv \Delta \, m + e \pmod{q_L}\]</span></p>
+<p>donde <span class="math inline">\(e\)</span> es pequeño gracias al rescaling acumulado. Los valores <span class="math inline">\(a\)</span> y <span class="math inline">\(b\)</span> son conocidos — son el propio cifrotexto, que el servidor tiene en sus manos. Lo que no conoce es <span class="math inline">\(s\)</span>.</p>
+<p>Antes de empezar cualquier cómputo, el propietario de la clave ha publicado una <em>clave de bootstrapping</em> (CB): un cifrado fresco de la clave secreta <span class="math inline">\(s\)</span> bajo la propia clave <span class="math inline">\(s\)</span>, pero con el módulo completo <span class="math inline">\(q_0\)</span>. Siguiendo la misma notación de cifrado que definimos antes — <span class="math inline">\(\text{Enc}(m) = (a,\; b = a \cdot s + e + m)\)</span> — la clave de bootstrapping es:</p>
+<p><span class="math display">\[\text{CB} = \text{Enc}(s) = (a_{\text{cb}},\; b_{\text{cb}} = a_{\text{cb}} \cdot s + e_{\text{cb}} + s)\]</span></p>
+<p>Es exactamente un cifrado normal, solo que el «mensaje» cifrado es la propia clave <span class="math inline">\(s\)</span>. (Cifrar la clave bajo sí misma requiere una hipótesis llamada <em>seguridad circular</em>; todos los esquemas FHE actuales la asumen.) La diferencia crucial es que este cifrado se generó con el módulo completo <span class="math inline">\(q_0\)</span>, así que tiene todo el presupuesto de niveles intacto.</p>
+<p>Ahora el servidor puede evaluar el circuito de descifrado homomórficamente. Veamos cómo, paso a paso. Recordemos que <span class="math inline">\(a\)</span> y <span class="math inline">\(b\)</span> — las componentes del cifrotexto agotado — son valores concretos, polinomios que el servidor tiene en sus manos. Toda la información del mensaje <span class="math inline">\(m\)</span> y del error acumulado <span class="math inline">\(e\)</span> está codificada <em>dentro</em> de esos valores, en la relación <span class="math inline">\(b - a \cdot s \equiv \Delta m + e \pmod{q_L}\)</span>. Los polinomios <span class="math inline">\(a\)</span> y <span class="math inline">\(b\)</span> en sí mismos son solo números grandes; el error no «vive» en <span class="math inline">\(a\)</span> o en <span class="math inline">\(b\)</span> por separado, sino en cómo se combinan con la clave <span class="math inline">\(s\)</span>.</p>
+<p>Pero hay un detalle crucial en ese «<span class="math inline">\(\pmod{q_L}\)</span>». Lo que significa es que el valor <em>entero</em> de <span class="math inline">\(b - a \cdot s\)</span> — sin reducir módulo nada — no es <span class="math inline">\(\Delta m + e\)</span>, sino:</p>
+<p><span class="math display">\[b - a \cdot s = \Delta \, m + e + k \cdot q_L\]</span></p>
+<p>para algún entero <span class="math inline">\(k\)</span>. Al reducir módulo <span class="math inline">\(q_L\)</span>, el término <span class="math inline">\(k \cdot q_L\)</span> desaparece y solo queda el residuo <span class="math inline">\(\Delta m + e\)</span>. Cuando el cifrotexto operaba bajo el módulo <span class="math inline">\(q_L\)</span>, eso no importaba — la reducción se aplicaba implícitamente. Pero ahora que vamos a pasar a un módulo mayor, ese <span class="math inline">\(k \cdot q_L\)</span> se convierte en un problema.</p>
+<p><strong>Paso 1: descifrado homomórfico.</strong> El servidor usa <span class="math inline">\(a\)</span> y <span class="math inline">\(b\)</span> como constantes conocidas para operar sobre la CB. Primero, multiplica la CB (que es un cifrotexto que contiene <span class="math inline">\(s\)</span>) por la constante <span class="math inline">\(a\)</span>. Ya vimos que multiplicar un cifrotexto por una constante preserva el mensaje: si CB cifra <span class="math inline">\(s\)</span>, entonces <span class="math inline">\(a \cdot \text{CB}\)</span> cifra <span class="math inline">\(a \cdot s\)</span>. Esta operación es barata — no consume nivel porque no es una multiplicación entre dos cifrotextos. Después, resta de la constante <span class="math inline">\(b\)</span>. Sumar una constante a un cifrotexto simplemente suma esa constante al mensaje cifrado. El resultado es:</p>
+<p><span class="math display">\[b - a \cdot \text{CB} = \text{Enc}(b - a \cdot s) = \text{Enc}(\Delta \, m + e + k \cdot q_L)\]</span></p>
+<p>Este nuevo cifrotexto fue generado a partir de la CB, que tiene el módulo completo <span class="math inline">\(q_0\)</span>. Por tanto tiene niveles de sobra para seguir operando. Pero contiene <span class="math inline">\(\Delta m + e + k \cdot q_L\)</span> — el mensaje que queremos <em>más</em> un término espurio <span class="math inline">\(k \cdot q_L\)</span> que hay que eliminar.</p>
+<p><strong>Paso 2: eliminación del término <span class="math inline">\(k \cdot q_L\)</span> (reducción modular homomórfica).</strong> Aquí reside el coste real del bootstrapping. Necesitamos calcular <span class="math inline">\((b - a \cdot s) \bmod q_L\)</span> homomórficamente para quedarnos solo con <span class="math inline">\(\Delta m + e\)</span>. Pero la reducción modular no es una operación polinómica — no se puede expresar como una secuencia de sumas y multiplicaciones. Para evaluarla homomórficamente hay que <em>aproximarla</em> mediante un polinomio de grado alto, lo que consume múltiples niveles de multiplicación — típicamente entre 10 y 20, según la precisión deseada.</p>
+<p>Solo después de este segundo paso obtenemos un cifrotexto fresco bajo <span class="math inline">\(q_0\)</span> que contiene <span class="math inline">\(\Delta m + e\)</span> — el mensaje limpio, sin el término <span class="math inline">\(k \cdot q_L\)</span>, y con el presupuesto de niveles parcialmente restaurado.</p>
+<div id="fig-mod-approximation" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-mod-approximation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/mod-approximation.png" class="img-fluid figure-img" style="width:85.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mod-approximation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.8: Aproximación de la reducción modular. La función «<span class="math inline">\(x\)</span> módulo <span class="math inline">\(q_L\)</span>» es periódica pero discontinua — no se puede expresar como una secuencia de sumas y multiplicaciones. Para evaluarla homomórficamente se aproxima mediante un polinomio de grado alto, que consume entre 10 y 20 niveles multiplicativos.
+</figcaption>
+</figure>
+</div>
+<p>Por eso el bootstrapping es caro: el paso 1 (<span class="math inline">\(b - a \cdot \text{CB}\)</span>) es trivial, pero el paso 2 (la reducción modular) es un cálculo pesado que consume buena parte de los niveles recién restaurados.</p>
+<p>Es como vaciar el depósito de combustible de un avión hasta la reserva y, en vez de aterrizar, usar la propia reserva para accionar una bomba que rellena el tanque principal desde un depósito auxiliar que llevabas a bordo.</p>
+<p>En la práctica, un bootstrap tarda del orden de un segundo — frente a los milisegundos de una operación normal — y el cifrotexto resultante no recupera <em>todos</em> los niveles, porque la propia evaluación del circuito de descifrado consume parte del presupuesto restaurado. Por esta razón, el enfoque preferido es diseñar el cálculo para que quepa dentro del presupuesto de niveles (<em>leveled FHE</em>) y recurrir al bootstrapping solo cuando el circuito es demasiado profundo para dimensionarlo de antemano.</p>
+<p>En la práctica, la situación en CKKS es algo más compleja: los datos no se almacenan directamente como coeficientes del polinomio, sino codificados mediante una transformada — lo que añade pasos adicionales (<em>CoeffsToSlots</em> y <em>SlotsToCoeffs</em>) al circuito de bootstrapping. Veremos esa codificación en detalle en la siguiente sección.</p>
+<div id="fig-bootstrapping" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-bootstrapping-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/bootstrapping.png" class="img-fluid figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bootstrapping-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.9: Bootstrapping en dos pasos. El Paso 1 es barato: multiplica la clave CB por constantes conocidas. El Paso 2 es el cuello de botella (aproximadamente 1 segundo), porque aproxima la reducción modular mediante un polinomio de alto grado.
+</figcaption>
+</figure>
+</div>
+<p>Con o sin bootstrapping, cada operación homomórfica tarda milisegundos — un coste que se paga por <em>cifrotexto</em>. Si cada cifrotexto contiene un solo dato, el rendimiento resulta prohibitivo para cualquier aplicación real.</p>
+<div class="repaso">
+<ol type="1">
+<li>¿Por qué el bootstrapping necesita cifrar la clave secreta bajo sí misma? ¿Qué hipótesis de seguridad requiere esto?</li>
+<li>Si el bootstrapping es tan caro, ¿por qué no se dimensionan siempre los parámetros para evitarlo? ¿Cuándo es inevitable?</li>
+</ol>
+</div>
+</section>
+<section id="sec-packing-simd" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="sec-packing-simd"><span class="header-section-number">5.6</span> Packing y SIMD</h2>
+<p>Si cada operación homomórfica cuesta milisegundos independientemente de cuántos datos contenga el cifrotexto, la clave para un rendimiento aceptable está en empaquetar el máximo número de datos en cada uno. Gracias a una técnica llamada <em>batching</em> o <em>packing</em>, un solo cifrotexto puede contener miles de valores independientes, y una sola operación sobre el cifrotexto los procesa <em>todos en paralelo</em>. El packing es lo que convierte al FHE de una curiosidad teórica en una herramienta con rendimiento aceptable. Pero ¿cómo caben miles de números dentro de un solo polinomio? La respuesta conecta la estructura algebraica del anillo <span class="math inline">\(R_q\)</span> con una idea que ya conocemos: la transformada de Fourier.</p>
+<p>Para entender por qué el packing es necesario, consideremos la alternativa ingenua. Queremos cifrar los cinco salarios <span class="math inline">\([3200, 4100, 2800, 5500, 3900]\)</span>. La forma más directa sería codificar cada valor como un polinomio constante — <span class="math inline">\(m(x) = 3200\)</span>, <span class="math inline">\(m(x) = 4100\)</span>, etc. — y cifrar cada uno por separado. El problema es que cada cifrotexto es un par de polinomios de grado <span class="math inline">\(N - 1 = 8191\)</span>, con sus 8192 coeficientes enteros módulo <span class="math inline">\(q\)</span>: unos 400 KB. De esos 8192 coeficientes, solo el término constante lleva información útil; los otros 8191 son ceros. Para cinco salarios necesitaríamos cinco cifrotextos independientes — 2 MB en total — y cinco operaciones separadas para cualquier cálculo. Un polinomio de 8192 coeficientes transportando un único número es un desperdicio absurdo, como fletar un camión de 18 ruedas para entregar una carta.</p>
+<p>La estructura algebraica de <span class="math inline">\(R_q\)</span> ofrece algo mucho mejor: empaquetar los cinco valores — o hasta <span class="math inline">\(N/2 = 4096\)</span> — en un <em>único</em> polinomio, de modo que una sola operación los procese todos a la vez. Pero los datos no se colocan en los coeficientes del polinomio: se codifican en sus <em>evaluaciones</em> en puntos específicos del plano complejo.</p>
+<p><strong>De coeficientes a slots.</strong> Recordemos que un cifrotexto vive en el anillo <span class="math inline">\(R_q\)</span> que definimos antes (<span class="math inline">\(x^N + 1 = 0\)</span>): un polinomio <span class="math inline">\(m(x)\)</span> de grado menor que <span class="math inline">\(N\)</span> con coeficientes enteros módulo <span class="math inline">\(q\)</span>. A primera vista, este polinomio tiene <span class="math inline">\(N\)</span> coeficientes y punto — no hay «posiciones» independientes donde colocar datos. Pero ocurre algo interesante cuando evaluamos ese polinomio en puntos concretos — una operación que en álgebra se llama <em>canonical embedding</em> (inmersión canónica).</p>
+<p>El polinomio <span class="math inline">\(x^N + 1\)</span> tiene <span class="math inline">\(N\)</span> raíces complejas: <span class="math inline">\(\omega_k = e^{i\pi(2k+1)/N}\)</span> para <span class="math inline">\(k = 0, 1, \ldots, N-1\)</span>. Son puntos equidistribuidos en el círculo unitario del plano complejo — exactamente los mismos tipos de raíces que aparecen en la FFT. Evaluar <span class="math inline">\(m(x)\)</span> en esas <span class="math inline">\(N\)</span> raíces produce <span class="math inline">\(N\)</span> números complejos. Pero como los coeficientes de <span class="math inline">\(m(x)\)</span> son reales (enteros), las evaluaciones en raíces conjugadas son también conjugadas: <span class="math inline">\(m(\bar{\omega}_k) = \overline{m(\omega_k)}\)</span>. Las raíces se agrupan en <span class="math inline">\(N/2\)</span> pares conjugados, y cada par aporta un solo valor complejo independiente. Los <span class="math inline">\(N/2\)</span> valores complejos resultantes son los <em>slots</em>.</p>
+<p>Cada slot tiene una parte real y una parte imaginaria, así que en principio se podrían empaquetar hasta <span class="math inline">\(N\)</span> números reales — <span class="math inline">\(N/2\)</span> en las partes reales y <span class="math inline">\(N/2\)</span> en las imaginarias. En la práctica, CKKS empaqueta <span class="math inline">\(N_{\text{slot}} = N/2\)</span> valores reales (uno por slot, usando solo la parte real), porque mezclar partes reales e imaginarias complica la gestión de errores. Con <code>poly_modulus_degree = 8192</code>, tenemos <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots disponibles.</p>
+<div id="fig-canonical-embedding" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-canonical-embedding-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/canonical-embedding.png" class="img-fluid figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-canonical-embedding-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.10: Inmersión canónica. Los coeficientes del polinomio <span class="math inline">\(m(x)\)</span> no son los datos: los slots son las evaluaciones de <span class="math inline">\(m(x)\)</span> en las <span class="math inline">\(N\)</span> raíces complejas de <span class="math inline">\(x^N+1\)</span>. Las raíces conjugadas producen valores redundantes, dejando <span class="math inline">\(N/2\)</span> slots independientes. Codificar y decodificar equivale a una DFT modificada (inversa y directa, respectivamente).
+</figcaption>
+</figure>
+</div>
+<p><strong>Codificar</strong> un vector de datos — por ejemplo, los cinco salarios <span class="math inline">\([3200, 4100, 2800, 5500, 3900]\)</span> — consiste en encontrar el polinomio <span class="math inline">\(m(x)\)</span> de grado <span class="math inline">\(N-1\)</span> cuyas evaluaciones en las <span class="math inline">\(N/2\)</span> raíces coincidan con esos valores. Es exactamente una transformada inversa: dados los valores en el «dominio de frecuencias» (los slots), se calcula la señal en el «dominio del tiempo» (los coeficientes del polinomio). La librería lo hace internamente con una variante de la inversa de la DFT, que cuesta <span class="math inline">\(O(N \log N)\)</span> — la misma complejidad que la NTT que ya usamos para multiplicar polinomios. Los cinco salarios se colocan en los primeros 5 de los 4096 slots; los restantes 4091 quedan a cero.</p>
+<div id="fig-packing-simd" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-packing-simd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/packing-simd.png" class="img-fluid figure-img" style="width:90.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-packing-simd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.11: Codificación por slots (<span class="math inline">\(N = 4\)</span>). Arriba: dos datos <span class="math inline">\([6, 2]\)</span> se codifican como un polinomio de 4 coeficientes hallando <span class="math inline">\(m(x)\)</span> tal que <span class="math inline">\(m(\omega_0) = 6\)</span> y <span class="math inline">\(m(\omega_1) = 2\)</span>. Abajo: sumar dos polinomios coeficiente a coeficiente equivale a sumar los slots dato a dato — la base del paralelismo SIMD.
+</figcaption>
+</figure>
+</div>
+<p><strong>¿Por qué funciona el paralelismo?</strong> La clave es que las operaciones en el anillo <span class="math inline">\(R_q\)</span> — suma y multiplicación de polinomios — se traducen <em>automáticamente</em> en operaciones elemento a elemento sobre los slots. Si <span class="math inline">\(m_1(x)\)</span> codifica el vector <span class="math inline">\((v_1, v_2, \ldots, v_{N/2})\)</span> y <span class="math inline">\(m_2(x)\)</span> codifica <span class="math inline">\((w_1, w_2, \ldots, w_{N/2})\)</span>, entonces:</p>
+<ul>
+<li><span class="math inline">\(m_1(x) + m_2(x)\)</span> codifica <span class="math inline">\((v_1 + w_1,\; v_2 + w_2,\; \ldots,\; v_{N/2} + w_{N/2})\)</span></li>
+<li><span class="math inline">\(m_1(x) \cdot m_2(x)\)</span> codifica <span class="math inline">\((v_1 \cdot w_1,\; v_2 \cdot w_2,\; \ldots,\; v_{N/2} \cdot w_{N/2})\)</span></li>
+</ul>
+<p>Esto es una consecuencia directa de la estructura algebraica: evaluar un polinomio en un punto es un homomorfismo de anillos — si <span class="math inline">\(f(\omega) = v\)</span> y <span class="math inline">\(g(\omega) = w\)</span>, entonces <span class="math inline">\((f+g)(\omega) = v+w\)</span> y <span class="math inline">\((f \cdot g)(\omega) = v \cdot w\)</span>. Una sola operación sobre el polinomio equivale a <span class="math inline">\(N/2\)</span> operaciones independientes sobre los datos — la misma idea que las instrucciones SIMD (<em>Single Instruction, Multiple Data</em>) de un procesador moderno.</p>
+<p>La analogía con SIMD es precisa. En una CPU con instrucciones AVX-512, un registro de 512 bits almacena 8 <em>doubles</em> de 64 bits, y una instrucción <code>VADDPD</code> (<em>Vector Add Packed Double-Precision Floating-Point</em>) suma los 8 pares en un solo ciclo. En FHE, el cifrotexto es el «registro» y almacena hasta 4096 valores; una suma homomórfica los procesa todos a la vez. La diferencia es la escala del coste: la instrucción AVX tarda un nanosegundo; la suma homomórfica, milisegundos. Pero el paralelismo es el mismo: el coste no depende de cuántos slots estén ocupados, sino de que se ejecuta <em>una</em> operación polinómica independientemente de cuántos datos contenga.</p>
+<p><strong>Economía del packing.</strong> Sin packing, cada cifrotexto almacena un solo valor y ocupa ~400 KB. Cifrar 4096 valores requeriría 4096 cifrotextos — 1.6 GB — y 4096 operaciones para sumarlos. Con packing, los 4096 valores caben en un solo cifrotexto de 400 KB, y una sola suma los procesa todos. El coste amortizado baja de 400 KB a ~100 bytes por valor, y el número de operaciones se reduce en un factor <span class="math inline">\(N/2\)</span>. Es esta reducción la que permite que aplicaciones como la regresión cifrada (Receta 3) o la búsqueda semántica (Receta 6) sean viables en la práctica.</p>
+<p>En nuestro código, cuando escribimos <code>ts.ckks_vector(contexto, salarios)</code>, la librería ejecuta internamente esa codificación: transforma el vector Python <code>[3200, 4100, 2800, 5500, 3900]</code> en un polinomio de grado 8191 cuyas evaluaciones en las raíces de <span class="math inline">\(x^{8192}+1\)</span> reproducen esos cinco valores en los primeros slots. El programador no necesita pensar en raíces complejas ni en transformadas — solo en vectores y operaciones aritméticas.</p>
+<p>Ahora bien, el packing tiene una limitación fundamental: solo permite operaciones <em>slot a slot</em>. Sumar o multiplicar dos vectores cifrados funciona directamente — cada slot se procesa de forma independiente. Pero ¿qué ocurre cuando necesitamos combinar valores de distintos slots? Por ejemplo, para calcular <code>salarios_cifrados.sum()</code> hay que sumar los cinco valores que están en slots separados. Eso requiere <em>mover datos entre slots</em> — una operación que no se consigue con sumas ni multiplicaciones de polinomios, y que necesita un mecanismo completamente distinto: las rotaciones.</p>
+<div class="repaso">
+<ol type="1">
+<li>¿Por qué el número de slots es <span class="math inline">\(N/2\)</span> y no <span class="math inline">\(N\)</span>? ¿Qué propiedad de las raíces de <span class="math inline">\(x^N+1\)</span> lo explica?</li>
+<li>En nuestro ejemplo, <code>ts.ckks_vector(contexto, salarios)</code> coloca 5 valores en 4096 slots. ¿Qué contienen los 4091 slots restantes? ¿Afecta eso al coste de las operaciones?</li>
+<li>En CKKS, el bootstrapping necesita aplicar la reducción modular sobre cada <em>slot</em> de forma independiente, pero el descifrado homomórfico produce el polinomio en su representación de coeficientes. ¿Por qué es necesario un paso adicional (<em>CoeffsToSlots</em>) antes de la reducción modular? ¿Qué tipo de operación es y qué coste tiene?</li>
+</ol>
+</div>
+</section>
+<section id="sec-rotaciones-fhe" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="sec-rotaciones-fhe"><span class="header-section-number">5.7</span> Rotaciones</h2>
+<p>Las operaciones elemento a elemento — sumas y multiplicaciones slot por slot — son la base del paralelismo SIMD en FHE. Pero muchos cálculos útiles necesitan <em>combinar</em> valores que están en distintos slots del mismo cifrotexto. Calcular la media de un vector cifrado requiere sumar todos sus elementos; una multiplicación de matrices requiere productos escalares entre filas y columnas; una convolución requiere desplazar y acumular. Todas estas operaciones exigen mover datos entre posiciones del vector — exactamente lo que hacen las <em>rotaciones</em>.</p>
+<p>Antes de ver cómo se implementan las rotaciones en el esquema — que involucra automorfismos sobre polinomios y claves adicionales —, conviene entender la idea a nivel de vectores, sin preocuparnos todavía por la maquinaria criptográfica subyacente.</p>
+<p><strong>Desplazamiento cíclico.</strong> Una rotación por <span class="math inline">\(k\)</span> posiciones desplaza todos los slots del vector <span class="math inline">\(k\)</span> posiciones hacia la izquierda, de forma cíclica: el valor que estaba en el slot <span class="math inline">\(i\)</span> pasa al slot <span class="math inline">\(i - k\)</span>, y los que «salen» por un extremo reaparecen por el otro. Con cuatro slots como ejemplo:</p>
+<p><span class="math display">\[\text{Rot}([a, b, c, d],\; 1) = [b, c, d, a]\]</span></p>
+<p>El dato <span class="math inline">\(a\)</span> del slot 0 pasa al slot 3; el dato <span class="math inline">\(b\)</span> del slot 1 pasa al slot 0, y así sucesivamente. Es un desplazamiento circular, no una pérdida de datos — todos los valores siguen en el cifrotexto, solo que en posiciones diferentes.</p>
+<p><strong>Suma por árbol de rotaciones.</strong> Para sumar todos los elementos de un vector cifrado, no existe una operación «sumar todos los slots» — recuerda que el esquema solo ofrece sumas y multiplicaciones de polinomios. La solución es rotar y sumar repetidamente. Ilustrémoslo con 4 slots:</p>
+<p><span class="math display">\[[a, b, c, d] \xrightarrow{+\;\text{Rot}(\cdot,2)} [a{+}c,\; b{+}d,\; c{+}a,\; d{+}b] \xrightarrow{+\;\text{Rot}(\cdot,1)} [a{+}b{+}c{+}d,\; \ldots]\]</span></p>
+<p>En el primer paso, rotamos 2 posiciones y sumamos el resultado con el original: cada slot acumula la suma de dos elementos. En el segundo paso, rotamos 1 posición y sumamos de nuevo: cada slot contiene la suma de los cuatro. En general, <span class="math inline">\(\log_2(N_{\text{slot}})\)</span> pasos bastan para sumar los <span class="math inline">\(N_{\text{slot}}\)</span> elementos. Con <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, son 12 rotaciones y 12 sumas — exactamente lo que ejecuta <code>.sum()</code> internamente. La ganancia es sustancial: sin este truco, sumar los valores de <span class="math inline">\(N_{\text{slot}}\)</span> slots requeriría <span class="math inline">\(N_{\text{slot}} - 1\)</span> operaciones individuales — una acumulación por cada slot. El árbol de rotaciones reduce ese coste de <span class="math inline">\(O(N_{\text{slot}})\)</span> a <span class="math inline">\(O(\log_2 N_{\text{slot}})\)</span>: con 4096 slots, de 4095 operaciones a solo 24. La idea es la misma que convierte una búsqueda lineal en binaria — dividir el problema a la mitad en cada paso: cada iteración duplica el número de elementos acumulados en cada slot, y tras <span class="math inline">\(\log_2 N_{\text{slot}}\)</span> pasos todos contienen la suma total.</p>
+<div id="fig-rotations" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rotations-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/rotations.png" class="img-fluid figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rotations-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.12: Suma por rotaciones. Con 4 slots, dos pasos de rotar-y-sumar bastan para acumular la suma total en el primer slot. El diagrama muestra la vista por slots; internamente, cada «Suma» es una adición de los <span class="math inline">\(N\)</span> coeficientes de dos polinomios, que por linealidad de la evaluación produce la suma slot a slot. Las rotaciones requieren claves de Galois, pero no consumen niveles multiplicativos.
+</figcaption>
+</figure>
+</div>
+<p><strong>¿Cómo funciona una rotación sobre el polinomio?</strong> Aquí la matemática del anillo <span class="math inline">\(R_q\)</span> revela un truco elegante. Recordemos que los slots son las evaluaciones del polinomio <span class="math inline">\(m(x)\)</span> en las raíces <span class="math inline">\(\omega_0, \omega_1, \ldots, \omega_{N/2-1}\)</span> del polinomio <span class="math inline">\(x^N + 1\)</span>. Permutar los slots — mover el valor del slot <span class="math inline">\(i\)</span> al slot <span class="math inline">\(j\)</span> — equivale a permutar las raíces en las que se evalúa el polinomio.</p>
+<p>Resulta que ciertas sustituciones de la variable del polinomio — llamadas <em>automorfismos</em> del anillo — hacen exactamente eso. La sustitución <span class="math inline">\(x \to x^k\)</span> (para ciertos valores impares de <span class="math inline">\(k\)</span>) reordena las raíces de <span class="math inline">\(x^N + 1\)</span> y, por tanto, permuta los slots. Trabajemos el ejemplo del diagrama (<a href="#fig-automorphism" class="quarto-xref">Figura&nbsp;<span>5.13</span></a>): <span class="math inline">\(N = 8\)</span>, 4 slots, sustitución <span class="math inline">\(x \to x^3\)</span>.</p>
+<p><strong>Paso 1: qué es un slot.</strong> En CKKS, el slot <span class="math inline">\(j\)</span> es el valor que toma el polinomio <span class="math inline">\(p(x)\)</span> al evaluarlo en la raíz <span class="math inline">\(\omega^{5^j \bmod 16}\)</span>, donde <span class="math inline">\(\omega = e^{i\pi/8}\)</span> es una raíz primitiva de <span class="math inline">\(x^8 + 1\)</span>. Para <span class="math inline">\(N=8\)</span> hay 4 slots, con raíces <span class="math inline">\(\omega^1, \omega^5, \omega^9, \omega^{13}\)</span>.</p>
+<p><strong>Paso 2: qué hace la sustitución al polinomio.</strong> Aplicar <span class="math inline">\(x \to x^3\)</span> transforma <span class="math inline">\(p(x)\)</span> en el nuevo polinomio <span class="math inline">\(q(x) = p(x^3)\)</span>. El valor del slot <span class="math inline">\(j\)</span> en <span class="math inline">\(q\)</span> es: <span class="math display">\[q(\omega^{5^j}) = p\!\left((\omega^{5^j})^3\right) = p\!\left(\omega^{3 \cdot 5^j \bmod 16}\right)\]</span> Es decir, el slot <span class="math inline">\(j\)</span> del nuevo polinomio toma el valor que <span class="math inline">\(p\)</span> tenía en la raíz <span class="math inline">\(\omega^{3 \cdot 5^j \bmod 16}\)</span>.</p>
+<p><strong>Paso 3: calcular adónde va cada slot.</strong> Computamos <span class="math inline">\(3 \cdot 5^j \bmod 16\)</span> para <span class="math inline">\(j = 0, 1, 2, 3\)</span>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Slot <span class="math inline">\(j\)</span></th>
+<th style="text-align: center;">Raíz original</th>
+<th style="text-align: center;"><span class="math inline">\(3 \cdot 5^j \bmod 16\)</span></th>
+<th style="text-align: center;">Nueva raíz</th>
+<th style="text-align: center;">Valor en el slot</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span class="math inline">\(\omega^1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(3 \cdot 1 = 3\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\omega^3 = \overline{\omega^{13}}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(d\)</span> (slot 3 original)</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(\omega^5\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(3 \cdot 5 = 15\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\omega^{15} = \overline{\omega^{1}}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(a\)</span> (slot 0 original)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><span class="math inline">\(\omega^9\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(3 \cdot 9 = 27 \equiv 11\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\omega^{11} = \overline{\omega^{5}}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(b\)</span> (slot 1 original)</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><span class="math inline">\(\omega^{13}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(3 \cdot 13 = 39 \equiv 7\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\omega^{7} = \overline{\omega^{9}}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(c\)</span> (slot 2 original)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Paso 4: por qué el conjugado da el mismo valor.</strong> En cada caso, la nueva raíz es el conjugado complejo de la raíz de otro slot. Para datos reales, <span class="math inline">\(p(\bar{z}) = \overline{p(z)} = p(z)\)</span> — el valor en el conjugado coincide con el valor original. Por tanto, el slot <span class="math inline">\(j\)</span> del resultado contiene el valor del slot <span class="math inline">\(j-1\)</span> del original.</p>
+<p>El efecto neto es una <strong>rotación cíclica derecha</strong>: <span class="math inline">\([a, b, c, d] \to [d, a, b, c]\)</span>. Eligiendo distintos valores de <span class="math inline">\(k\)</span> impar se obtienen permutaciones distintas — cada <span class="math inline">\(k\)</span> es una rotación diferente.</p>
+<p><strong>¿Por qué hacen falta claves de Galois?</strong> Aquí está el problema práctico. Aplicar <span class="math inline">\(x \to x^k\)</span> al cifrotexto <span class="math inline">\((a(x), b(x))\)</span> produce <span class="math inline">\((a(x^k), b(x^k))\)</span>. Este nuevo par sigue cifrando el mensaje rotado, pero bajo una clave <em>diferente</em>: <span class="math inline">\(s(x^k)\)</span> en lugar de <span class="math inline">\(s(x)\)</span>. Es como si al rotar los guantes de la caja de seguridad se hubiera cambiado la cerradura — el resultado es correcto, pero ya no podemos abrirlo con nuestra llave original.</p>
+<p>Para convertir el cifrotexto de vuelta a la clave <span class="math inline">\(s(x)\)</span> se necesita un paso adicional llamado <em>key-switching</em> — conceptualmente similar a la relinearización que vimos en la multiplicación, pero convirtiendo <span class="math inline">\(s(x^k)\)</span> a <span class="math inline">\(s(x)\)</span> en lugar de <span class="math inline">\(s^2\)</span> a <span class="math inline">\(s\)</span>. Este paso requiere una clave precalculada que «traduce» entre las dos claves. Esa clave es la <em>clave de Galois</em> para la rotación por <span class="math inline">\(k\)</span> posiciones, y necesitamos una distinta para cada valor de <span class="math inline">\(k\)</span> que queramos usar.</p>
+<div id="fig-automorphism" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-automorphism-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/automorphism.png" class="img-fluid figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-automorphism-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.13: Automorfismo y key-switching (ejemplo con <span class="math inline">\(x^8+1=0\)</span>, <span class="math inline">\(N=8\)</span>, 4 slots). La sustitución <span class="math inline">\(x \to x^3\)</span> permuta cíclicamente los slots: <span class="math inline">\([a,b,c,d] \to [d,a,b,c]\)</span>. Pero cambia la clave de descifrado de <span class="math inline">\(s(x)\)</span> a <span class="math inline">\(s(x^3)\)</span>. El key-switching, usando una clave de Galois precalculada, restaura la clave original sin revelar el secreto.
+</figcaption>
+</figure>
+</div>
+<p>Esto explica por qué las claves de Galois son tan voluminosas: con <span class="math inline">\(N = 8192\)</span>, las <span class="math inline">\(\log_2(N/2) = 12\)</span> rotaciones necesarias para un <code>sum()</code> requieren 12 claves de Galois, cada una del tamaño de un cifrotexto (cientos de kilobytes). Si el circuito necesita rotaciones por cantidades arbitrarias, el conjunto completo puede alcanzar cientos de megabytes. Conviene ver todas las claves del esquema en conjunto:</p>
+<p></p>
+<div id="tbl-fhe-keys" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fhe-keys-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;5.1: Claves en un contexto CKKS y su función.
+</figcaption>
+<div aria-describedby="tbl-fhe-keys-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 22%">
+<col style="width: 20%">
+<col style="width: 44%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Clave</th>
+<th>Se genera</th>
+<th>Habilita</th>
+<th>¿Qué pasa sin ella?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Secreta</strong> (<span class="math inline">\(s\)</span>)</td>
+<td>Automáticamente al crear el contexto</td>
+<td>Descifrar</td>
+<td>No se pueden recuperar los resultados</td>
+</tr>
+<tr class="even">
+<td><strong>Pública</strong></td>
+<td>Automáticamente al crear el contexto</td>
+<td>Cifrar</td>
+<td>No se pueden cifrar datos (solo el poseedor de <span class="math inline">\(s\)</span> podría)</td>
+</tr>
+<tr class="odd">
+<td><strong>Relinearización</strong></td>
+<td>Automáticamente en TenSEAL</td>
+<td>Multiplicación entre cifrotextos</td>
+<td>El cifrotexto crece tras cada multiplicación hasta ser inmanejable</td>
+</tr>
+<tr class="even">
+<td><strong>Galois</strong></td>
+<td>Explícitamente: <code>generate_galois_keys()</code></td>
+<td>Rotaciones</td>
+<td><code>sum()</code> y cualquier operación que combine slots falla con error</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>En nuestro código, <code>ts.context(...)</code> genera automáticamente la clave secreta, la pública y la de relinearización. Las claves de Galois hay que pedirlas explícitamente con <code>generate_galois_keys()</code>. ¿Por qué no se generan también automáticamente? Porque son caras: con <span class="math inline">\(N = 8192\)</span>, las claves de Galois ocupan cientos de megabytes y tardan varios segundos en generarse. Si el circuito solo necesita sumas y multiplicaciones elemento a elemento — sin rotaciones —, ese coste es innecesario. Por eso la librería deja la decisión al programador.</p>
+<p>Si Daniel olvidara esa línea e intentara ejecutar <code>salarios_cifrados.sum()</code> — que internamente necesita rotar y acumular los slots del vector —, obtendría un error en tiempo de ejecución. Las sumas y multiplicaciones elemento a elemento funcionarían sin problema, pero cualquier operación que combine slots distintos del vector fallaría.</p>
+<p><strong>Coste de las rotaciones.</strong> Las rotaciones no consumen niveles multiplicativos — son operaciones lineales, como las sumas. Pero no son gratis: cada rotación añade una pequeña cantidad de ruido (por el key-switching) y tiene un coste computacional similar al de una multiplicación, porque el paso de key-switching involucra multiplicaciones de polinomios. En un circuito que combine packing con rotaciones, el diseñador debe contabilizar tanto la profundidad multiplicativa como el número de rotaciones para dimensionar correctamente los parámetros.</p>
+<p><strong>¿Qué operaciones se benefician?</strong> Las tres primitivas del modelo SIMD — suma slot a slot, multiplicación slot a slot y rotación — cubren un catálogo bien definido de operaciones eficientes. Las <em>operaciones elementales</em> (sumar dos vectores cifrados, multiplicarlos componente a componente, escalar por una constante) son directas: una sola operación polinómica sobre todos los slots en paralelo, sin importar cuántos haya. Las <em>reducciones</em> — sumar todos los elementos, calcular una media, obtener una norma — usan el árbol de rotaciones con coste <span class="math inline">\(O(\log N_{\text{slot}})\)</span> en lugar del <span class="math inline">\(O(N_{\text{slot}})\)</span> que costaría operar slot a slot. Los <em>productos escalares</em> combinan ambas primitivas: una multiplicación SIMD (slot a slot) seguida de una reducción por rotaciones. Las <em>multiplicaciones matriz-vector</em> se descomponen en productos escalares de cada fila con el vector. Y las <em>convoluciones</em> de redes neuronales se implementan como secuencias de rotaciones y acumulaciones. El patrón general es: cualquier cálculo que se exprese como combinaciones de sumas, multiplicaciones y desplazamientos sobre vectores se traduce eficientemente a FHE con packing y rotaciones. Lo que queda fuera son las operaciones que dependen del <em>valor</em> de los datos — comparaciones, condicionales, ordenaciones — porque el esquema no permite inspeccionar un cifrotexto para decidir qué rama tomar.</p>
+<p>En resumen: el packing reduce el coste <em>por dato</em> cuando las operaciones son paralelas e independientes, y las rotaciones permiten combinar datos de distintos slots cuando el circuito lo requiere. Juntos, transforman la economía del FHE — el coste amortizado baja varios órdenes de magnitud y operaciones complejas como medias, productos escalares y regresiones se vuelven viables. El precio es la complejidad adicional de las claves de Galois y el diseño cuidadoso de los patrones de rotación. Este mecanismo de codificación — polinomio → evaluación en raíces → slots — también explica las transformadas <em>CoeffsToSlots</em> y <em>SlotsToCoeffs</em> que vimos en el bootstrapping: son exactamente los pasos de pasar de coeficientes del polinomio a la representación por slots y viceversa. Todo lo anterior — retículos, RLWE, cifrado, ruido, bootstrapping, packing y rotaciones — es la maquinaria de CKKS, el esquema que usamos en nuestro código. Pero no es la única forma de construir un esquema FHE.</p>
+<div class="repaso">
+<ol type="1">
+<li>Para sumar todos los elementos de un vector cifrado con <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots, ¿cuántas rotaciones necesita el árbol de sumas? ¿Cuántas sumas homomórficas?</li>
+<li>¿Por qué cada posición de rotación necesita su propia clave de Galois? ¿Qué ocurre con la clave de cifrado al aplicar la sustitución <span class="math inline">\(x \to x^k\)</span>?</li>
+<li>Pídele a un LLM: <em>«¿Cuál es la diferencia entre rotación de slots en FHE y una rotación (shift circular) en un registro SIMD de CPU? ¿En qué se parecen y en qué difieren?»</em></li>
+</ol>
+</div>
+</section>
+<section id="otros-esquemas-de-encriptado" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="otros-esquemas-de-encriptado"><span class="header-section-number">5.8</span> Otros esquemas de encriptado</h2>
+<p>Todo lo que hemos visto describe CKKS, pero no es el único esquema FHE. Existen cuatro esquemas principales, y elegir entre ellos es una decisión de ingeniería que depende del tipo de datos, las operaciones necesarias y los compromisos aceptables.</p>
+<p><strong>La familia RLWE: BFV, BGV y CKKS.</strong> Los tres comparten los mismos cimientos: el anillo RLWE, la cadena de módulos, el packing SIMD y las rotaciones por automorfismos. La diferencia está en cómo codifican el mensaje antes de cifrarlo.</p>
+<p>BFV y BGV trabajan con <em>enteros exactos</em>: el descifrado recupera el valor sin ningún error, mediante redondeo exacto (BFV) o reducción del módulo del mensaje (BGV). Eso los hace ideales para conteos, consultas sobre bases de datos cifradas o votación electrónica — escenarios donde un error de <span class="math inline">\(\pm 1\)</span> sería inaceptable. La contrapartida es que no representan reales directamente: cualquier cálculo con decimales exige gestionar manualmente aritmética de punto fijo.</p>
+<p>CKKS acepta un pequeño error de aproximación (<span class="math inline">\(\sim 10^{-7}\)</span>) a cambio de poder codificar números reales de forma nativa. Eso lo convirtió en el esquema de referencia para <em>machine learning</em> y estadística sobre datos cifrados, donde ese error es irrelevante frente al ruido de los propios datos. No es adecuado cuando los resultados deben ser exactos.</p>
+<p><strong>TFHE: puertas lógicas en el toro.</strong> TFHE abandona por completo el modelo SIMD. Su base matemática es distinta: en lugar de explotar las raíces del polinomio <span class="math inline">\(x^N + 1\)</span> para crear slots independientes (como hace la familia RLWE), cifra cada bit como una posición en el <em>toro</em> <span class="math inline">\(\mathbb{T} = \mathbb{R}/\mathbb{Z}\)</span> — una estructura circular donde solo importa la parte decimal del número — y evalúa el cómputo como un circuito de puertas lógicas, una a una (<a href="#fig-tfhe-torus" class="quarto-xref">Figura&nbsp;<span>5.14</span></a>). Cada puerta ejecuta un bootstrapping automático, lo que elimina el concepto de «presupuesto de niveles»: el circuito puede ser arbitrariamente profundo sin planificación previa.</p>
+<div id="fig-tfhe-torus" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tfhe-torus-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/cifrado-homomorfico/tfhe-torus.png" class="img-fluid figure-img" style="width:55.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tfhe-torus-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.14: Codificación en el toro <span class="math inline">\(\mathbb{T} = \mathbb{R}/\mathbb{Z}\)</span>. El bit 0 se codifica cerca de <span class="math inline">\(0.0\)</span> (arriba) y el bit 1 cerca de <span class="math inline">\(0.5\)</span> (abajo). El ruido desplaza la posición, pero el bit se recupera mientras no cruce la frontera de decisión.
+</figcaption>
+</figure>
+</div>
+<p>La fortaleza de TFHE es exactamente la debilidad de CKKS: comparaciones, condicionales y flujo de control. Un <code>if (x &gt; y)</code> que en CKKS requiere aproximar la función signo con un polinomio de grado alto — consumiendo muchos niveles —, en TFHE se evalúa directamente bit a bit. La contrapartida: sin SIMD, sumar dos enteros de 32 bits exige encadenar cientos de puertas lógicas donde CKKS ejecutaría una sola operación. Las librerías modernas como Concrete (Zama) mitigan esto empaquetando enteros de <span class="math inline">\(n\)</span> bits por cifrotexto y usando el <em>programmable bootstrapping</em> — que aplica cualquier función durante el proceso de limpieza del ruido, sin coste adicional — para evaluar funciones no lineales como ReLU o comparaciones en un solo paso.</p>
+<p><strong>Comparación.</strong> La <a href="#tbl-fhe-schemes" class="quarto-xref">Tabla&nbsp;<span>5.2</span></a> resume las diferencias entre los cuatro esquemas:</p>
+<div id="tbl-fhe-schemes" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fhe-schemes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;5.2: Principales esquemas FHE: fundamentos, capacidades y compromisos.
+</figcaption>
+<div aria-describedby="tbl-fhe-schemes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 21%">
+<col style="width: 18%">
+<col style="width: 35%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Esquema</th>
+<th>Base</th>
+<th>Dato nativo</th>
+<th>Fortaleza</th>
+<th>Limitación principal</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>BFV</td>
+<td>RLWE</td>
+<td>Enteros exactos</td>
+<td>Aritmética entera exacta, SIMD</td>
+<td>Sin reales; bootstrap lento</td>
+</tr>
+<tr class="even">
+<td>BGV</td>
+<td>RLWE</td>
+<td>Enteros exactos</td>
+<td>Como BFV, más eficiente a escala</td>
+<td>Sin reales; bootstrap lento</td>
+</tr>
+<tr class="odd">
+<td>CKKS</td>
+<td>RLWE</td>
+<td>Reales aprox.</td>
+<td>Punto flotante, SIMD</td>
+<td>Error acumulado; inexacto</td>
+</tr>
+<tr class="even">
+<td>TFHE</td>
+<td>LWE + RLWE</td>
+<td>Bits / enteros pequeños</td>
+<td>Comparaciones, condicionales; LUTs</td>
+<td>Sin SIMD; aritmética lenta</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>En nuestro ejemplo usamos CKKS porque necesitamos operar con números reales (salarios) y podemos tolerar un error de aproximación mínimo — exactamente el escenario para el que fue diseñado. Si necesitáramos comparar salarios cifrados para encontrar el máximo, TFHE sería la elección natural. Y si el requisito fuera contar votos cifrados sin ningún margen de error, BFV o BGV serían los candidatos.</p>
+<div class="repaso">
+<ol type="1">
+<li>Pídele a un LLM: <em>«Explícame la diferencia entre cifrado homomórfico parcial, somewhat y fully homomorphic. Dame un ejemplo concreto de cada uno.»</em> ¿La respuesta es precisa?</li>
+<li>Si <code>coeff_mod_bit_sizes=[60, 40, 40, 40, 60]</code>, ¿cuántas multiplicaciones encadenadas soporta el esquema?</li>
+<li>BFV, BGV y CKKS comparten la misma base RLWE pero difieren en la codificación del mensaje. Describe qué codifica cada uno, su fortaleza principal y su limitación más importante. ¿En qué se distingue TFHE de los tres — tanto en fundamentos como en modelo de cómputo?</li>
+</ol>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./04.html" class="pagination-link" aria-label="Limitaciones actuales">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Limitaciones actuales</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./06.html" class="pagination-link" aria-label="Lecturas Recomendadas">
+        <span class="nav-page-text">Lecturas Recomendadas</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

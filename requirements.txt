@@ -1,0 +1,4 @@
+tenseal  # optional
+openfhe  # optional
+pytest
+pypdf

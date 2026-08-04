@@ -1,0 +1,24 @@
+/* Extra styles for standalone per-chapter "Strange Tech" books (HTML output). */
+/* These books have only 2 pages (Preface + 1 chapter), so the left chapter-list */
+/* sidebar is redundant. Hide it and let the book title/language switch live in */
+/* the top navbar and the right-hand table-of-contents panel instead. */
+
+#quarto-sidebar {
+  display: none !important;
+}
+
+.quarto-btn-toggle {
+  display: none !important;
+}
+
+#quarto-content.page-columns {
+  grid-template-columns: 1fr minmax(0, 700px) 1fr !important;
+}
+
+/* Title shown above the right-hand table of contents (via book: margin-header). */
+.quarto-margin-header {
+  font-size: 1.05em;
+  font-weight: bold;
+  margin-bottom: 0.75em;
+  line-height: 1.3;
+}
