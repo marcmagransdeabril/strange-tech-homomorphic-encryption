@@ -30,36 +30,36 @@ to open, e.g. "Failed to load PDF document").
 
 ## Table of Contents
 
-Table of contents links point to the **GitHub Pages** site (not a repo-relative
-path), since GitHub only serves `.html` files as rendered pages through Pages —
-a relative link or blob link to an `.html` file opens GitHub's syntax-highlighted
-source view instead of the rendered page.
+Each language is now a **single scrollable page** (`book/<lang>/index.html`)
+with a persistent left-hand table of contents (every chapter, plus its own
+subsections) and a top-right language switcher. The links below deep-link
+into that page:
 
 ### Español
 
-1. [Prefacio](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/index.html)
-2. [Prólogo](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/00-prologo.html)
-3. [Introducción](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/01.html)
-4. [Manos a la obra](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/02.html)
-5. [Aplicaciones](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/03.html)
-6. [Limitaciones actuales](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/04.html)
-7. [Fundamentos](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/05.html)
-8. [Lecturas Recomendadas](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/06.html)
-9. [Referencias](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/07.html)
-10. [Soluciones](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/08.html)
+1. [Prefacio](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/index.html#merged-00)
+2. [Prólogo](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/index.html#merged-01)
+3. [Introducción](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/index.html#merged-02)
+4. [Manos a la obra](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/index.html#merged-03)
+5. [Aplicaciones](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/index.html#merged-04)
+6. [Limitaciones actuales](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/index.html#merged-05)
+7. [Fundamentos](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/index.html#merged-06)
+8. [Lecturas Recomendadas](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/index.html#merged-07)
+9. [Referencias](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/index.html#merged-08)
+10. [Soluciones](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/es/index.html#merged-09)
 
 ### English
 
-1. [Preface](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html)
-2. [Prologue](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/00-prologo.html)
-3. [Introduction](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/01.html)
-4. [Hands On](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/02.html)
-5. [Applications](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/03.html)
-6. [Current Limitations](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/04.html)
-7. [Foundations](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/05.html)
-8. [Further Reading](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/06.html)
-9. [References](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/07.html)
-10. [Solutions](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/08.html)
+1. [Preface](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-00)
+2. [Prologue](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-01)
+3. [Introduction](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-02)
+4. [Hands On](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-03)
+5. [Applications](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-04)
+6. [Current Limitations](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-05)
+7. [Foundations](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-06)
+8. [Recommended Readings](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-07)
+9. [References](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-08)
+10. [Solutions](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-09)
 
 ## Code Examples
 
