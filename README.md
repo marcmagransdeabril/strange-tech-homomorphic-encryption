@@ -4,14 +4,7 @@
 
 Part of the [**Strange Tech**](https://github.com/marcmagransdeabril) series — a collection of standalone books, one per advanced technology, for engineers who want an edge before it becomes mainstream.
 
-> **Chapter summary**
->
-> Homomorphic encryption allows computations to be performed on encrypted
-> data without ever decrypting it. This opens the door to a paradigm where
-> privacy and cloud computing are no longer opposing concepts. The price:
-> homomorphic operations are still between $10^4$ and $10^6$ times slower
-> than their plaintext equivalents, limiting use to scenarios where privacy
-> justifies the cost.
+Homomorphic encryption allows computations to be performed on encrypted data without ever decrypting it. This opens the door to a paradigm where privacy and cloud computing are no longer opposing concepts. The price: homomorphic operations are still between $10^4$ and $10^6$ times slower than their plaintext equivalents, limiting use to scenarios where privacy justifies the cost.
 
 | Format | Español | English |
 |---|---|---|
