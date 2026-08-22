@@ -140,7 +140,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-title-meta">
 </div>
 </header>
-<p><em>Elena, directora de innovación de una aseguradora médica, entra en la sala con una carpeta llena de post-its. Siempre impecable y con la confianza de una carrera brillante, hoy parece estar un tanto descolocada. Lleva varias semanas intentando infructuosamente cerrar un acuerdo con un proveedor de analítica en la nube. Daniel, ingeniero principal del equipo de datos, la espera con el portátil abierto después de haberse tomado un café y haber leído las últimas noticias de Hacker News. Al menos ha empezado bien el día, pero parece que se acercan las malas noticias. ¿No es curioso que en en este mundo caótico, haya situaciones tan predecibles?</em></p>
+<p><em>Elena, directora de innovación de una aseguradora médica, entra en la sala con una carpeta llena de post-its. Siempre impecable y con la confianza de una carrera brillante, hoy parece estar un tanto descolocada. Lleva varias semanas intentando cerrar un acuerdo con un proveedor de analítica en la nube. Daniel, ingeniero principal del equipo de datos, la espera con el portátil abierto después de haberse tomado un café y haber leído las últimas noticias de Hacker News. Al menos ha empezado bien el día, pero parece que se acercan las malas noticias. ¿No es curioso que en este mundo caótico, haya situaciones tan predecibles?</em></p>
 <p><strong>Elena</strong>: <em>Daniel, necesito que el proveedor analice los datos de nuestros pacientes para los modelos de riesgo. Pero el departamento legal nos ha bloqueado. Dicen que los datos médicos son confidenciales y no podemos enviarlos a un tercero. ¿No hay forma de que hagan el análisis sin ver los datos?</em></p>
 <p><strong>Daniel</strong>: <em>Operar sobre datos sin verlos… eso suena a pedirle al chef que cocine sin tocar los ingredientes.</em></p>
 <p><strong>Elena</strong>: <em>No me vengas con metáforas. Necesito una solución real. El contrato se firma en tres semanas o perdemos al proveedor.</em></p>
@@ -1533,4 +1533,29 @@ the 52nd Annual IEEE Symposium on Foundations of Computer Science
 </div>
 </nav>
 </div> <!-- /content -->
-</body></html>
+<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script></body></html>
