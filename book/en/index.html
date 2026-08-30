@@ -307,6 +307,11 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 </section>
 <section class="level2" data-number="2.4" id="sec-muro-del-ruido">
 <h2 class="anchored" data-anchor-id="sec-muro-del-ruido" data-number="2.4"><span class="header-section-number">2.4</span> Recipe 4: The noise wall</h2>
+<p>After a hellish week, Daniel is shutting down his office computer when he receives a desperate call from Elena at five in the afternoon — always at 5 or 6, especially on Fridays. <em>“Daniel! It’s not working! The circle of death again! And also it says numbers overflow? Numbers overflow? Look at the face they made when I showed them the version you said worked. Didn’t you test it?”.</em></p>
+<p><em>“Yes, of course, before installing it we always test it.”</em></p>
+<p><em>“Well, I don’t know what could have gone wrong. Since you were out during lunch, I asked Gabriel to add an extra correction factor.”</em></p>
+<p><em>“Is it possible he added a multiplication to the final result?”.</em></p>
+<p><em>“But what difference does that make? I don’t know how he messed up…”</em></p>
 <p>What happens if we ask for more operations than the modulus chain allows? Let’s create a context with a single multiplicative level and attempt two chained multiplications:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a aria-hidden="true" href="#cb7-1" tabindex="-1"></a>ctx_1nivel <span class="op">=</span> ts.context(</span>
 <span id="cb7-2"><a aria-hidden="true" href="#cb7-2" tabindex="-1"></a>    ts.SCHEME_TYPE.CKKS,</span>
