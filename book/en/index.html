@@ -285,7 +285,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 </section>
 <section class="level2" data-number="2.3" id="recipe-3-encrypted-linear-regression">
 <h2 class="anchored" data-anchor-id="recipe-3-encrypted-linear-regression" data-number="2.3"><span class="header-section-number">2.3</span> Recipe 3: Encrypted linear regression</h2>
-<p>Elena needs something more ambitious: a predictive model that assigns a risk score to each patient. The vendor has an already-trained linear regression model (the weights are public), but the patient data is confidential. FHE allows exactly this: encrypt the patient data, multiply by the plaintext weights, and sum — a homomorphic dot product.</p>
+<p>Elena, as always, never stops and now needs something more ambitious: a predictive model that assigns a risk score to each patient. <em>“Can you have it ready for this afternoon? It’s super urgent and we’re drowning in work.”</em> The vendor has an already-trained linear regression model (the weights are public), but the patient data is confidential. FHE allows exactly this: encrypt the patient data, multiply by the plaintext weights, and sum — a homomorphic dot product.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a aria-hidden="true" href="#cb6-1" tabindex="-1"></a><span class="co"># Patient data (encrypted) — the vendor cannot see it</span></span>
 <span id="cb6-2"><a aria-hidden="true" href="#cb6-2" tabindex="-1"></a>features <span class="op">=</span> [<span class="fl">1.2</span>, <span class="fl">0.7</span>, <span class="fl">3.1</span>, <span class="fl">0.4</span>, <span class="fl">2.8</span>]</span>
 <span id="cb6-3"><a aria-hidden="true" href="#cb6-3" tabindex="-1"></a>features_cifrados <span class="op">=</span> ts.ckks_vector(contexto, features)</span>
@@ -296,7 +296,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb6-8"><a aria-hidden="true" href="#cb6-8" tabindex="-1"></a><span class="co"># Prediction: homomorphic dot product</span></span>
 <span id="cb6-9"><a aria-hidden="true" href="#cb6-9" tabindex="-1"></a>prediccion <span class="op">=</span> (features_cifrados <span class="op">*</span> pesos).<span class="bu">sum</span>()</span>
 <span id="cb6-10"><a aria-hidden="true" href="#cb6-10" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Riesgo (FHE): </span><span class="sc">{</span>prediccion<span class="sc">.</span>decrypt()[<span class="dv">0</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
-<p>Note that no multiplicative level is consumed here: <code>features_cifrados * pesos</code> is a multiplication by constants (cheap), and <code>sum()</code> only uses rotations. The same context we already created would serve for a model with thousands of features — thanks to <em>packing</em> (<a class="quarto-xref" href="05.html#sec-packing-simd"><span>Section 5.6</span></a>), the <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots of the ciphertext would process them all in parallel. This is the basis of real-world deployments of <em>ML on encrypted data</em> that we’ll see in the next section.</p>
+<p>Note that no multiplicative level is consumed here: <code>features_cifrados * pesos</code> is a multiplication by constants (cheap), and <code>sum()</code> only uses rotations. The same context we already created would serve for a model with thousands of features — thanks to <em>packing</em> (<a class="quarto-xref" href="05.html#sec-packing-simd"><span>Section 5.6</span></a>), the <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots of the ciphertext would process them all in parallel. This is the basis of real-world deployments of <em>ML on encrypted data</em> that we’ll see in the applications section (<a class="quarto-xref" href="03.html"><span>Chapter 3</span></a>).</p>
 <div class="repaso">
 <ol type="1">
 <li>In the linear regression recipe, why doesn’t the multiplication <code>features_cifrados * pesos</code> consume multiplicative levels? What would happen if the weights were also encrypted?</li>
@@ -434,7 +434,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 </section><section class="standalone-merged-section" id="merged-04">
 <header class="quarto-title-block default" id="title-block-header-4">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>  <span class="chapter-title">Applications</span></h1>
+<h1 class="title"><span class="quarto-section-identifier" id="sec-aplicaciones-fhe"><span class="chapter-number">3</span>  <span class="chapter-title">Applications</span></span></h1>
 </div>
 <div class="quarto-title-meta">
 </div>

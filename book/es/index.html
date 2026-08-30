@@ -286,7 +286,8 @@ Rivest, Ronald L., Leonard Adleman, y Michael L. Dertouzos. 1978. <span>«On Dat
 </section>
 <section class="level2" data-number="2.3" id="receta-3-regresión-lineal-cifrada">
 <h2 class="anchored" data-anchor-id="receta-3-regresión-lineal-cifrada" data-number="2.3"><span class="header-section-number">2.3</span> Receta 3: Regresión lineal cifrada</h2>
-<p>Elena necesita algo más ambicioso: un modelo predictivo que asigne una puntuación de riesgo a cada paciente. El proveedor tiene un modelo de regresión lineal ya entrenado (los pesos son públicos), pero los datos del paciente son confidenciales. FHE permite exactamente esto: cifrar los datos del paciente, multiplicarlos por los pesos en claro y sumar — un producto escalar homomórfico.</p>
+<p>Elena, como siempre, no para y ahora necesita algo más ambicioso: un modelo predictivo que asigne una puntuación de riesgo a cada paciente. <em>«¿Lo tienes para esta tarde? Es súper urgente y estamos con el agua al cuello. El proveedor tiene un modelo de regresión lineal ya entrenado (los pesos son públicos), pero los datos del paciente son confidenciales.»</em></p>
+<p>Afortunadamente, FHE permite exactamente esto: cifrar los datos del paciente, multiplicarlos por los pesos en claro y sumar — un producto escalar homomórfico.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a aria-hidden="true" href="#cb6-1" tabindex="-1"></a><span class="co"># Datos del paciente (cifrados) — el proveedor no los ve</span></span>
 <span id="cb6-2"><a aria-hidden="true" href="#cb6-2" tabindex="-1"></a>features <span class="op">=</span> [<span class="fl">1.2</span>, <span class="fl">0.7</span>, <span class="fl">3.1</span>, <span class="fl">0.4</span>, <span class="fl">2.8</span>]</span>
 <span id="cb6-3"><a aria-hidden="true" href="#cb6-3" tabindex="-1"></a>features_cifrados <span class="op">=</span> ts.ckks_vector(contexto, features)</span>
@@ -297,7 +298,7 @@ Rivest, Ronald L., Leonard Adleman, y Michael L. Dertouzos. 1978. <span>«On Dat
 <span id="cb6-8"><a aria-hidden="true" href="#cb6-8" tabindex="-1"></a><span class="co"># Predicción: producto escalar homomórfico</span></span>
 <span id="cb6-9"><a aria-hidden="true" href="#cb6-9" tabindex="-1"></a>prediccion <span class="op">=</span> (features_cifrados <span class="op">*</span> pesos).<span class="bu">sum</span>()</span>
 <span id="cb6-10"><a aria-hidden="true" href="#cb6-10" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Riesgo (FHE): </span><span class="sc">{</span>prediccion<span class="sc">.</span>decrypt()[<span class="dv">0</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button class="code-copy-button" title="Copiar al portapapeles"><i class="bi"></i></button></div>
-<p>Nótese que aquí no se consume ningún nivel multiplicativo: <code>features_cifrados * pesos</code> es una multiplicación por constantes (barata), y <code>sum()</code> solo usa rotaciones. El mismo contexto que ya creamos serviría para un modelo con miles de features — gracias al <em>packing</em> (<a class="quarto-xref" href="05.html#sec-packing-simd"><span>Sección 5.6</span></a>), los <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots del cifrotexto procesarían todos en paralelo. Esta es la base de los despliegues reales de <em>ML sobre datos cifrados</em> que veremos en la siguiente sección.</p>
+<p>Nótese que aquí no se consume ningún nivel multiplicativo: <code>features_cifrados * pesos</code> es una multiplicación por constantes no cifradas (barata), y <code>sum()</code> solo usa rotaciones para hacer el calculo eficiente con las claves de Galois. El mismo contexto que ya creamos serviría para un modelo con miles de datos por paciente — gracias al <em>packing</em> (<a class="quarto-xref" href="05.html#sec-packing-simd"><span>Sección 5.6</span></a>), los <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots del cifrotexto se procesarían todos en paralelo. Esta es la base de los despliegues reales de <em>Machine Learning sobre datos cifrados</em> que comentaremos en la sección de aplicaciones (<a class="quarto-xref" href="03.html"><span>Capítulo 3</span></a>).</p>
 <div class="repaso">
 <ol type="1">
 <li>En la receta de regresión lineal, ¿por qué la multiplicación <code>features_cifrados * pesos</code> no consume niveles multiplicativos? ¿Qué pasaría si los pesos también estuvieran cifrados?</li>
@@ -435,7 +436,7 @@ Rivest, Ronald L., Leonard Adleman, y Michael L. Dertouzos. 1978. <span>«On Dat
 </section><section class="standalone-merged-section" id="merged-04">
 <header class="quarto-title-block default" id="title-block-header-4">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>  <span class="chapter-title">Aplicaciones</span></h1>
+<h1 class="title"><span class="quarto-section-identifier" id="sec-aplicaciones-fhe"><span class="chapter-number">3</span>  <span class="chapter-title">Aplicaciones</span></span></h1>
 </div>
 <div class="quarto-title-meta">
 </div>
