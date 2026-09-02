@@ -24,7 +24,7 @@ ul.task-list li input[type="checkbox"] {
 </style>
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
-<link href="./00-prologo.html" rel="next"/>
+
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -188,7 +188,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 </section><section class="standalone-merged-section" id="merged-03">
 <header class="quarto-title-block default" id="title-block-header-3">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>  <span class="chapter-title">Hands on</span></h1>
+<h1 class="title"><span class="quarto-section-identifier" id="sec-manos-fhe"><span class="chapter-number">2</span>  <span class="chapter-title">Hands on</span></span></h1>
 </div>
 <div class="quarto-title-meta">
 </div>
@@ -235,10 +235,12 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb3-4"><a aria-hidden="true" href="#cb3-4" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media (claro): </span><span class="sc">{</span>media_claro<span class="sc">:.2f}</span><span class="ss"> €"</span>)  <span class="co"># 3900.00 €</span></span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
 <p>The result is practically identical — the absolute difference is on the order of <span class="math inline">\(10^{-7}\)</span>, inherent noise from the CKKS scheme that remains constant regardless of the operands’ magnitude (we’ll see why in <a class="quarto-xref" href="05.html#sec-ruido-niveles"><span>Section 5.4</span></a>), along with the execution time. Our example runs locally, but the operations on the ciphertext would be identical in a real deployment: the cloud provider would have calculated the mean salary without ever seeing a single actual number. Exactly what Elena needed.</p>
 <div class="repaso">
-<ol type="1">
-<li>Ask an LLM: <em>“What’s the difference between the BFV and CKKS schemes? When would you use each one?”</em></li>
-<li>What happens if you increase <code>poly_modulus_degree</code> to 16384? And if you reduce it to 4096? Experiment with the execution time.</li>
-</ol>
+<div class="pregunta" id="q-sec-manos-fhe-1">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-1"><strong>2.1.</strong></a> Ask an LLM: <em>“What’s the difference between the BFV and CKKS schemes? When would you use each one?”</em>
+</div>
+<div class="pregunta" id="q-sec-manos-fhe-2">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-2"><strong>2.2.</strong></a> What happens if you increase <code>poly_modulus_degree</code> to 16384? And if you reduce it to 4096? Experiment with the execution time.
+</div>
 </div>
 </section>
 <section class="level2" data-number="2.2" id="recipe-2-encrypted-variance">
@@ -277,10 +279,12 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb5-14"><a aria-hidden="true" href="#cb5-14" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Varianza (FHE): </span><span class="sc">{</span>varianza_cifrada<span class="sc">.</span>decrypt()[<span class="dv">0</span>]<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
 <p>This is a real example of what makes FHE programming hard: it’s not enough to translate a mathematically correct formula into code. Every multiplication — between ciphertexts or by a constant — consumes part of the operation budget, and combining two ciphertexts requires that they’ve gone through <em>symmetric</em> sequences. The programmer must design the circuit thinking not just about <em>what</em> it computes, but <em>how</em> it chains operations: the order of operations is part of the algorithm.</p>
 <div class="repaso">
-<ol type="1">
-<li>In Recipe 2, why does the formula <span class="math inline">\(E[X^2] - (E[X])^2\)</span> require two multiplications between ciphertexts while the alternative formula <span class="math inline">\(\frac{1}{n}\sum(x_i - \bar{x})^2\)</span> might require more? Which is more efficient in FHE?</li>
-<li>The naive version of Recipe 2 translates the mathematical formula literally and produces garbage, while the corrected version gives the right result. The difference between the two isn’t the formula, but the order and symmetry of the operations in each branch. What specific property must the two branches share for the final subtraction to work? Why does the naive version break it?</li>
-</ol>
+<div class="pregunta" id="q-sec-manos-fhe-3">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-3"><strong>2.3.</strong></a> In Recipe 2, why does the formula <span class="math inline">\(E[X^2] - (E[X])^2\)</span> require two multiplications between ciphertexts while the alternative formula <span class="math inline">\(\frac{1}{n}\sum(x_i - \bar{x})^2\)</span> might require more? Which is more efficient in FHE?
+</div>
+<div class="pregunta" id="q-sec-manos-fhe-4">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-4"><strong>2.4.</strong></a> The naive version of Recipe 2 translates the mathematical formula literally and produces garbage, while the corrected version gives the right result. The difference between the two isn’t the formula, but the order and symmetry of the operations in each branch. What specific property must the two branches share for the final subtraction to work? Why does the naive version break it?
+</div>
 </div>
 </section>
 <section class="level2" data-number="2.3" id="recipe-3-encrypted-linear-regression">
@@ -299,10 +303,12 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb6-10"><a aria-hidden="true" href="#cb6-10" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Riesgo (FHE): </span><span class="sc">{</span>prediccion<span class="sc">.</span>decrypt()[<span class="dv">0</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
 <p>Note that no multiplicative level is consumed here: <code>features_cifrados * pesos</code> is a multiplication by constants (cheap), and <code>sum()</code> only uses rotations. The same context we already created would serve for a model with thousands of features — thanks to <em>packing</em> (<a class="quarto-xref" href="05.html#sec-packing-simd"><span>Section 5.6</span></a>), the <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots of the ciphertext would process them all in parallel. This is the basis of real-world deployments of <em>ML on encrypted data</em> that we’ll see in the applications section (<a class="quarto-xref" href="03.html"><span>Chapter 3</span></a>).</p>
 <div class="repaso">
-<ol type="1">
-<li>In the linear regression recipe, why doesn’t the multiplication <code>features_cifrados * pesos</code> consume multiplicative levels? What would happen if the weights were also encrypted?</li>
-<li>If the model had 10,000 features and <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, how many ciphertexts would you need for a prediction? How would you combine the partial results?</li>
-</ol>
+<div class="pregunta" id="q-sec-manos-fhe-5">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-5"><strong>2.5.</strong></a> In the linear regression recipe, why doesn’t the multiplication <code>features_cifrados * pesos</code> consume multiplicative levels? What would happen if the weights were also encrypted?
+</div>
+<div class="pregunta" id="q-sec-manos-fhe-6">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-6"><strong>2.6.</strong></a> If the model had 10,000 features and <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, how many ciphertexts would you need for a prediction? How would you combine the partial results?
+</div>
 </div>
 </section>
 <section class="level2" data-number="2.4" id="sec-muro-del-ruido">
@@ -331,10 +337,12 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <p>The library throws an exception on the second multiplication. It doesn’t produce “approximate” results or corrupted data: it simply refuses to continue. This is a deliberate design decision — better an explicit error than silent garbage.</p>
 <p>This wall is the practical manifestation of everything we’ll see in <a class="quarto-xref" href="05.html#sec-ruido-niveles"><span>Section 5.4</span></a>: each 40-bit level in <code>coeff_mod_bit_sizes</code> is a link that gets consumed with each multiplication. When they run out, there’s no way forward — unless you resort to <em>bootstrapping</em>, which restores the levels at enormous cost (see <a class="quarto-xref" href="#sec-bootstrapping-receta"><span>Section 2.5</span></a> for a practical example and <a class="quarto-xref" href="05.html"><span>Chapter 5</span></a> for the theoretical explanation).</p>
 <div class="repaso">
-<ol type="1">
-<li>If you need to compute a degree-3 polynomial over encrypted data (<span class="math inline">\(ax^3 + bx^2 + cx + d\)</span>), how many multiplicative levels do you need? What <code>coeff_mod_bit_sizes</code> would you configure?</li>
-<li>Why does the library throw an error instead of returning an approximate result? What consequences would there be if it silently produced garbage in a medical or financial system?</li>
-</ol>
+<div class="pregunta" id="q-sec-manos-fhe-7">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-7"><strong>2.7.</strong></a> If you need to compute a degree-3 polynomial over encrypted data (<span class="math inline">\(ax^3 + bx^2 + cx + d\)</span>), how many multiplicative levels do you need? What <code>coeff_mod_bit_sizes</code> would you configure?
+</div>
+<div class="pregunta" id="q-sec-manos-fhe-8">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-8"><strong>2.8.</strong></a> Why does the library throw an error instead of returning an approximate result? What consequences would there be if it silently produced garbage in a medical or financial system?
+</div>
 </div>
 </section>
 <section class="level2" data-number="2.5" id="sec-bootstrapping-receta">
@@ -389,23 +397,24 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb9-5"><a aria-hidden="true" href="#cb9-5" tabindex="-1"></a>ctxt <span class="op">=</span> cc.EvalMult(ctxt, ctxt)   <span class="co"># x² — consumes 1 level</span></span>
 <span id="cb9-6"><a aria-hidden="true" href="#cb9-6" tabindex="-1"></a>ctxt <span class="op">=</span> cc.EvalMult(ctxt, ctxt)   <span class="co"># x⁴ — consumes another level</span></span>
 <span id="cb9-7"><a aria-hidden="true" href="#cb9-7" tabindex="-1"></a></span>
-<span id="cb9-8"><a aria-hidden="true" href="#cb9-8" tabindex="-1"></a><span class="co"># Levels exhausted. Without EvalBootstrap, the next multiplication would fail</span></span>
-<span id="cb9-9"><a aria-hidden="true" href="#cb9-9" tabindex="-1"></a><span class="co"># throwing a scale out of bounds or exhausted levels error.</span></span>
-<span id="cb9-10"><a aria-hidden="true" href="#cb9-10" tabindex="-1"></a><span class="co"># Here: bootstrapping to the rescue.</span></span>
-<span id="cb9-11"><a aria-hidden="true" href="#cb9-11" tabindex="-1"></a>ctxt <span class="op">=</span> cc.EvalBootstrap(ctxt)</span>
-<span id="cb9-12"><a aria-hidden="true" href="#cb9-12" tabindex="-1"></a></span>
-<span id="cb9-13"><a aria-hidden="true" href="#cb9-13" tabindex="-1"></a><span class="co"># Now we can keep operating!</span></span>
-<span id="cb9-14"><a aria-hidden="true" href="#cb9-14" tabindex="-1"></a>ctxt <span class="op">=</span> cc.EvalMult(ctxt, ctxt)   <span class="co"># x⁸</span></span>
-<span id="cb9-15"><a aria-hidden="true" href="#cb9-15" tabindex="-1"></a></span>
-<span id="cb9-16"><a aria-hidden="true" href="#cb9-16" tabindex="-1"></a>result <span class="op">=</span> cc.Decrypt(ctxt, keys.secretKey)</span>
-<span id="cb9-17"><a aria-hidden="true" href="#cb9-17" tabindex="-1"></a>result.SetLength(<span class="bu">len</span>(datos))</span>
-<span id="cb9-18"><a aria-hidden="true" href="#cb9-18" tabindex="-1"></a><span class="co"># → [6561.0, 5764801.0, 256.0, 390625.0]  (3⁸, 7⁸, 2⁸, 5⁸)</span></span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<span id="cb9-8"><a aria-hidden="true" href="#cb9-8" tabindex="-1"></a><span class="co"># Levels exhausted. In Recipe 4 this was the end.</span></span>
+<span id="cb9-9"><a aria-hidden="true" href="#cb9-9" tabindex="-1"></a><span class="co"># Here: bootstrapping to the rescue.</span></span>
+<span id="cb9-10"><a aria-hidden="true" href="#cb9-10" tabindex="-1"></a>ctxt <span class="op">=</span> cc.EvalBootstrap(ctxt)</span>
+<span id="cb9-11"><a aria-hidden="true" href="#cb9-11" tabindex="-1"></a></span>
+<span id="cb9-12"><a aria-hidden="true" href="#cb9-12" tabindex="-1"></a><span class="co"># Now we can keep operating!</span></span>
+<span id="cb9-13"><a aria-hidden="true" href="#cb9-13" tabindex="-1"></a>ctxt <span class="op">=</span> cc.EvalMult(ctxt, ctxt)   <span class="co"># x⁸</span></span>
+<span id="cb9-14"><a aria-hidden="true" href="#cb9-14" tabindex="-1"></a></span>
+<span id="cb9-15"><a aria-hidden="true" href="#cb9-15" tabindex="-1"></a>result <span class="op">=</span> cc.Decrypt(ctxt, keys.secretKey)</span>
+<span id="cb9-16"><a aria-hidden="true" href="#cb9-16" tabindex="-1"></a>result.SetLength(<span class="bu">len</span>(datos))</span>
+<span id="cb9-17"><a aria-hidden="true" href="#cb9-17" tabindex="-1"></a><span class="co"># → [6561.0, 5764801.0, 256.0, 390625.0]  (3⁸, 7⁸, 2⁸, 5⁸)</span></span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
 <p>The call to <code>EvalBootstrap</code> is where the magic happens: it takes the exhausted ciphertext, homomorphically evaluates the decryption circuit (the process we’ll detail in <a class="quarto-xref" href="05.html"><span>Chapter 5</span></a>), and produces a fresh ciphertext with restored levels. The operation takes on the order of one second — compared to the milliseconds of a normal multiplication — and the resulting ciphertext carries somewhat more approximation error. But it works: the multiplication that in Recipe 4 threw “scale out of bounds” now completes without problems, and we can even chain a third one.</p>
 <div class="repaso">
-<ol type="1">
-<li>Bootstrapping restores multiplicative levels but takes ~1 s compared to ~1 ms for a normal multiplication. If you need to evaluate a circuit of depth 20, which strategy is better: dimensioning 20 levels from the start, or using 5 levels with bootstrapping every 5 multiplications? What is the trade-off?</li>
-<li>Ask an LLM: <em>“What is circular security in FHE and why is it necessary for bootstrapping?”</em></li>
-</ol>
+<div class="pregunta" id="q-sec-manos-fhe-9">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-9"><strong>2.9.</strong></a> Bootstrapping restores multiplicative levels but takes ~1 s compared to ~1 ms for a normal multiplication. If you need to evaluate a circuit of depth 20, which strategy is better: dimensioning 20 levels from the start, or using 5 levels with bootstrapping every 5 multiplications?
+</div>
+<div class="pregunta" id="q-sec-manos-fhe-10">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-10"><strong>2.10.</strong></a> Ask an LLM: <em>“What is circular security in FHE and why is it necessary for bootstrapping?”</em>
+</div>
 </div>
 </section>
 <section class="level2" data-number="2.6" id="sec-busqueda-cifrada">
@@ -432,10 +441,12 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <p>But there’s an inescapable cost: <strong>the server must process all records for each query</strong>. It can’t “skip” the positions that are zero, because it doesn’t know which ones they are — the vector is encrypted. If the database has 10,000 records, the server multiplies and sums all 10,000, even though only one contains useful information. That’s the price of privacy: the query is hidden precisely because it’s indistinguishable from any other. If the server could process only a subset, it could deduce by elimination which position was queried.</p>
 <p>With <span class="math inline">\(N = 8192\)</span>, each ciphertext stores up to <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots — enough for a database of that size without needing multiple ciphertexts. For larger databases, the programmer must divide the records into blocks of <span class="math inline">\(N_{\text{slot}}\)</span>, send one query ciphertext per block, and sum the partial results.</p>
 <div class="repaso">
-<ol type="1">
-<li>In the encrypted search, why must the server process <em>all</em> records to answer a single query? What information would leak if it processed only a subset?</li>
-<li>If the vendor’s database has 10,000 records and <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, how many ciphertexts does the client need for a query? And how many must the server process?</li>
-</ol>
+<div class="pregunta" id="q-sec-manos-fhe-11">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-11"><strong>2.11.</strong></a> In the encrypted search, why must the server process <em>all</em> records to answer a single query? What information would leak if it processed only a subset?
+</div>
+<div class="pregunta" id="q-sec-manos-fhe-12">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-12"><strong>2.12.</strong></a> If the vendor’s database has 10,000 records and <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, how many ciphertexts does the client need for a query? And how many must the server process?
+</div>
 </div>
 </section>
 </section><section class="standalone-merged-section" id="merged-04">
@@ -453,10 +464,12 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <p><strong>Encrypted searches.</strong> A user searches for information on a web service, but doesn’t want the provider to know their queries — think searches for medical symptoms or legal advice. With FHE, the query is sent encrypted, the server processes it against its index without decrypting it, and returns encrypted results that only the user can read. The provider offers the service without knowing what was searched.</p>
 <p><strong>Secure computation outsourcing.</strong> Beyond the above sectors, any organization that outsources computation to the cloud faces the same dilemma: trust the provider or don’t use the cloud. FHE eliminates that trade-off by allowing data to remain encrypted throughout processing. The provider never has access to plaintext data, and it can also be combined with zero-knowledge proofs (the chapter on zero-knowledge proofs) so that the provider proves it executed the computation correctly — without revealing anything about the data or the process.</p>
 <div class="repaso">
-<ol type="1">
-<li>For the healthcare, finance, and machine learning applications, what alternative is used in practice today and why is it unsatisfactory?</li>
-<li>Ask an LLM: <em>“Which companies or libraries offer homomorphic encryption in production today? What is the state of maturity?”</em> Verify the answers with a web search.</li>
-</ol>
+<div class="pregunta" id="q-sec-aplicaciones-fhe-1">
+<a class="pregunta-num" href="#sol-sec-aplicaciones-fhe-1"><strong>3.1.</strong></a> For the healthcare, finance, and machine learning applications, what alternative is used in practice today and why is it unsatisfactory?
+</div>
+<div class="pregunta" id="q-sec-aplicaciones-fhe-2">
+<a class="pregunta-num" href="#sol-sec-aplicaciones-fhe-2"><strong>3.2.</strong></a> Ask an LLM: <em>“Which companies or libraries offer homomorphic encryption in production today? What is the state of maturity?”</em> Verify the answers with a web search.
+</div>
 </div>
 </section><section class="standalone-merged-section" id="merged-05">
 <header class="quarto-title-block default" id="title-block-header-5">
@@ -476,11 +489,15 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <p><strong>Key sizes.</strong> The secret key is compact (a few kilobytes), but the cryptographic material needed for homomorphic operations is enormous. The <a class="quarto-xref" href="05.html#tbl-fhe-keys">Table <span>5.1</span></a> in <a class="quarto-xref" href="05.html#sec-rotaciones-fhe"><span>Section 5.7</span></a> shows the four necessary keys; the relinearization and especially the Galois keys — one per rotation position — occupy hundreds of megabytes with <span class="math inline">\(N = 8192\)</span>. If bootstrapping is added, the evaluation keys can exceed a gigabyte. This limits the devices where FHE can run (an IoT sensor can’t store 500 MB of keys) and adds latency in scenarios where keys must be transmitted to the server.</p>
 <p><strong>Malleability.</strong> By definition, a homomorphic scheme allows anyone to transform a ciphertext into another valid ciphertext that encrypts a related message — that’s precisely what makes it useful. But that same property means ciphertexts are <em>malleable</em>: an attacker could modify an encrypted result without being detected (for example, adding a constant to someone’s encrypted salary). FHE schemes guarantee that an attacker cannot distinguish between two ciphertexts — they can’t tell which message was encrypted. But they <em>don’t</em> guarantee that an attacker can’t <em>modify</em> a ciphertext in a useful way without being detected. In practice, computation integrity is protected by combining FHE with zero-knowledge proofs (the chapter on zero-knowledge proofs) or with verifiable computation schemes.</p>
 <div class="repaso">
-<ol type="1">
-<li>If homomorphic operations are <span class="math inline">\(10^4\)</span>–<span class="math inline">\(10^6\)</span> times slower, for what types of applications is the cost acceptable and for which is it not?</li>
-<li>Ask an LLM: <em>“How does the performance of FHE in 2024 compare with 2015? What were the main advances?”</em></li>
-<li>An engineer needs to implement a comparison <code>x &gt; y</code> on encrypted data with FHE. Why can’t they do it directly? What alternative do they have and what is its cost?</li>
-</ol>
+<div class="pregunta" id="q-sec-limitaciones-fhe-1">
+<a class="pregunta-num" href="#sol-sec-limitaciones-fhe-1"><strong>4.1.</strong></a> If homomorphic operations are <span class="math inline">\(10^4\)</span>–<span class="math inline">\(10^6\)</span> times slower, for what types of applications is the cost acceptable and for which is it not?
+</div>
+<div class="pregunta" id="q-sec-limitaciones-fhe-2">
+<a class="pregunta-num" href="#sol-sec-limitaciones-fhe-2"><strong>4.2.</strong></a> Ask an LLM: <em>“How does the performance of FHE in 2024 compare with 2015? What were the main advances?”</em>
+</div>
+<div class="pregunta" id="q-sec-limitaciones-fhe-3">
+<a class="pregunta-num" href="#sol-sec-limitaciones-fhe-3"><strong>4.3.</strong></a> An engineer needs to implement a comparison <code>x &gt; y</code> on encrypted data with FHE. Why can’t they do it directly? What alternative do they have and what is its cost?
+</div>
 </div>
 </section><section class="standalone-merged-section" id="merged-06">
 <header class="quarto-title-block default" id="title-block-header-6">
@@ -513,10 +530,12 @@ Figure 5.1: Two-dimensional lattice generated by two basis vectors <span class=
 </ul>
 <p>CVP is at least as hard as SVP, and both are the foundation of lattice cryptography. In cryptography, the approximate versions are used — relaxed enough not to be NP-hard, but strict enough that no known algorithm, classical or quantum, can solve them in reasonable time. At the typical FHE dimensions (<span class="math inline">\(n \geq 1024\)</span>), that’s intractable. This difficulty is what protects the data. But a lattice by itself doesn’t encrypt anything — we need to translate this geometric difficulty into a mechanism that allows encryption and operations.</p>
 <div class="repaso">
-<ol type="1">
-<li>What is the difference between SVP and CVP? Why is CVP at least as hard as SVP?</li>
-<li>The security of FHE is based on the fact that lattice problems are hard “even for quantum computers.” What distinguishes these problems from those used by RSA (factorization) against quantum attacks?</li>
-</ol>
+<div class="pregunta" id="q-sec-fundamentos-fhe-1">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-1"><strong>5.1.</strong></a> What is the difference between SVP and CVP? Why is CVP at least as hard as SVP?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-2">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-2"><strong>5.2.</strong></a> The security of FHE is based on the fact that lattice problems are hard “even for quantum computers.” What distinguishes these problems from those used by RSA (factorization) against quantum attacks?
+</div>
 </div>
 </section>
 <section class="level2" data-number="5.2" id="from-lattices-to-rings-lwe-and-rlwe">
@@ -557,10 +576,12 @@ Figure 5.3: LWE versus RLWE. On the left, LWE requires an <span class="math inl
 </figure>
 </div>
 <div class="repaso">
-<ol type="1">
-<li>In standard LWE, the public part is an <span class="math inline">\(n \times n\)</span> integer matrix <span class="math inline">\(A\)</span>. In RLWE it is replaced by a single polynomial of <span class="math inline">\(n\)</span> coefficients. What algebraic property of the ring <span class="math inline">\(R_q\)</span> enables this compression? What speed gain does it provide?</li>
-<li>Ask an LLM: <em>“In lattice-based cryptography, why is solving RLWE considered at least as hard as solving the closest vector problem (CVP)? Explain the reduction intuitively.”</em> Verify that it mentions the role of the noise <span class="math inline">\(e\)</span> in the connection to CVP.</li>
-</ol>
+<div class="pregunta" id="q-sec-fundamentos-fhe-3">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-3"><strong>5.3.</strong></a> In standard LWE, the public part is an <span class="math inline">\(n \times n\)</span> integer matrix <span class="math inline">\(A\)</span>. In RLWE it is replaced by a single polynomial of <span class="math inline">\(n\)</span> coefficients. What algebraic property of the ring <span class="math inline">\(R_q\)</span> enables this compression? What speed gain does it provide?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-4">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-4"><strong>5.4.</strong></a> Ask an LLM: <em>“In lattice-based cryptography, why is solving RLWE considered at least as hard as solving the closest vector problem (CVP)? Explain the reduction intuitively.”</em> Verify that it mentions the role of the noise <span class="math inline">\(e\)</span> in the connection to CVP.
+</div>
 </div>
 </section>
 <section class="level2" data-number="5.3" id="encryption-and-homomorphic-operations">
@@ -627,12 +648,18 @@ Figure 5.5: Multiplication between ciphertexts. The product generates a triplet
 <p>The result contains <span class="math inline">\(m_1 \cdot m_2\)</span> — what we wanted — but the resulting error <span class="math inline">\(e_{\text{mult}} = e_1 \cdot m_2 + e_2 \cdot m_1 + e_1 \cdot e_2\)</span> is much larger than in addition. The errors no longer <em>add</em> but <em>multiply</em> with the messages, growing much faster. After a few chained multiplications, the accumulated error can exceed the message and decryption produces garbage. This is the fundamental reason why FHE has a limited operation budget.</p>
 <p>There’s a subtle point worth making explicit: the only two operations the scheme provides natively are polynomial addition and multiplication. The algebraic structure of RLWE — a polynomial ring — only defines these two operations. Any other computation — comparisons (<span class="math inline">\(x &gt; y\)</span>), maximums, minimums, nonlinear functions like sigmoid or ReLU — must be <em>approximated</em> by a sufficiently high-degree polynomial, and each multiplication of that polynomial consumes a level from the budget. A simple <code>if (x &gt; 0)</code> that in normal code is a single instruction requires evaluating a polynomial of degree 10 to 30 that approximates the sign function in FHE, consuming between 4 and 10 multiplicative levels. This restriction — sometimes called the <em>arithmetic circuit</em> model — is what turns programming on encrypted data into a careful design exercise, as we saw in <a class="quarto-xref" href="04.html"><span>Chapter 4</span></a>. And each of those multiplications has a cost we haven’t quantified yet: the accumulated noise.</p>
 <div class="repaso">
-<ol type="1">
-<li>In RLWE encryption, why is the random polynomial <span class="math inline">\(a\)</span> necessary in each encryption? What attack does its absence enable?</li>
-<li>Explain in your own words why homomorphic addition is “cheap” (the error grows linearly) while multiplication is “expensive” (the error grows much faster).</li>
-<li>What role does <em>relinearization</em> play after a homomorphic multiplication? What would happen if it weren’t applied?</li>
-<li>CKKS doesn’t support conditional branches. How would you implement the following logic using CKKS? Roughly how many multiplicative levels does it consume? <code>if (m &lt; 0) then m = -m</code></li>
-</ol>
+<div class="pregunta" id="q-sec-fundamentos-fhe-5">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-5"><strong>5.5.</strong></a> In RLWE encryption, why is the random polynomial <span class="math inline">\(a\)</span> necessary in each encryption? What attack does its absence enable?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-6">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-6"><strong>5.6.</strong></a> Explain in your own words why homomorphic addition is “cheap” (the error grows linearly) while multiplication is “expensive” (the error grows much faster).
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-7">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-7"><strong>5.7.</strong></a> What role does <em>relinearization</em> play after a homomorphic multiplication? What would happen if it weren’t applied?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-8">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-8"><strong>5.8.</strong></a> CKKS doesn’t support conditional branches. How would you implement the following logic using CKKS? Roughly how many multiplicative levels does it consume? <code>if (m &lt; 0) then m = -m</code>
+</div>
 </div>
 </section>
 <section class="level2" data-number="5.4" id="sec-ruido-niveles">
@@ -678,10 +705,12 @@ Figure 5.7: Modulus chain and level consumption. Each multiplication consumes o
 </div>
 <p>But if the budget is finite, something doesn’t add up: we call the scheme <em>fully</em> homomorphic, and yet it only allows a fixed number of multiplications — not very different, in principle, from the partial schemes we mentioned at the beginning of the chapter.</p>
 <div class="repaso">
-<ol type="1">
-<li>Why is <em>rescaling</em> necessary after each multiplication in CKKS? What happens to the message scale if it’s not applied?</li>
-<li>For a circuit that computes <span class="math inline">\(a \cdot b + c \cdot d\)</span>, how many multiplication levels are needed? What <code>coeff_mod_bit_sizes</code> would you use?</li>
-</ol>
+<div class="pregunta" id="q-sec-fundamentos-fhe-9">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-9"><strong>5.9.</strong></a> Why is <em>rescaling</em> necessary after each multiplication in CKKS? What happens to the message scale if it’s not applied?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-10">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-10"><strong>5.10.</strong></a> For a circuit that computes <span class="math inline">\(a \cdot b + c \cdot d\)</span>, how many multiplication levels are needed? What <code>coeff_mod_bit_sizes</code> would you use?
+</div>
 </div>
 </section>
 <section class="level2" data-number="5.5" id="bootstrapping">
@@ -730,10 +759,12 @@ Figure 5.9: Bootstrapping in two steps. Step 1 is cheap: it multiplies the BK k
 </div>
 <p>With or without bootstrapping, each homomorphic operation takes milliseconds — a cost paid per <em>ciphertext</em>. If each ciphertext contains a single data point, the performance is prohibitive for any real application.</p>
 <div class="repaso">
-<ol type="1">
-<li>Why does bootstrapping need to encrypt the secret key under itself? What security assumption does this require?</li>
-<li>If bootstrapping is so expensive, why aren’t the parameters always dimensioned to avoid it? When is it unavoidable?</li>
-</ol>
+<div class="pregunta" id="q-sec-fundamentos-fhe-11">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-11"><strong>5.11.</strong></a> Why does bootstrapping need to encrypt the secret key under itself? What security assumption does this require?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-12">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-12"><strong>5.12.</strong></a> If bootstrapping is so expensive, why aren’t the parameters always dimensioned to avoid it? When is it unavoidable?
+</div>
 </div>
 </section>
 <section class="level2" data-number="5.6" id="sec-packing-simd">
@@ -776,11 +807,15 @@ Figure 5.11: Slot-based encoding (<span class="math inline">\(N = 4\)</span>). 
 <p>In our code, when we write <code>ts.ckks_vector(contexto, salarios)</code>, the library internally executes that encoding: it transforms the Python vector <code>[3200, 4100, 2800, 5500, 3900]</code> into a polynomial of degree 8191 whose evaluations at the roots of <span class="math inline">\(x^{8192}+1\)</span> reproduce those five values in the first slots. The programmer doesn’t need to think about complex roots or transforms — just about vectors and arithmetic operations.</p>
 <p>Now, packing has a fundamental limitation: it only allows <em>slot-by-slot</em> operations. Adding or multiplying two encrypted vectors works directly — each slot is processed independently. But what happens when we need to combine values from different slots? For example, to compute <code>salarios_cifrados.sum()</code> we need to add the five values that sit in separate slots. That requires <em>moving data between slots</em> — an operation that can’t be achieved with polynomial additions or multiplications, and that needs a completely different mechanism: rotations.</p>
 <div class="repaso">
-<ol type="1">
-<li>Why is the number of slots <span class="math inline">\(N/2\)</span> and not <span class="math inline">\(N\)</span>? What property of the roots of <span class="math inline">\(x^N+1\)</span> explains this?</li>
-<li>In our example, <code>ts.ckks_vector(contexto, [3200, 4100, 2800, 5500, 3900])</code> places 5 values in 4096 slots. What do the remaining 4091 slots contain? Does it affect the cost of operations?</li>
-<li>In CKKS, bootstrapping needs to apply the modular reduction on each <em>slot</em> independently, but the homomorphic decryption produces the polynomial in its coefficient representation. Why is an additional step (<em>CoeffsToSlots</em>) needed before the modular reduction? What type of operation is it and what is its cost?</li>
-</ol>
+<div class="pregunta" id="q-sec-fundamentos-fhe-13">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-13"><strong>5.13.</strong></a> Why is the number of slots <span class="math inline">\(N/2\)</span> and not <span class="math inline">\(N\)</span>? What property of the roots of <span class="math inline">\(x^N+1\)</span> explains this?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-14">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-14"><strong>5.14.</strong></a> In our example, <code>ts.ckks_vector(contexto, [3200, 4100, 2800, 5500, 3900])</code> places 5 values in 4096 slots. What do the remaining 4091 slots contain? Does it affect the cost of operations?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-15">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-15"><strong>5.15.</strong></a> In CKKS, bootstrapping needs to apply the modular reduction on each <em>slot</em> independently, but the homomorphic decryption produces the polynomial in its coefficient representation. Why is an additional step (<em>CoeffsToSlots</em>) needed before the modular reduction? What type of operation is it and what is its cost?
+</div>
 </div>
 </section>
 <section class="level2" data-number="5.7" id="sec-rotaciones-fhe">
@@ -876,11 +911,15 @@ Table 5.1: Keys in a CKKS context and their function.
 <p><strong>Which operations benefit?</strong> The three primitives of the SIMD model — slot-by-slot addition, slot-by-slot multiplication, and rotation — cover a well-defined catalog of efficient operations. <em>Elementwise operations</em> (adding two encrypted vectors, multiplying them component-wise, scaling by a constant) are direct: a single polynomial operation across all slots in parallel, regardless of how many there are. <em>Reductions</em> — summing all elements, computing a mean, obtaining a norm — use the rotation tree at cost <span class="math inline">\(O(\log N_{\text{slot}})\)</span> instead of the <span class="math inline">\(O(N_{\text{slot}})\)</span> it would cost to operate slot by slot. <em>Dot products</em> combine both primitives: a SIMD multiplication (slot by slot) followed by a reduction via rotations. <em>Matrix-vector multiplications</em> decompose into dot products of each row with the vector. And neural network <em>convolutions</em> are implemented as sequences of rotations and accumulations. The general pattern is: any computation expressible as combinations of additions, multiplications, and shifts on vectors translates efficiently to FHE with packing and rotations. What falls outside are operations that depend on the <em>value</em> of the data — comparisons, conditionals, sorting — because the scheme doesn’t allow inspecting a ciphertext to decide which branch to take.</p>
 <p>In summary: packing reduces the <em>per-datum</em> cost when operations are parallel and independent, and rotations allow combining data from different slots when the circuit requires it. Together, they transform the economics of FHE — the amortized cost drops by several orders of magnitude and complex operations like means, dot products, and regressions become viable. The price is the additional complexity of Galois keys and the careful design of rotation patterns. This encoding mechanism — polynomial → evaluation at roots → slots — also explains the <em>CoeffsToSlots</em> and <em>SlotsToCoeffs</em> transforms we saw in bootstrapping: they are exactly the steps of converting from polynomial coefficients to the slot representation and back. Everything above — lattices, RLWE, encryption, noise, bootstrapping, packing, and rotations — is the machinery of CKKS, the scheme we used in our code. But it’s not the only way to build an FHE scheme.</p>
 <div class="repaso">
-<ol type="1">
-<li>To sum all elements of an encrypted vector with <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots, how many rotations does the summation tree need? How many homomorphic additions?</li>
-<li>Why does each rotation position need its own Galois key? What happens to the encryption key when applying the substitution <span class="math inline">\(x \to x^k\)</span>?</li>
-<li>Ask an LLM: <em>“What is the difference between slot rotation in FHE and a rotation (circular shift) in a CPU SIMD register? How are they similar and how do they differ?”</em></li>
-</ol>
+<div class="pregunta" id="q-sec-fundamentos-fhe-16">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-16"><strong>5.16.</strong></a> To sum all elements of an encrypted vector with <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots, how many rotations does the summation tree need? How many homomorphic additions?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-17">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-17"><strong>5.17.</strong></a> Why does each rotation position need its own Galois key? What happens to the encryption key when applying the substitution <span class="math inline">\(x \to x^k\)</span>?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-18">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-18"><strong>5.18.</strong></a> Ask an LLM: <em>“What is the difference between slot rotation in FHE and a rotation (circular shift) in a CPU SIMD register? How are they similar and how do they differ?”</em>
+</div>
 </div>
 </section>
 <section class="level2" data-number="5.8" id="other-encryption-schemes">
@@ -961,11 +1000,15 @@ Table 5.2: Main FHE schemes: foundations, capabilities, and trade-offs.
 </div>
 <p>In our example we used CKKS because we need to operate on real numbers (salaries) and can tolerate minimal approximation error — exactly the scenario it was designed for. If we needed to compare encrypted salaries to find the maximum, TFHE would be the natural choice. And if the requirement were to count encrypted votes with zero error margin, BFV or BGV would be the candidates.</p>
 <div class="repaso">
-<ol type="1">
-<li>Ask an LLM: <em>“Explain the difference between partially homomorphic, somewhat homomorphic, and fully homomorphic encryption. Give me a concrete example of each.”</em> Is the answer accurate?</li>
-<li>If <code>coeff_mod_bit_sizes=[60, 40, 40, 40, 60]</code>, how many chained multiplications does the scheme support?</li>
-<li>BFV, BGV, and CKKS share the same RLWE base but differ in message encoding. Describe what each encodes, its main strength, and its most important limitation. How does TFHE differ from the three — both in foundations and in computation model?</li>
-</ol>
+<div class="pregunta" id="q-sec-fundamentos-fhe-19">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-19"><strong>5.19.</strong></a> Ask an LLM: <em>“Explain the difference between partially homomorphic, somewhat homomorphic, and fully homomorphic encryption. Give me a concrete example of each.”</em> Is the answer accurate?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-20">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-20"><strong>5.20.</strong></a> If <code>coeff_mod_bit_sizes=[60, 40, 40, 40, 60]</code>, how many chained multiplications does the scheme support?
+</div>
+<div class="pregunta" id="q-sec-fundamentos-fhe-21">
+<a class="pregunta-num" href="#sol-sec-fundamentos-fhe-21"><strong>5.21.</strong></a> BFV, BGV, and CKKS share the same RLWE base but differ in message encoding. Describe what each encodes, its main strength, and its most important limitation. How does TFHE differ from the three — both in foundations and in computation model?
+</div>
 </div>
 </section>
 </section><section class="standalone-merged-section" id="merged-07">
@@ -1041,47 +1084,127 @@ the 52nd Annual IEEE Symposium on Foundations of Computer Science
 <div class="quarto-title-meta">
 </div>
 </header>
-<div class="solucion">
-<ol type="1">
-<li><p>BFV operates on exact integers (decryption recovers the exact value via rounding) and is suitable for database queries or counting. CKKS operates on approximate real numbers (accepts a small error of <span class="math inline">\(\sim 10^{-6}\)</span>) and is the reference scheme for machine learning and statistics. Verify that the LLM mentions both share the RLWE base and that the key difference is in message encoding.</p></li>
-<li><p><code>poly_modulus_degree=16384</code> doubles the security and allows more multiplicative levels, but each operation takes longer (polynomials are twice as large). With <code>4096</code>, operations are faster but you get fewer multiplicative levels and lower security. Execution time scales approximately as <span class="math inline">\(O(n \log n)\)</span> per NTT operation.</p></li>
-<li><p>The formula <span class="math inline">\(E[X^2] - (E[X])^2\)</span> needs one element-wise multiplication (<span class="math inline">\(x_i^2\)</span>) and one multiplication of the mean result by itself — two ciphertext × ciphertext multiplications. The alternative <span class="math inline">\(\frac{1}{n}\sum(x_i - \bar{x})^2\)</span> first requires computing <span class="math inline">\(\bar{x}\)</span> (sums and rotations), then subtracting it from each <span class="math inline">\(x_i\)</span> (an addition by constant), and finally squaring each difference — it looks similar in multiplication count, but it first requires materializing the mean in every slot (extra rotations). In CKKS, the first formula is generally more efficient: fewer rotations and the same number of multiplicative levels.</p></li>
-<li><p>Both branches must reach the subtraction point having gone through <em>symmetric</em> sequences of operations — the same type and order of multiplications — so that their ciphertexts end up at the same level and with equivalent scales and noise histories. In the naive version, one branch does <code>ct*ct</code> followed by <code>*(1/n)</code> while the other does <code>*(1/n)</code> followed by <code>media*media</code>: although both consume two levels, the second multiplies together two ciphertexts already degraded by the earlier <code>*(1/n)</code>, so its internal state doesn’t match the first branch’s. CKKS doesn’t detect the mismatch, and the subtraction produces garbage. The fix moves the constants to plaintext: both branches then go through exactly one <code>ct*ct</code> between <em>fresh</em> ciphertexts.</p></li>
-<li><p>Because <code>features_cifrados * pesos</code> multiplies a ciphertext by plaintext constants, which doesn’t consume levels — it’s equivalent to scaling the internal polynomial. If the weights were also encrypted, it would be a ciphertext × ciphertext multiplication, which does consume a level and requires relinearization.</p></li>
-<li><p>With 10,000 features and <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, you need <span class="math inline">\(\lceil 10{,}000 / 4096 \rceil = 3\)</span> ciphertexts to pack all the features. The prediction requires 3 multiplications by constants (one per ciphertext) and 3 rotation-based sums (one per ciphertext), and finally adding the 3 scalar results — a trivial operation on decrypted values, or an additional homomorphic addition.</p></li>
-<li><p>2 levels are needed: one for <span class="math inline">\(x^2 = x \cdot x\)</span> and another for <span class="math inline">\(x^3 = x^2 \cdot x\)</span> (multiplications by constants <span class="math inline">\(a, b, c, d\)</span> and additions don’t consume levels). The configuration would be <code>coeff_mod_bit_sizes=[60, 40, 40, 60]</code> with <code>poly_modulus_degree=8192</code>.</p></li>
-<li><p>The explicit error is a security decision: in a medical system, a silent “approximate” result could cause a misdiagnosis; in finance, a transaction with corrupted data could go unnoticed. The <em>fail-fast</em> principle ensures errors are caught in development, not production. A system that stops is preferable to one that produces plausible but incorrect results.</p></li>
-<li><p>With depth 20: dimensioning 20 levels requires an enormous <code>poly_modulus_degree</code> (≥32768) to maintain security, making every operation very slow. With 5 levels plus bootstrapping every 5 multiplications, you need 4 bootstraps (~4 s extra), but each individual multiplication is faster (smaller polynomials). The main trade-off opposes the direct latency cost of each <code>EvalBootstrap</code> call (~1 s per call) against the sustained memory and computation time cost of <em>every</em> individual multiplication when increasing ring size (<span class="math inline">\(N\)</span>) and modulus (<span class="math inline">\(Q\)</span>). For deep circuits, periodic bootstrapping is usually more efficient than static dimensioning, especially when the depth isn’t known in advance.</p></li>
-<li><p>Bootstrapping homomorphically evaluates the decryption circuit (<span class="math inline">\(b - a \cdot s\)</span>), which requires encrypting the secret key <span class="math inline">\(s\)</span> under itself. <em>Circular security</em> is the assumption that publishing <span class="math inline">\(\text{Enc}_s(s)\)</span> doesn’t weaken the scheme. It isn’t proven in general — it’s an additional assumption that all FHE schemes rely on. Verify that the LLM distinguishes between this assumption and standard IND-CPA security.</p></li>
-<li><p>The server must process <em>all</em> records because the query vector is encrypted — it can’t distinguish the zeros from the one. If it processed only a subset, it would reveal by elimination that the queried position is in that subset, breaking the query’s privacy.</p></li>
-<li><p>With <span class="math inline">\(N_{\text{slot}} = N/2 = 4096\)</span> slots per ciphertext and 10,000 records, the client needs <span class="math inline">\(\lceil 10{,}000 / 4096 \rceil = 3\)</span> ciphertexts (one with the 1 in the correct position, the other two with only zeros). The server must process all 3 ciphertexts — it can’t discard any without leaking information about the query.</p></li>
-<li><p>Current unsatisfactory alternatives: (1) In healthcare, data is anonymized or NDAs are used, but anonymization is fragile (patients can be re-identified by cross-referencing variables) and agreements don’t prevent the provider from seeing plaintext data. (2) In finance, controlled environments (<em>data clean rooms</em>) and legal agreements are used, but the recipient still accesses the actual data. (3) In multi-organization ML, data collection is centralized, exposing individual data. FHE would eliminate these exposures by always operating on encrypted data.</p></li>
-<li><p>Companies and libraries: Microsoft SEAL (C++, BFV/CKKS), IBM HELib (BGV/CKKS), Zama (Concrete, TFHE), Google (FHE transpiler for C++), Duality Technologies. The maturity state in 2024 is <em>limited production</em>: there are real use cases (ML on encrypted data, financial computation) but the overhead is still high (<span class="math inline">\(10^4\)</span>–<span class="math inline">\(10^5\times\)</span>) for most applications.</p></li>
-<li><p>The cost is acceptable when the value of privacy exceeds the computational cost: genomic data, proprietary financial models, electronic voting, computation on regulated medical data. It’s not acceptable for low-latency applications (video games, high-frequency trading) or where data is not sensitive.</p></li>
-<li><p>The main advances between 2015 and 2024 were: faster bootstrapping (TFHE achieves millisecond evaluations), CKKS for approximate arithmetic (2017), FHE compilers that transform normal code into homomorphic code (Google, Zama), and hardware acceleration (Intel HEXL, DARPA DPRIVE projects). The performance gap was reduced from ~<span class="math inline">\(10^6\times\)</span> to ~<span class="math inline">\(10^4\times\)</span> for many operations.</p></li>
-<li><p>RLWE-based FHE schemes only offer two native operations: polynomial addition and multiplication. A comparison like <code>x &gt; y</code> is not an arithmetic operation — it requires evaluating a nonlinear function (sign). To implement it, the sign function is approximated by a high-degree polynomial (typically degree 10-30), and each multiplication of that polynomial consumes a level from the budget. A simple <code>if (x &gt; y)</code> can cost between 4 and 10 multiplicative levels.</p></li>
-<li><p>SVP asks to find the shortest nonzero vector in the lattice; CVP asks to find the nearest lattice point to a given point in space. CVP is at least as hard as SVP because, if CVP could be solved efficiently, it could be used to solve SVP: simply query CVP with the origin and discard the zero vector. The intuition for why SVP may be easier is that its reference point (the origin) belongs to the lattice itself, which allows exploiting internal symmetries of the structure (translation invariance, for example). In CVP, the target point is arbitrary and “breaks” those symmetries — it’s a problem parameterized by an external input unrelated to the periodic structure of the lattice.</p></li>
-<li><p>RSA relies on integer factorization, which Shor’s algorithm solves in polynomial time on a quantum computer. Lattice problems (SVP, CVP) have no known efficient quantum analog: the best quantum algorithms remain exponential in the lattice dimension. That’s why lattices are the foundation of post-quantum cryptography and, by extension, of FHE.</p></li>
-<li><p>In the ring <span class="math inline">\(R_q = \mathbb{Z}_q[x]/(x^n+1)\)</span>, multiplying by a polynomial <span class="math inline">\(a(x)\)</span> is equivalent to multiplying by a negacyclic matrix determined by the coefficients of <span class="math inline">\(a(x)\)</span>. This allows replacing the random LWE matrix <span class="math inline">\(A\)</span> (<span class="math inline">\(n^2\)</span> integers, <span class="math inline">\(O(n^2)\)</span> multiplication) with a single polynomial (<span class="math inline">\(n\)</span> integers, <span class="math inline">\(O(n \log n)\)</span> multiplication via NTT). With <span class="math inline">\(n = 8192\)</span>, keys are reduced ~<span class="math inline">\(8{,}000\times\)</span> and operations are accelerated ~<span class="math inline">\(1{,}000\times\)</span>.</p></li>
-<li><p>The RLWE equation is <span class="math inline">\(b = a \cdot s + e\)</span>, where <span class="math inline">\(e\)</span> is a small error. Without the error, recovering <span class="math inline">\(s\)</span> would be trivial linear algebra (polynomial division). With it, <span class="math inline">\(b\)</span> is a point <em>near</em> the lattice generated by the ring <span class="math inline">\(R_q\)</span>, but not exactly on it — recovering <span class="math inline">\(s\)</span> is equivalent to finding the nearest point, which is CVP. Formally, Lyubashevsky, Peikert, and Regev proved that solving RLWE in the average case allows solving approximate SVP on ideal lattices in the worst case. Verify that the LLM mentions the reduction applies to ideal lattices (those with the ring structure <span class="math inline">\(R_q\)</span>, not general lattices) and that the noise <span class="math inline">\(e\)</span> is what turns a trivial problem into an intractable one.</p></li>
-<li><p>Without the random polynomial <span class="math inline">\(a\)</span>, two ciphertexts <span class="math inline">\(c_1 = s + e_1 + m_1\)</span> and <span class="math inline">\(c_2 = s + e_2 + m_2\)</span> would allow the attacker to compute <span class="math inline">\(c_1 - c_2 \approx m_1 - m_2\)</span>, revealing the difference between messages. The polynomial <span class="math inline">\(a\)</span>, different in each encryption, acts as a mask that makes each ciphertext indistinguishable from random noise.</p></li>
-<li><p>In homomorphic addition, errors add: <span class="math inline">\(e_{\text{sum}} = e_1 + e_2\)</span>. If initial errors are on the order of <span class="math inline">\(\epsilon\)</span>, after <span class="math inline">\(k\)</span> additions the error is <span class="math inline">\(k\epsilon\)</span>. In multiplication, errors multiply with the messages: <span class="math inline">\(e_{\text{mult}} \approx e_1 \cdot m_2 + e_2 \cdot m_1\)</span>, growing proportionally to the message sizes. This drastically limits the number of chained multiplications before noise overflows the modulus.</p></li>
-<li><p>Homomorphic multiplication produces a triplet <span class="math inline">\((d_0, d_1, d_2)\)</span> that depends on <span class="math inline">\(s^2\)</span>, instead of the standard pair <span class="math inline">\((a, b)\)</span> that depends only on <span class="math inline">\(s\)</span>. Relinearization uses a public key that encrypts <span class="math inline">\(s^2\)</span> to convert the triplet into a standard pair. Without it, each multiplication would increase the ciphertext’s degree in <span class="math inline">\(s\)</span>, making it unmanageable after a few operations.</p></li>
-<li><p>The logic <code>if (m &lt; 0) then m = -m</code> computes the absolute value: <span class="math inline">\(|m| = m \cdot \text{sign}(m)\)</span>. Since CKKS doesn’t support conditional branches, the sign function must be approximated with a polynomial (for example, a degree 15–27 Chebyshev approximation). The implementation evaluates that polynomial on the ciphertext — <span class="math inline">\(\text{Enc}(\text{sign}(m)) \approx p(\text{Enc}(m))\)</span> — and then multiplies the result by <span class="math inline">\(\text{Enc}(m)\)</span>: <code>enc_abs = enc_m * poly_sign(enc_m)</code>. Evaluating the polynomial consumes <span class="math inline">\(\lceil \log_2(\text{degree}) \rceil \approx 4\)</span>–<span class="math inline">\(5\)</span> levels via the Paterson–Stockmeyer algorithm, plus one additional level for the final multiplication: between <strong>5 and 10 multiplicative levels</strong> in total, compared to a single instruction in conventional code.</p></li>
-<li><p>In CKKS, each multiplication doubles the message scale from <span class="math inline">\(\Delta\)</span> to <span class="math inline">\(\Delta^2\)</span> and amplifies the error by a factor of <span class="math inline">\(\Delta\)</span>. Rescaling divides the entire ciphertext by <span class="math inline">\(\Delta\)</span>, restoring the standard scale and eliminating the extra 40 bits of error. Without rescaling, the scale would grow exponentially and the modulus <span class="math inline">\(q\)</span> would be exhausted after a single multiplication.</p></li>
-<li><p>The circuit <span class="math inline">\(a \cdot b + c \cdot d\)</span> has two independent (parallel, not chained) multiplications followed by an addition. The multiplicative depth is 1. A single level suffices: <code>coeff_mod_bit_sizes=[60, 40, 60]</code> would be enough.</p></li>
-<li><p>Bootstrapping evaluates the decryption circuit (<span class="math inline">\(b - a \cdot s\)</span>) homomorphically, which requires operating with <span class="math inline">\(s\)</span> in the encrypted domain. This needs an encryption of <span class="math inline">\(s\)</span> under the key <span class="math inline">\(s\)</span> itself. This requires the <em>circular security</em> assumption: that encrypting the key under itself doesn’t weaken the scheme. All current FHE schemes assume this property, although it hasn’t been proven in general.</p></li>
-<li><p>Dimensioning parameters to avoid bootstrapping requires a modulus <span class="math inline">\(q\)</span> proportional to the number of multiplications, which demands an ever-larger <code>poly_modulus_degree</code> to maintain security. For very deep circuits, the polynomials would be so large that each operation would be slower than periodic bootstrapping. Bootstrapping is unavoidable when the circuit depth is not known in advance or is too large to dimension statically.</p></li>
-<li><p>The polynomial <span class="math inline">\(x^N + 1\)</span> has <span class="math inline">\(N\)</span> complex roots, but since the message polynomial’s coefficients are real, evaluations at conjugate roots are also conjugates: <span class="math inline">\(m(\bar{\omega}) = \overline{m(\omega)}\)</span>. The roots group into <span class="math inline">\(N/2\)</span> conjugate pairs, and each pair contributes a single independent value. That’s why there are <span class="math inline">\(N/2\)</span> slots, not <span class="math inline">\(N\)</span>.</p></li>
-<li><p>The remaining 4091 slots contain zeros. The cost of operations is unaffected: a homomorphic addition or multiplication processes <em>all</em> <span class="math inline">\(N/2 = 4096\)</span> slots in parallel, whether or not they’re occupied. The cost is per ciphertext, not per datum — empty slots simply add or multiply zeros at no additional cost.</p></li>
-<li><p>The slots don’t coincide with the polynomial’s coefficients: they’re encoded via a variant of the DFT (the <em>canonical embedding</em>). The bootstrapping’s homomorphic decryption produces the polynomial in its coefficient representation, but the modular reduction must be applied to each slot separately. <em>CoeffsToSlots</em> converts from coefficients to slots via a homomorphic matrix multiplication, which consumes several additional multiplicative levels — levels subtracted from the newly restored budget.</p></li>
-<li><p>The summation tree needs <span class="math inline">\(\log_2(4096) = 12\)</span> rotations and 12 homomorphic additions. At each step, the vector is rotated by a power of 2 (<span class="math inline">\(1, 2, 4, \ldots, 2048\)</span>) and the result is added to the original, so that after 12 steps each slot contains the sum of all elements.</p></li>
-<li><p>The substitution <span class="math inline">\(x \to x^k\)</span> that implements the rotation transforms the ciphertext <span class="math inline">\((a(x), b(x))\)</span> into <span class="math inline">\((a(x^k), b(x^k))\)</span>, which is encrypted under the key <span class="math inline">\(s(x^k)\)</span> instead of <span class="math inline">\(s(x)\)</span>. To decrypt with the original key, a <em>key-switching</em> is needed that requires precomputed material — the Galois key — specific to each value of <span class="math inline">\(k\)</span>. Different rotation amounts correspond to different exponents <span class="math inline">\(k\)</span>, and each needs its own key.</p></li>
-<li><p>In a CPU SIMD register, a circular shift reorders register positions with no cryptographic cost — it’s a direct operation on bits. In FHE, rotation achieves the same logical effect (shifting vector positions), but requires an automorphism on the polynomial followed by key-switching, which adds noise and needs a precomputed Galois key. The similarity is functional: both move data within a “wide register.” The difference is cost: nanoseconds on CPU, milliseconds in FHE, plus the need for additional keys.</p></li>
-<li><p>Partial: supports ONE type of operation without limit (RSA→multiplications, Paillier→additions). Somewhat (SHE): supports additions AND multiplications but with a limited number of operations before noise prevents decryption. Fully (FHE): supports additions and multiplications without limit, thanks to bootstrapping that periodically resets the noise. Verify that the LLM doesn’t confuse SHE with FHE.</p></li>
-<li><p>The intermediate levels (<code>40, 40, 40</code>) consume one multiplicative depth level each. With three intermediate 40-bit levels, the scheme supports <strong>3 chained multiplications</strong>. The extreme levels (<code>60</code>) are reserved for scale (encoding) and decryption.</p></li>
-<li><p><em>Encoding</em>: BFV scales the integer message by <span class="math inline">\(\lfloor q/t \rfloor\)</span> and recovers the exact result by rounding; BGV does the same with inverse modulus management; CKKS scales by <span class="math inline">\(\Delta\)</span> and accepts an approximation error to represent reals. <em>Strengths</em>: BFV/BGV guarantee exact integer arithmetic; CKKS enables floating point and is natural for ML. <em>Limitations</em>: BFV/BGV can’t represent reals; CKKS accumulates error. TFHE differs on both axes: it uses LWE (not RLWE) — integer vectors instead of polynomials — and encodes a single bit per ciphertext on a torus. Its computation model is based on logic gates with automatic bootstrapping after each gate (~10 ms), making it ideal for comparisons and conditionals but inefficient for massive arithmetic (no SIMD parallelism).</p></li>
-</ol>
+<div class="solucion" data-ref="sec-manos-fhe">
+<div class="solucion" id="sol-sec-manos-fhe-1">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-1"><strong>2.1.</strong></a> BFV operates on exact integers (decryption recovers the exact value via rounding) and is suitable for database queries or counting. CKKS operates on approximate real numbers (accepts a small error of <span class="math inline">\(\sim 10^{-6}\)</span>) and is the reference scheme for machine learning and statistics. Verify that the LLM mentions both share the RLWE base and that the key difference is in message encoding.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-2">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-2"><strong>2.2.</strong></a> <code>poly_modulus_degree=16384</code> doubles the security and allows more multiplicative levels, but each operation takes longer (polynomials are twice as large). With <code>4096</code>, operations are faster but you get fewer multiplicative levels and lower security. Execution time scales approximately as <span class="math inline">\(O(n \log n)\)</span> per NTT operation.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-3">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-3"><strong>2.3.</strong></a> The formula <span class="math inline">\(E[X^2] - (E[X])^2\)</span> needs one element-wise multiplication (<span class="math inline">\(x_i^2\)</span>) and one multiplication of the mean result by itself — two ciphertext × ciphertext multiplications. The alternative <span class="math inline">\(\frac{1}{n}\sum(x_i - \bar{x})^2\)</span> first requires computing <span class="math inline">\(\bar{x}\)</span> (sums and rotations), then subtracting it from each <span class="math inline">\(x_i\)</span> (an addition by constant), and finally squaring each difference — it looks similar in multiplication count, but it first requires materializing the mean in every slot (extra rotations). In CKKS, the first formula is generally more efficient: fewer rotations and the same number of multiplicative levels.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-4">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-4"><strong>2.4.</strong></a> Both branches must reach the subtraction point having gone through <em>symmetric</em> sequences of operations — the same type and order of multiplications — so that their ciphertexts end up at the same level and with equivalent scales and noise histories. In the naive version, one branch does <code>ct*ct</code> followed by <code>*(1/n)</code> while the other does <code>*(1/n)</code> followed by <code>media*media</code>: although both consume two levels, the second multiplies together two ciphertexts already degraded by the earlier <code>*(1/n)</code>, so its internal state doesn’t match the first branch’s. CKKS doesn’t detect the mismatch, and the subtraction produces garbage. The fix moves the constants to plaintext: both branches then go through exactly one <code>ct*ct</code> between <em>fresh</em> ciphertexts.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-5">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-5"><strong>2.5.</strong></a> Because <code>features_cifrados * pesos</code> multiplies a ciphertext by plaintext constants, which doesn’t consume levels — it’s equivalent to scaling the internal polynomial. If the weights were also encrypted, it would be a ciphertext × ciphertext multiplication, which does consume a level and requires relinearization.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-6">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-6"><strong>2.6.</strong></a> With 10,000 features and <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, you need <span class="math inline">\(\lceil 10{,}000 / 4096 \rceil = 3\)</span> ciphertexts to pack all the features. The prediction requires 3 multiplications by constants (one per ciphertext) and 3 rotation-based sums (one per ciphertext), and finally adding the 3 scalar results — a trivial operation on decrypted values, or an additional homomorphic addition.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-7">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-7"><strong>2.7.</strong></a> 2 levels are needed: one for <span class="math inline">\(x^2 = x \cdot x\)</span> and another for <span class="math inline">\(x^3 = x^2 \cdot x\)</span> (multiplications by constants <span class="math inline">\(a, b, c, d\)</span> and additions don’t consume levels). The configuration would be <code>coeff_mod_bit_sizes=[60, 40, 40, 60]</code> with <code>poly_modulus_degree=8192</code>.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-8">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-8"><strong>2.8.</strong></a> The explicit error is a security decision: in a medical system, a silent “approximate” result could cause a misdiagnosis; in finance, a transaction with corrupted data could go unnoticed. The <em>fail-fast</em> principle ensures errors are caught in development, not production. A system that stops is preferable to one that produces plausible but incorrect results.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-9">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-9"><strong>2.9.</strong></a> With depth 20: dimensioning 20 levels requires an enormous <code>poly_modulus_degree</code> (≥32768) to maintain security, making every operation very slow. With 5 levels plus bootstrapping every 5 multiplications, you need 4 bootstraps (~4 s extra), but each individual multiplication is faster (smaller polynomials). For deep circuits, periodic bootstrapping is usually more efficient than static dimensioning, especially when the depth isn’t known in advance.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-10">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-10"><strong>2.10.</strong></a> Bootstrapping homomorphically evaluates the decryption circuit (<span class="math inline">\(b - a \cdot s\)</span>), which requires encrypting the secret key <span class="math inline">\(s\)</span> under itself. <em>Circular security</em> is the assumption that publishing <span class="math inline">\(\text{Enc}_s(s)\)</span> doesn’t weaken the scheme. It isn’t proven in general — it’s an additional assumption that all FHE schemes rely on. Verify that the LLM distinguishes between this assumption and standard IND-CPA security.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-11">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-11"><strong>2.11.</strong></a> The server must process <em>all</em> records because the query vector is encrypted — it can’t distinguish the zeros from the one. If it processed only a subset, it would reveal by elimination that the queried position is in that subset, breaking the query’s privacy.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-12">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-12"><strong>2.12.</strong></a> With <span class="math inline">\(N_{\text{slot}} = N/2 = 4096\)</span> slots per ciphertext and 10,000 records, the client needs <span class="math inline">\(\lceil 10{,}000 / 4096 \rceil = 3\)</span> ciphertexts (one with the 1 in the correct position, the other two with only zeros). The server must process all 3 ciphertexts — it can’t discard any without leaking information about the query.</p>
+</div>
+</div>
+<div class="solucion" data-ref="sec-aplicaciones-fhe">
+<div class="solucion" id="sol-sec-aplicaciones-fhe-1">
+<p><a class="solucion-num" href="#q-sec-aplicaciones-fhe-1"><strong>3.1.</strong></a> Current unsatisfactory alternatives: (1) In healthcare, data is anonymized or NDAs are used, but anonymization is fragile (patients can be re-identified by cross-referencing variables) and agreements don’t prevent the provider from seeing plaintext data. (2) In finance, controlled environments (<em>data clean rooms</em>) and legal agreements are used, but the recipient still accesses the actual data. (3) In multi-organization ML, data collection is centralized, exposing individual data. FHE would eliminate these exposures by always operating on encrypted data.</p>
+</div>
+<div class="solucion" id="sol-sec-aplicaciones-fhe-2">
+<p><a class="solucion-num" href="#q-sec-aplicaciones-fhe-2"><strong>3.2.</strong></a> Companies and libraries: Microsoft SEAL (C++, BFV/CKKS), IBM HELib (BGV/CKKS), Zama (Concrete, TFHE), Google (FHE transpiler for C++), Duality Technologies. The maturity state in 2024 is <em>limited production</em>: there are real use cases (ML on encrypted data, financial computation) but the overhead is still high (<span class="math inline">\(10^4\)</span>–<span class="math inline">\(10^5\times\)</span>) for most applications.</p>
+</div>
+</div>
+<div class="solucion" data-ref="sec-limitaciones-fhe">
+<div class="solucion" id="sol-sec-limitaciones-fhe-1">
+<p><a class="solucion-num" href="#q-sec-limitaciones-fhe-1"><strong>4.1.</strong></a> The cost is acceptable when the value of privacy exceeds the computational cost: genomic data, proprietary financial models, electronic voting, computation on regulated medical data. It’s not acceptable for low-latency applications (video games, high-frequency trading) or where data is not sensitive.</p>
+</div>
+<div class="solucion" id="sol-sec-limitaciones-fhe-2">
+<p><a class="solucion-num" href="#q-sec-limitaciones-fhe-2"><strong>4.2.</strong></a> The main advances between 2015 and 2024 were: faster bootstrapping (TFHE achieves millisecond evaluations), CKKS for approximate arithmetic (2017), FHE compilers that transform normal code into homomorphic code (Google, Zama), and hardware acceleration (Intel HEXL, DARPA DPRIVE projects). The performance gap was reduced from ~<span class="math inline">\(10^6\times\)</span> to ~<span class="math inline">\(10^4\times\)</span> for many operations.</p>
+</div>
+<div class="solucion" id="sol-sec-limitaciones-fhe-3">
+<p><a class="solucion-num" href="#q-sec-limitaciones-fhe-3"><strong>4.3.</strong></a> RLWE-based FHE schemes only offer two native operations: polynomial addition and multiplication. A comparison like <code>x &gt; y</code> is not an arithmetic operation — it requires evaluating a nonlinear function (sign). To implement it, the sign function is approximated by a high-degree polynomial (typically degree 10-30), and each multiplication of that polynomial consumes a level from the budget. A simple <code>if (x &gt; y)</code> can cost between 4 and 10 multiplicative levels.</p>
+</div>
+</div>
+<div class="solucion" data-ref="sec-fundamentos-fhe">
+<div class="solucion" id="sol-sec-fundamentos-fhe-1">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-1"><strong>5.1.</strong></a> SVP asks to find the shortest nonzero vector in the lattice; CVP asks to find the nearest lattice point to a given point in space. CVP is at least as hard as SVP because, if CVP could be solved efficiently, it could be used to solve SVP: simply query CVP with the origin and discard the zero vector. The intuition for why SVP may be easier is that its reference point (the origin) belongs to the lattice itself, which allows exploiting internal symmetries of the structure (translation invariance, for example). In CVP, the target point is arbitrary and “breaks” those symmetries — it’s a problem parameterized by an external input unrelated to the periodic structure of the lattice.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-2">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-2"><strong>5.2.</strong></a> RSA relies on integer factorization, which Shor’s algorithm solves in polynomial time on a quantum computer. Lattice problems (SVP, CVP) have no known efficient quantum analog: the best quantum algorithms remain exponential in the lattice dimension. That’s why lattices are the foundation of post-quantum cryptography and, by extension, of FHE.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-3">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-3"><strong>5.3.</strong></a> In the ring <span class="math inline">\(R_q = \mathbb{Z}_q[x]/(x^n+1)\)</span>, multiplying by a polynomial <span class="math inline">\(a(x)\)</span> is equivalent to multiplying by a negacyclic matrix determined by the coefficients of <span class="math inline">\(a(x)\)</span>. This allows replacing the random LWE matrix <span class="math inline">\(A\)</span> (<span class="math inline">\(n^2\)</span> integers, <span class="math inline">\(O(n^2)\)</span> multiplication) with a single polynomial (<span class="math inline">\(n\)</span> integers, <span class="math inline">\(O(n \log n)\)</span> multiplication via NTT). With <span class="math inline">\(n = 8192\)</span>, keys are reduced ~<span class="math inline">\(8{,}000\times\)</span> and operations are accelerated ~<span class="math inline">\(1{,}000\times\)</span>.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-4">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-4"><strong>5.4.</strong></a> The RLWE equation is <span class="math inline">\(b = a \cdot s + e\)</span>, where <span class="math inline">\(e\)</span> is a small error. Without the error, recovering <span class="math inline">\(s\)</span> would be trivial linear algebra (polynomial division). With it, <span class="math inline">\(b\)</span> is a point <em>near</em> the lattice generated by the ring <span class="math inline">\(R_q\)</span>, but not exactly on it — recovering <span class="math inline">\(s\)</span> is equivalent to finding the nearest point, which is CVP. Formally, Lyubashevsky, Peikert, and Regev proved that solving RLWE in the average case allows solving approximate SVP on ideal lattices in the worst case. Verify that the LLM mentions the reduction applies to ideal lattices (those with the ring structure <span class="math inline">\(R_q\)</span>, not general lattices) and that the noise <span class="math inline">\(e\)</span> is what turns a trivial problem into an intractable one.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-5">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-5"><strong>5.5.</strong></a> Without the random polynomial <span class="math inline">\(a\)</span>, two ciphertexts <span class="math inline">\(c_1 = s + e_1 + m_1\)</span> and <span class="math inline">\(c_2 = s + e_2 + m_2\)</span> would allow the attacker to compute <span class="math inline">\(c_1 - c_2 \approx m_1 - m_2\)</span>, revealing the difference between messages. The polynomial <span class="math inline">\(a\)</span>, different in each encryption, acts as a mask that makes each ciphertext indistinguishable from random noise.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-6">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-6"><strong>5.6.</strong></a> In homomorphic addition, errors add: <span class="math inline">\(e_{\text{sum}} = e_1 + e_2\)</span>. If initial errors are on the order of <span class="math inline">\(\epsilon\)</span>, after <span class="math inline">\(k\)</span> additions the error is <span class="math inline">\(k\epsilon\)</span>. In multiplication, errors multiply with the messages: <span class="math inline">\(e_{\text{mult}} \approx e_1 \cdot m_2 + e_2 \cdot m_1\)</span>, growing proportionally to the message sizes. This drastically limits the number of chained multiplications before noise overflows the modulus.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-7">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-7"><strong>5.7.</strong></a> Homomorphic multiplication produces a triplet <span class="math inline">\((d_0, d_1, d_2)\)</span> that depends on <span class="math inline">\(s^2\)</span>, instead of the standard pair <span class="math inline">\((a, b)\)</span> that depends only on <span class="math inline">\(s\)</span>. Relinearization uses a public key that encrypts <span class="math inline">\(s^2\)</span> to convert the triplet into a standard pair. Without it, each multiplication would increase the ciphertext’s degree in <span class="math inline">\(s\)</span>, making it unmanageable after a few operations.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-8">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-8"><strong>5.8.</strong></a> The logic <code>if (m &lt; 0) then m = -m</code> computes the absolute value: <span class="math inline">\(|m| = m \cdot \text{sign}(m)\)</span>. Since CKKS doesn’t support conditional branches, the sign function must be approximated with a polynomial (for example, a degree 15–27 Chebyshev approximation). The implementation evaluates that polynomial on the ciphertext — <span class="math inline">\(\text{Enc}(\text{sign}(m)) \approx p(\text{Enc}(m))\)</span> — and then multiplies the result by <span class="math inline">\(\text{Enc}(m)\)</span>: <code>enc_abs = enc_m * poly_sign(enc_m)</code>. Evaluating the polynomial consumes <span class="math inline">\(\lceil \log_2(\text{degree}) \rceil \approx 4\)</span>–<span class="math inline">\(5\)</span> levels via the Paterson–Stockmeyer algorithm, plus one additional level for the final multiplication: between <strong>5 and 10 multiplicative levels</strong> in total, compared to a single instruction in conventional code.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-9">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-9"><strong>5.9.</strong></a> In CKKS, each multiplication doubles the message scale from <span class="math inline">\(\Delta\)</span> to <span class="math inline">\(\Delta^2\)</span> and amplifies the error by a factor of <span class="math inline">\(\Delta\)</span>. Rescaling divides the entire ciphertext by <span class="math inline">\(\Delta\)</span>, restoring the standard scale and eliminating the extra 40 bits of error. Without rescaling, the scale would grow exponentially and the modulus <span class="math inline">\(q\)</span> would be exhausted after a single multiplication.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-10">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-10"><strong>5.10.</strong></a> The circuit <span class="math inline">\(a \cdot b + c \cdot d\)</span> has two independent (parallel, not chained) multiplications followed by an addition. The multiplicative depth is 1. A single level suffices: <code>coeff_mod_bit_sizes=[60, 40, 60]</code> would be enough.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-11">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-11"><strong>5.11.</strong></a> Bootstrapping evaluates the decryption circuit (<span class="math inline">\(b - a \cdot s\)</span>) homomorphically, which requires operating with <span class="math inline">\(s\)</span> in the encrypted domain. This needs an encryption of <span class="math inline">\(s\)</span> under the key <span class="math inline">\(s\)</span> itself. This requires the <em>circular security</em> assumption: that encrypting the key under itself doesn’t weaken the scheme. All current FHE schemes assume this property, although it hasn’t been proven in general.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-12">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-12"><strong>5.12.</strong></a> Dimensioning parameters to avoid bootstrapping requires a modulus <span class="math inline">\(q\)</span> proportional to the number of multiplications, which demands an ever-larger <code>poly_modulus_degree</code> to maintain security. For very deep circuits, the polynomials would be so large that each operation would be slower than periodic bootstrapping. Bootstrapping is unavoidable when the circuit depth is not known in advance or is too large to dimension statically.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-13">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-13"><strong>5.13.</strong></a> The polynomial <span class="math inline">\(x^N + 1\)</span> has <span class="math inline">\(N\)</span> complex roots, but since the message polynomial’s coefficients are real, evaluations at conjugate roots are also conjugates: <span class="math inline">\(m(\bar{\omega}) = \overline{m(\omega)}\)</span>. The roots group into <span class="math inline">\(N/2\)</span> conjugate pairs, and each pair contributes a single independent value. That’s why there are <span class="math inline">\(N/2\)</span> slots, not <span class="math inline">\(N\)</span>.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-14">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-14"><strong>5.14.</strong></a> The remaining 4091 slots contain zeros. The cost of operations is unaffected: a homomorphic addition or multiplication processes <em>all</em> <span class="math inline">\(N/2 = 4096\)</span> slots in parallel, whether or not they’re occupied. The cost is per ciphertext, not per datum — empty slots simply add or multiply zeros at no additional cost.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-15">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-15"><strong>5.15.</strong></a> The slots don’t coincide with the polynomial’s coefficients: they’re encoded via a variant of the DFT (the <em>canonical embedding</em>). The bootstrapping’s homomorphic decryption produces the polynomial in its coefficient representation, but the modular reduction must be applied to each slot separately. <em>CoeffsToSlots</em> converts from coefficients to slots via a homomorphic matrix multiplication, which consumes several additional multiplicative levels — levels subtracted from the newly restored budget.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-16">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-16"><strong>5.16.</strong></a> The summation tree needs <span class="math inline">\(\log_2(4096) = 12\)</span> rotations and 12 homomorphic additions. At each step, the vector is rotated by a power of 2 (<span class="math inline">\(1, 2, 4, \ldots, 2048\)</span>) and the result is added to the original, so that after 12 steps each slot contains the sum of all elements.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-17">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-17"><strong>5.17.</strong></a> The substitution <span class="math inline">\(x \to x^k\)</span> that implements the rotation transforms the ciphertext <span class="math inline">\((a(x), b(x))\)</span> into <span class="math inline">\((a(x^k), b(x^k))\)</span>, which is encrypted under the key <span class="math inline">\(s(x^k)\)</span> instead of <span class="math inline">\(s(x)\)</span>. To decrypt with the original key, a <em>key-switching</em> is needed that requires precomputed material — the Galois key — specific to each value of <span class="math inline">\(k\)</span>. Different rotation amounts correspond to different exponents <span class="math inline">\(k\)</span>, and each needs its own key.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-18">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-18"><strong>5.18.</strong></a> In a CPU SIMD register, a circular shift reorders register positions with no cryptographic cost — it’s a direct operation on bits. In FHE, rotation achieves the same logical effect (shifting vector positions), but requires an automorphism on the polynomial followed by key-switching, which adds noise and needs a precomputed Galois key. The similarity is functional: both move data within a “wide register.” The difference is cost: nanoseconds on CPU, milliseconds in FHE, plus the need for additional keys.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-19">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-19"><strong>5.19.</strong></a> Partial: supports ONE type of operation without limit (RSA→multiplications, Paillier→additions). Somewhat (SHE): supports additions AND multiplications but with a limited number of operations before noise prevents decryption. Fully (FHE): supports additions and multiplications without limit, thanks to bootstrapping that periodically resets the noise. Verify that the LLM doesn’t confuse SHE with FHE.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-20">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-20"><strong>5.20.</strong></a> The intermediate levels (<code>40, 40, 40</code>) consume one multiplicative depth level each. With three intermediate 40-bit levels, the scheme supports <strong>3 chained multiplications</strong>. The extreme levels (<code>60</code>) are reserved for scale (encoding) and decryption.</p>
+</div>
+<div class="solucion" id="sol-sec-fundamentos-fhe-21">
+<p><a class="solucion-num" href="#q-sec-fundamentos-fhe-21"><strong>5.21.</strong></a> <em>Encoding</em>: BFV scales the integer message by <span class="math inline">\(\lfloor q/t \rfloor\)</span> and recovers the exact result by rounding; BGV does the same with inverse modulus management; CKKS scales by <span class="math inline">\(\Delta\)</span> and accepts an approximation error to represent reals. <em>Strengths</em>: BFV/BGV guarantee exact integer arithmetic; CKKS enables floating point and is natural for ML. <em>Limitations</em>: BFV/BGV can’t represent reals; CKKS accumulates error. TFHE differs on both axes: it uses LWE (not RLWE) — integer vectors instead of polynomials — and encodes a single bit per ciphertext on a torus. Its computation model is based on logic gates with automatic bootstrapping after each gate (~10 ms), making it ideal for comparisons and conditionals but inefficient for massive arithmetic (no SIMD parallelism).</p>
+</div>
 </div>
 </section></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -1484,15 +1607,7 @@ the 52nd Annual IEEE Symposium on Foundations of Computer Science
     }
   });
   </script>
-<nav class="page-navigation">
-<div class="nav-page nav-page-previous">
-</div>
-<div class="nav-page nav-page-next">
-<a aria-label="Prologue" class="pagination-link" href="./00-prologo.html">
-<span class="nav-page-text">Prologue</span> <i class="bi bi-arrow-right-short"></i>
-</a>
-</div>
-</nav>
+
 </div> <!-- /content -->
 <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
 const typesetMath = (el) => {
