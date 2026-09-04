@@ -468,7 +468,7 @@ Rivest, Ronald L., Leonard Adleman, y Michael L. Dertouzos. 1978. <span>«On Dat
 <p><strong>Análisis financiero regulado.</strong> La detección de fraude bancario es más eficaz cuando múltiples instituciones comparten patrones de transacciones sospechosas. Pero compartir datos financieros entre bancos choca frontalmente con regulaciones de privacidad y con la reticencia competitiva. Hoy se recurre a acuerdos de confidencialidad y entornos controlados, pero el banco receptor sigue viendo los datos en claro. El FHE permite que cada banco cifre sus transacciones y que un servicio centralizado ejecute algoritmos de detección sobre los datos cifrados de todos, sin que ninguna entidad acceda a los registros de las demás.</p>
 <p><strong>Machine Learning sobre datos sensibles.</strong> Entrenar un modelo de aprendizaje automático requiere acceso a grandes volúmenes de datos, que a menudo pertenecen a organizaciones distintas — hospitales, aseguradoras, administraciones públicas. FHE permite que varias partes contribuyan con datos cifrados a un entrenamiento conjunto sin revelar información individual. Esto abre la puerta a colaboraciones entre organizaciones que hoy son inviables por barreras legales o de confianza.</p>
 <p><strong>Búsquedas cifradas.</strong> Un usuario busca información en un servicio web, pero no quiere que el proveedor conozca sus consultas — piénsese en búsquedas de síntomas médicos o asesoramiento legal. Con FHE, la consulta se envía cifrada, el servidor la procesa contra su índice sin descifrarla, y devuelve resultados cifrados que solo el usuario puede leer. El proveedor ofrece el servicio sin saber qué se buscó.</p>
-<p><strong>Externalización segura de cómputo.</strong> Más allá de los sectores anteriores, cualquier organización que externalice cómputo a la nube enfrenta el mismo dilema: confiar en el proveedor o no usar la nube. El FHE elimina esa disyuntiva al permitir que los datos permanezcan cifrados durante todo el procesamiento. El proveedor nunca tiene acceso a los datos en claro, y además se puede combinar con pruebas de conocimiento cero (el capítulo sobre pruebas de conocimiento cero) para que demuestre que ejecutó el cálculo correctamente — sin revelar nada sobre los datos ni sobre el proceso.</p>
+<p><strong>Externalización segura de cómputo.</strong> Más allá de los sectores anteriores, cualquier organización que externalice cómputo a la nube enfrenta el mismo dilema: confiar en el proveedor o no usar la nube. El FHE elimina esa disyuntiva al permitir que los datos permanezcan cifrados durante todo el procesamiento. El proveedor nunca tiene acceso a los datos en claro, y además se puede combinar con pruebas de conocimiento cero — otra familia de técnicas criptográficas (ver <a href="06.html">Lecturas Recomendadas</a>) — para que demuestre que ejecutó el cálculo correctamente — sin revelar nada sobre los datos ni sobre el proceso.</p>
 <div class="repaso">
 <div class="pregunta" id="q-sec-aplicaciones-fhe-1">
 <a class="pregunta-num" href="#sol-sec-aplicaciones-fhe-1"><strong>3.1.</strong></a> Para las aplicaciones de sanidad, finanzas y Machine Learning, ¿qué alternativa se usa hoy en la práctica y por qué es insatisfactoria?
@@ -492,14 +492,14 @@ Rivest, Ronald L., Leonard Adleman, y Michael L. Dertouzos. 1978. <span>«On Dat
 <p><strong>Profundidad de circuito limitada.</strong> El presupuesto de niveles multiplicativos se fija <em>antes</em> de cifrar, mediante la cadena de módulos <code>coeff_mod_bit_sizes</code> (<a class="quarto-xref" href="05.html#sec-ruido-niveles"><span>Sección 5.4</span></a>). Si el circuito necesita más multiplicaciones de las presupuestadas, hay que redimensionar los parámetros (aumentando <span class="math inline">\(N\)</span> y <span class="math inline">\(q\)</span>, lo que encarece <em>todas</em> las operaciones) o recurrir al bootstrapping, que consume ~1 segundo y gasta parte de los niveles recién restaurados. No existe la posibilidad de «añadir niveles sobre la marcha» — la topología del circuito debe conocerse de antemano.</p>
 <p><strong>Resultados aproximados (CKKS).</strong> El esquema CKKS, el más usado para números reales, produce resultados con un error inherente del orden de <span class="math inline">\(10^{-6}\)</span> en configuraciones típicas. Para estadísticas y machine learning esto suele ser aceptable, pero no lo es para aplicaciones que requieren aritmética exacta (contabilidad, votación). Los esquemas BFV y BGV ofrecen aritmética exacta sobre enteros, pero no soportan números reales directamente. Además, CKKS tiene un matiz de seguridad particular: como los resultados descifrados llevan rastros del ruido interno del cifrotexto, un atacante que observe suficientes descifrados puede extraer información sobre la clave secreta. Las librerías actuales implementan mitigaciones — como añadir ruido adicional al descifrar —, pero el desarrollador debe tener presente una regla práctica: no exponer descifrados intermedios a terceros.</p>
 <p><strong>Expansión del cifrotexto.</strong> Como veremos al describir las matemáticas subyacentes al FHE en <a class="quarto-xref" href="05.html"><span>Capítulo 5</span></a>, cada cifrotexto es internamente un par de polinomios de <span class="math inline">\(N\)</span> coeficientes módulo <span class="math inline">\(q\)</span>, lo que implica un tamaño de <span class="math inline">\(2 \times N \times \lceil\log_2 q\rceil\)</span> bits. Con nuestros parámetros (<span class="math inline">\(N = 8192\)</span>, módulo total <span class="math inline">\(q \approx 2^{200}\)</span> — suma de los 60+40+40+60 bits de <code>coeff_mod_bit_sizes</code>), eso da <span class="math inline">\(2 \times 8192 \times 200 / 8 \approx 400\)</span> KB. Un número de 8 bytes se convierte en un cifrotexto de ~400 KB — una expansión de <span class="math inline">\(50\,000\times\)</span>. El <em>packing</em> (<a class="quarto-xref" href="05.html#sec-packing-simd"><span>Sección 5.6</span></a>) reduce el coste amortizado a ~100 bytes por valor, pero las claves criptográficas son aún más voluminosas: las claves de Galois ocupan cientos de megabytes y las de bootstrapping pueden alcanzar varios gigabytes. Transmitir estas claves a un proveedor en la nube puede tardar minutos incluso con conexiones rápidas, y el consumo de memoria RAM del servidor se multiplica.</p>
-<p><strong>Tamaño de claves.</strong> La clave secreta es compacta (unos pocos kilobytes), pero el material criptográfico necesario para las operaciones homomórficas es enorme. La <a class="quarto-xref" href="05.html#tbl-fhe-keys">Tabla <span>5.1</span></a> en <a class="quarto-xref" href="05.html#sec-rotaciones-fhe"><span>Sección 5.7</span></a> muestra las cuatro claves necesarias; las de relinearización y especialmente las de Galois — una por cada posición de rotación — ocupan cientos de megabytes con <span class="math inline">\(N = 8192\)</span>. Si se añade bootstrapping, las claves de evaluación pueden superar el gigabyte. Esto limita los dispositivos donde se puede ejecutar FHE (un sensor IoT no puede almacenar claves de 500 MB) y añade latencia en escenarios donde las claves deben transmitirse al servidor.</p>
-<p><strong>Maleabilidad.</strong> Por definición, un esquema homomórfico permite que cualquiera transforme un cifrotexto en otro cifrotexto válido que cifra un mensaje relacionado — eso es precisamente lo que lo hace útil. Pero esa misma propiedad implica que los cifrotextos son <em>maleables</em>: un atacante podría modificar un resultado cifrado sin ser detectado (por ejemplo, sumar una constante al salario cifrado de alguien). Los esquemas FHE garantizan que un atacante no puede distinguir entre dos cifrotextos — no puede saber qué mensaje se cifró. Pero <em>no</em> garantizan que un atacante no pueda <em>modificar</em> un cifrotexto de forma útil sin ser detectado. En la práctica, la integridad del cómputo se protege combinando FHE con pruebas de conocimiento cero (el capítulo sobre pruebas de conocimiento cero) o con esquemas de computación verificable.</p>
+<p><strong>Tamaño de claves.</strong> La clave secreta es compacta (unos pocos kilobytes), pero el material criptográfico necesario para las operaciones homomórficas es enorme. La <a class="quarto-xref" href="05.html#tbl-fhe-keys">Tabla <span>5.1</span></a> en <a class="quarto-xref" href="05.html#sec-rotaciones-fhe"><span>Sección 5.7</span></a> resume las cinco claves involucradas en un contexto CKKS con bootstrapping y su tamaño aproximado con <span class="math inline">\(N = 8192\)</span>: las de relinearización y especialmente las de Galois — una por cada posición de rotación — ocupan cientos de megabytes en conjunto, y las de bootstrapping pueden superar el gigabyte. Esto limita los dispositivos donde se puede ejecutar FHE (un sensor IoT no puede almacenar claves de 500 MB) y añade latencia en escenarios donde las claves deben transmitirse al servidor.</p>
+<p><strong>Maleabilidad.</strong> Por definición, un esquema homomórfico permite que cualquiera transforme un cifrotexto en otro cifrotexto válido que cifra un mensaje relacionado — eso es precisamente lo que lo hace útil. Pero esa misma propiedad implica que los cifrotextos son <em>maleables</em>: un atacante podría modificar un resultado cifrado sin ser detectado (por ejemplo, sumar una constante al salario cifrado de alguien). Los esquemas FHE garantizan que un atacante no puede distinguir entre dos cifrotextos — no puede saber qué mensaje se cifró. Pero <em>no</em> garantizan que un atacante no pueda <em>modificar</em> un cifrotexto de forma útil sin ser detectado. En la práctica, la integridad del cómputo se protege combinando FHE con pruebas de conocimiento cero (ver <a href="06.html">Lecturas Recomendadas</a>) o con esquemas de computación verificable.</p>
 <div class="repaso">
 <div class="pregunta" id="q-sec-limitaciones-fhe-1">
 <a class="pregunta-num" href="#sol-sec-limitaciones-fhe-1"><strong>4.1.</strong></a> Si las operaciones homomórficas son <span class="math inline">\(10^4\)</span>–<span class="math inline">\(10^6\)</span> veces más lentas, ¿para qué tipo de aplicaciones el coste es aceptable y para cuáles no?
 </div>
 <div class="pregunta" id="q-sec-limitaciones-fhe-2">
-<a class="pregunta-num" href="#sol-sec-limitaciones-fhe-2"><strong>4.2.</strong></a> Pídele a un LLM: <em>«¿Cómo se compara el rendimiento del FHE en 2024 con el de 2015? ¿Cuáles fueron los avances principales?»</em>
+<a class="pregunta-num" href="#sol-sec-limitaciones-fhe-2"><strong>4.2.</strong></a> Pídele a un LLM: <em>«¿Cómo se compara el rendimiento del FHE en 2026 con el de 2015? ¿Cuáles fueron los avances principales?»</em>
 </div>
 <div class="pregunta" id="q-sec-limitaciones-fhe-3">
 <a class="pregunta-num" href="#sol-sec-limitaciones-fhe-3"><strong>4.3.</strong></a> Un ingeniero necesita implementar una comparación <code>x &gt; y</code> sobre datos cifrados con FHE. ¿Por qué no puede hacerlo directamente? ¿Qué alternativa tiene y cuál es su coste?
@@ -513,6 +513,7 @@ Rivest, Ronald L., Leonard Adleman, y Michael L. Dertouzos. 1978. <span>«On Dat
 <div class="quarto-title-meta">
 </div>
 </header>
+<p>Ahora Daniel ha podido experimentar con la tecnologia, lo que el llama jugar con ella. Para Elena, los resultados obtenidos son suficientes para seguir adelante con el proyecto. PEro es este nivel de entendimiento suficiente para poner un sistema en produccion y ocuparse de resolver cualquier problema que venga ahora o en el futuro?</p>
 <p>Hemos visto que el código funciona y que las aplicaciones potenciales son reales, pero a costa de un rendimiento entre <span class="math inline">\(10^4\)</span> y <span class="math inline">\(10^6\)</span> veces peor que en claro por operación individual en CPU — una brecha que el <em>packing</em> (<a class="quarto-xref" href="#sec-packing-simd"><span>Sección 5.6</span></a>), las GPU y los aceleradores hardware reducen considerablemente ¿Cómo es posible que un ordenador ejecute cálculos sobre datos que no puede ver, y por qué es tan caro incluso con estas optimizaciones? Recordemos la analogía de la caja con guantes para manipular joyas o la de cocinar sin tocar los ingredientes: Alice mete sus materiales dentro de una caja cerrada con llave, y un trabajador los manipula a través de los guantes sin tocarlos jamás. En FHE, los datos son los materiales, el cifrado es la caja, y las operaciones homomórficas son los guantes. Vamos a ver cómo se construye esa «caja» matemáticamente, y de paso entenderemos cada parámetro del código que acabamos de ejecutar. La clave está en una rama de las matemáticas que poca gente asocia con criptografía: los retículos.</p>
 <section class="level2" data-number="5.1" id="retículos">
 <h2 class="anchored" data-anchor-id="retículos" data-number="5.1"><span class="header-section-number">5.1</span> Retículos</h2>
@@ -914,51 +915,50 @@ Figura 5.13: Automorfismo y key-switching (ejemplo con <span class="math inline
 </div>
 <p>Esto explica por qué las claves de Galois son tan voluminosas: con <span class="math inline">\(N = 8192\)</span>, las <span class="math inline">\(\log_2(N/2) = 12\)</span> rotaciones necesarias para un <code>sum()</code> requieren 12 claves de Galois, cada una del tamaño de un cifrotexto (cientos de kilobytes). Si el circuito necesita rotaciones por cantidades arbitrarias, el conjunto completo puede alcanzar cientos de megabytes. Conviene ver todas las claves del esquema en conjunto:</p>
 <p></p>
-<div class="quarto-float quarto-figure quarto-figure-center anchored" id="tbl-fhe-keys">
+<div class="quarto-float quarto-figure quarto-figure-center anchored" data-tbl-colwidths="[20,50,30]" id="tbl-fhe-keys">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fhe-keys-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Tabla 5.1: Claves en un contexto CKKS y su función.
+Tabla 5.1: Claves en un contexto CKKS. La secreta, la pública y la de relinearización se generan automáticamente al crear el contexto; las de Galois y bootstrapping requieren una llamada explícita (<code>generate_galois_keys()</code>, <code>EvalBootstrapKeyGen()</code>). Los tamaños son órdenes de magnitud orientativos, no valores exactos.
 </figcaption>
 <div aria-describedby="tbl-fhe-keys-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 14%"/>
-<col style="width: 22%"/>
 <col style="width: 20%"/>
-<col style="width: 44%"/>
+<col style="width: 50%"/>
+<col style="width: 30%"/>
 </colgroup>
 <thead>
 <tr class="header">
 <th>Clave</th>
-<th>Se genera</th>
-<th>Habilita</th>
-<th>¿Qué pasa sin ella?</th>
+<th>Función</th>
+<th>Tamaño (<span class="math inline">\(N = 8192\)</span>)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>Secreta</strong> (<span class="math inline">\(s\)</span>)</td>
-<td>Automáticamente al crear el contexto</td>
-<td>Descifrar</td>
-<td>No se pueden recuperar los resultados</td>
+<td>Descifrar los resultados</td>
+<td>Pocos KB</td>
 </tr>
 <tr class="even">
 <td><strong>Pública</strong></td>
-<td>Automáticamente al crear el contexto</td>
-<td>Cifrar</td>
-<td>No se pueden cifrar datos (solo el poseedor de <span class="math inline">\(s\)</span> podría)</td>
+<td>Cifrar los datos</td>
+<td>Cientos de KB (similar a un cifrotexto)</td>
 </tr>
 <tr class="odd">
 <td><strong>Relinearización</strong></td>
-<td>Automáticamente en TenSEAL</td>
-<td>Multiplicación entre cifrotextos</td>
-<td>El cifrotexto crece tras cada multiplicación hasta ser inmanejable</td>
+<td>Evita que el cifrotexto crezca sin control tras cada multiplicación</td>
+<td>1–10 MB</td>
 </tr>
 <tr class="even">
 <td><strong>Galois</strong></td>
-<td>Explícitamente: <code>generate_galois_keys()</code></td>
-<td>Rotaciones</td>
-<td><code>sum()</code> y cualquier operación que combine slots falla con error</td>
+<td>Rotaciones; sin ella, <code>sum()</code> y cualquier operación que combine slots falla</td>
+<td>1–10 MB por rotación; cientos de MB para el conjunto completo</td>
+</tr>
+<tr class="odd">
+<td><strong>Bootstrapping</strong></td>
+<td>Refresca el ruido para poder superar la profundidad multiplicativa inicial</td>
+<td>Puede superar 1 GB</td>
 </tr>
 </tbody>
 </table>
@@ -1074,13 +1074,13 @@ Tabla 5.2: Principales esquemas FHE: fundamentos, capacidades y compromisos.
 </section><section class="standalone-merged-section" id="merged-07">
 <header class="quarto-title-block default" id="title-block-header-7">
 <div class="quarto-title">
-<h1 class="title">Lecturas Recomendadas</h1>
+<h1 class="title"><span class="quarto-section-identifier" id="sec-lecturas-fhe">Lecturas Recomendadas</span></h1>
 </div>
 <div class="quarto-title-meta">
 </div>
 </header>
 <p>El mejor punto de partida para aprender en profundidad sobre cifrado homomórfico es el artículo original <span class="citation" data-cites="gentry2010computing">Gentry (<a href="07.html#ref-gentry2010computing" role="doc-biblioref">2010</a>)</span>, donde Gentry explica su propio avance en lenguaje accesible, sin formalismo pesado; es ideal para entender <em>qué</em> resuelve el FHE y <em>por qué</em> funciona el bootstrapping. Como siguiente paso, <span class="citation" data-cites="vaikuntanathan2011computing">Vaikuntanathan (<a href="07.html#ref-vaikuntanathan2011computing" role="doc-biblioref">2011</a>)</span> es una charla invitada en FOCS que profundiza en la mecánica del FHE sin requerir criptografía avanzada, explicando la evolución desde cifrado parcialmente homomórfico hasta FHE completo con claridad excepcional. Para una visión completa y actualizada del campo, <span class="citation" data-cites="marcolla2022survey">Marcolla et al. (<a href="07.html#ref-marcolla2022survey" role="doc-biblioref">2022</a>)</span> ofrece una revisión exhaustiva que cubre todos los esquemas modernos (BGV, BFV, CKKS, TFHE), aceleración por hardware y despliegues reales.</p>
-<p>Aunque el FHE garantiza la confidencialidad de los datos, no garantiza su integridad — el segundo pilar de la seguridad (confidencialidad, integridad y disponibilidad) —: no garantiza que el servidor calculó correctamente ni que el resultado no fue manipulado. La combinación natural para añadir integridad son las pruebas de conocimiento cero, que se tratan en el capítulo sobre pruebas de conocimiento cero.</p>
+<p>Aunque el FHE garantiza la confidencialidad de los datos, no garantiza su integridad — el segundo pilar de la seguridad (confidencialidad, integridad y disponibilidad) —: no garantiza que el servidor calculó correctamente ni que el resultado no fue manipulado. La combinación natural para añadir integridad son las pruebas de conocimiento cero — una familia de técnicas criptográficas independiente del FHE que permite demostrar que un cálculo se ejecutó correctamente sin revelar nada sobre los datos. El artículo fundacional es <span class="citation" data-cites="goldwasser1989knowledge">Goldwasser et al. (<a href="07.html#ref-goldwasser1989knowledge" role="doc-biblioref">1989</a>)</span>, y <span class="citation" data-cites="thaler2022proofs">Thaler (<a href="07.html#ref-thaler2022proofs" role="doc-biblioref">2022</a>)</span> ofrece un tratamiento moderno y accesible del tema.</p>
 <p>Sin embargo, el FHE protege los datos pero no el programa: el servidor conoce el programa que ejecuta. Para entender dónde encaja esta tecnología en el paisaje más amplio de la computación privada, <span class="citation" data-cites="barak2016obfuscation">Barak (<a href="07.html#ref-barak2016obfuscation" role="doc-biblioref">2016</a>)</span> ofrece una introducción accesible escrita por uno de los investigadores más prominentes del campo. El artículo sitúa el FHE junto a otras dos primitivas complementarias. La primera es el <em>cómputo multiparte seguro</em> (MPC), donde varias partes computan conjuntamente sin que ninguna vea los datos de las demás; a diferencia del FHE, el MPC está desplegado en producción hoy — con un overhead del orden de 10–100× sobre texto en claro — y tiene aplicaciones reales en detección de fraude entre bancos o análisis de datos genómicos entre instituciones. La segunda es la <em>ofuscación por indistinguibilidad</em> (iO), que permitiría cifrar también la lógica del programa — el escenario donde ni los datos ni el código son visibles para el servidor —, pero es hoy completamente impráctica (varios órdenes de magnitud más lenta que el propio FHE), razón por la que no tiene capítulo propio en este libro.</p>
 <div class="references csl-bib-body hanging-indent" id="refs-7" role="list" style="display: none">
 <div class="csl-entry" id="ref-barak2016obfuscation" role="listitem">
@@ -1089,8 +1089,14 @@ Barak, Boaz. 2016. <span>«Hopes, Fears, and Software Obfuscation»</span>. <em>
 <div class="csl-entry" id="ref-gentry2010computing-7" role="listitem">
 Gentry, Craig. 2010. <span>«Computing Arbitrary Functions of Encrypted Data»</span>. <em>Communications of the ACM</em> 53 (3): 97-105. <a href="https://doi.org/10.1145/1666420.1666444">https://doi.org/10.1145/1666420.1666444</a>.
 </div>
+<div class="csl-entry" id="ref-goldwasser1989knowledge" role="listitem">
+Goldwasser, Shafi, Silvio Micali, y Charles Rackoff. 1989. <span>«The Knowledge Complexity of Interactive Proof Systems»</span>. <em>SIAM Journal on Computing</em> 18 (1): 186-208. <a href="https://doi.org/10.1137/0218012">https://doi.org/10.1137/0218012</a>.
+</div>
 <div class="csl-entry" id="ref-marcolla2022survey" role="listitem">
 Marcolla, Chiara, Victor Sucasas, Marc Manzano, Riccardo Bassoli, Frank H. P. Fitzek, y Najwa Aaraj. 2022. <span>«Survey on Fully Homomorphic Encryption, Theory, and Applications»</span>. <em>Proceedings of the IEEE</em> 110 (10): 1572-609. <a href="https://doi.org/10.1109/JPROC.2022.3205665">https://doi.org/10.1109/JPROC.2022.3205665</a>.
+</div>
+<div class="csl-entry" id="ref-thaler2022proofs" role="listitem">
+Thaler, Justin. 2022. <em>Proofs, Arguments, and Zero-Knowledge</em>. Foundations y Trends en Privacy y Security. Now Publishers. <a href="https://doi.org/10.1561/3300000030">https://doi.org/10.1561/3300000030</a>.
 </div>
 <div class="csl-entry" id="ref-vaikuntanathan2011computing" role="listitem">
 Vaikuntanathan, Vinod. 2011. <span>«Computing Blindfolded: New Developments in Fully Homomorphic Encryption»</span>. <em>Proceedings of the 52nd Annual IEEE Symposium on Foundations of Computer Science (FOCS)</em>, 5-16. <a href="https://doi.org/10.1109/FOCS.2011.98">https://doi.org/10.1109/FOCS.2011.98</a>.
@@ -1118,6 +1124,11 @@ Scheme.”</span> PhD thesis, Stanford University. <a href="https://crypto.stanf
 Gentry, Craig. 2010. <span>“Computing Arbitrary Functions of Encrypted
 Data.”</span> <em>Communications of the ACM</em> 53 (3): 97–105. <a href="https://doi.org/10.1145/1666420.1666444">https://doi.org/10.1145/1666420.1666444</a>.
 </div>
+<div class="csl-entry" id="ref-goldwasser1989knowledge-8" role="listitem">
+Goldwasser, Shafi, Silvio Micali, and Charles Rackoff. 1989. <span>“The
+Knowledge Complexity of Interactive Proof Systems.”</span> <em>SIAM
+Journal on Computing</em> 18 (1): 186–208. <a href="https://doi.org/10.1137/0218012">https://doi.org/10.1137/0218012</a>.
+</div>
 <div class="csl-entry" id="ref-marcolla2022survey-8" role="listitem">
 Marcolla, Chiara, Victor Sucasas, Marc Manzano, Riccardo Bassoli, Frank
 H. P. Fitzek, and Najwa Aaraj. 2022. <span>“Survey on Fully Homomorphic
@@ -1128,6 +1139,10 @@ IEEE</em> 110 (10): 1572–609. <a href="https://doi.org/10.1109/JPROC.2022.3205
 Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978.
 <span>“On Data Banks and Privacy Homomorphisms.”</span> <em>Foundations
 of Secure Computation</em>, 169–80.
+</div>
+<div class="csl-entry" id="ref-thaler2022proofs-8" role="listitem">
+Thaler, Justin. 2022. <em>Proofs, Arguments, and Zero-Knowledge</em>.
+Foundations and Trends in Privacy and Security. Now Publishers. <a href="https://doi.org/10.1561/3300000030">https://doi.org/10.1561/3300000030</a>.
 </div>
 <div class="csl-entry" id="ref-vaikuntanathan2011computing-8" role="listitem">
 Vaikuntanathan, Vinod. 2011. <span>“Computing Blindfolded: New
