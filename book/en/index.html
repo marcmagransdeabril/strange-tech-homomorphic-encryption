@@ -2,14 +2,11 @@
 
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
 <meta charset="utf-8"/>
-<meta content="quarto-1.9.36" name="generator"/>
+<meta content="quarto-1.5.57" name="generator"/>
 <meta content="width=device-width, initial-scale=1.0, user-scalable=yes" name="viewport"/>
 <meta content="Marc Magrans de Abril" name="author"/>
 <title>Strange Tech: Homomorphic Encryption</title>
 <style>
-/* Default styles provided by pandoc.
-** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -26,16 +23,15 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 
 <script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet"/>
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" id="quarto-text-highlighting-styles" rel="stylesheet"/>
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" id="quarto-text-highlighting-styles" rel="stylesheet"/>
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet"/>
-<link append-hash="true" data-mode="light" href="site_libs/bootstrap/bootstrap-9e09d2eb63ca372e5c6aa0cd7f5bad22.min.css" id="quarto-bootstrap" rel="stylesheet"/>
+<link data-mode="light" href="site_libs/bootstrap/bootstrap.min.css" id="quarto-bootstrap" rel="stylesheet"/>
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -51,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-</head><body class="nav-sidebar floating quarto-light"><a class="lang-switch-badge" href="../es/index.html">ES</a>
+</head><body class="nav-sidebar floating"><a class="lang-switch-badge" href="../es/index.html">ES</a>
 <link href="templates/styles.css" rel="stylesheet"/>
 <link href="templates/standalone-book.css" rel="stylesheet"/>
 <div id="quarto-search-results"></div>
@@ -169,16 +165,16 @@ ul.task-list li input[type="checkbox"] {
 <section class="level2" data-number="1.2" id="a-brief-history">
 <h2 class="anchored" data-anchor-id="a-brief-history" data-number="1.2"><span class="header-section-number">1.2</span> A brief history</h2>
 <p>The name <em>homomorphic</em> comes from the Greek <em>homo</em> (same) and <em>morphḗ</em> (form): an encryption that preserves the form of operations, so that what is done with the encrypted data produces the same result as if it were done with the plaintext. The best way to understand it is with an analogy <span class="citation" data-cites="gentry2010computing">(<a href="07.html#ref-gentry2010computing" role="doc-biblioref">Gentry 2010</a>)</span>: imagine that Alice, a very distrustful jeweler, puts her raw materials inside a transparent glove box and locks it. She sends the box to a worker who can manipulate the pieces through the gloves — cut them, solder them, polish them — but without ever touching them directly. When he’s done, Alice recovers the box and opens it with her key: inside she finds the finished ring. The worker did all the work without ever having had access to the materials. The question is whether such a thing is possible with data and the associated computations.</p>
-<p>In 1978, Rivest, Adleman, and Dertouzos posed exactly that question: can computations be performed on encrypted data without decrypting it <span class="citation" data-cites="rivest1978data">(<a href="07.html#ref-rivest1978data" role="doc-biblioref">Rivest et al. 1978</a>)</span>? For three decades the practical answer was “no.” The existing schemes — RSA, ElGamal, Paillier — supported <em>one</em> operation (multiplication or addition), but not both; they are called <em>partially</em> homomorphic.</p>
+<p>In 1978, Rivest, Adleman, and Dertouzos posed exactly that question: can computations be performed on encrypted data without decrypting it <span class="citation" data-cites="rivest1978data">(<a href="07.html#ref-rivest1978data" role="doc-biblioref">Rivest, Adleman, and Dertouzos 1978</a>)</span>? For three decades the practical answer was “no.” The existing schemes — RSA, ElGamal, Paillier — supported <em>one</em> operation (multiplication or addition), but not both; they are called <em>partially</em> homomorphic.</p>
 <p>In 2009, Craig Gentry solved the open problem in his doctoral thesis, constructing the first <em>fully</em> homomorphic encryption scheme (FHE) based on ideal lattices <span class="citation" data-cites="gentry2009fully">(<a href="07.html#ref-gentry2009fully" role="doc-biblioref">Gentry 2009</a>)</span>. The key to his construction is <em>bootstrapping</em>: a “somewhat homomorphic” scheme evaluates its own decryption circuit, which refreshes the ciphertext’s noise — the imprecisions that accumulate with each operation — and enables unlimited operations.</p>
 <p>Since then, successive generations of schemes — BGV (2012), BFV (2012), GSW (2013), CKKS (2017), TFHE (2018) — have reduced the computational cost by several orders of magnitude, making the first real-world deployments viable.</p>
 <p>In the following chapters we will first see how homomorphic encryption can be used in practice, then the possible applications and limitations of the technology (<a class="quarto-xref" href="04.html"><span>Chapter 4</span></a>), and finally, the mathematical foundations of these operations (<a class="quarto-xref" href="05.html"><span>Chapter 5</span></a>), all interspersed with questions of varying difficulty to make sure we’re understanding the concepts.</p>
-<div class="references csl-bib-body hanging-indent" id="refs" role="list" style="display: none">
+<div class="references csl-bib-body hanging-indent" data-entry-spacing="0" id="refs" role="list" style="display: none">
 <div class="csl-entry" id="ref-gentry2009fully" role="listitem">
 Gentry, Craig. 2009. <span>“A Fully Homomorphic Encryption Scheme.”</span> PhD thesis, Stanford University. <a href="https://crypto.stanford.edu/craig/">https://crypto.stanford.edu/craig/</a>.
 </div>
 <div class="csl-entry" id="ref-gentry2010computing" role="listitem">
-Gentry, Craig. 2010. <span>“Computing Arbitrary Functions of Encrypted Data.”</span> <em>Communications of the ACM</em> 53 (3): 97–105. <a href="https://doi.org/10.1145/1666420.1666444">https://doi.org/10.1145/1666420.1666444</a>.
+———. 2010. <span>“Computing Arbitrary Functions of Encrypted Data.”</span> <em>Communications of the ACM</em> 53 (3): 97–105. <a href="https://doi.org/10.1145/1666420.1666444">https://doi.org/10.1145/1666420.1666444</a>.
 </div>
 <div class="csl-entry" id="ref-rivest1978data" role="listitem">
 Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On Data Banks and Privacy Homomorphisms.”</span> <em>Foundations of Secure Computation</em>, 169–80.
@@ -197,7 +193,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <p>Before diving into the theory, let’s see FHE in action with six simple recipes: we’ll start by computing a mean over encrypted data, move on to variance — which requires multiplications — attempt a linear regression, hit the noise wall, break through it with <em>bootstrapping</em>, and close with an encrypted search where the server answers without knowing what it was asked. Each recipe poses a small problem and solves it step by step. By the end of this section you’ll know what FHE can and cannot do <em>today</em>, before understanding the <em>why</em>.</p>
 <p>All recipes use Python with <a href="https://github.com/OpenMined/TenSEAL">TenSEAL</a>, a library that implements the CKKS scheme — best suited for real-number arithmetic — except Recipe 5, which uses <a href="https://github.com/openfheorg/openfhe-development">OpenFHE</a> because TenSEAL does not expose <em>bootstrapping</em>.</p>
 <p>The first step, common to all recipes, is to create the <em>cryptographic context</em> — the equivalent of preparing the “glove box” from the analogy. Each parameter has a reason that we’ll see in <a class="quarto-xref" href="05.html"><span>Chapter 5</span></a>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a><span class="im">import</span> tenseal <span class="im">as</span> ts</span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a><span class="im">import</span> tenseal <span class="im">as</span> ts</span>
 <span id="cb1-2"><a aria-hidden="true" href="#cb1-2" tabindex="-1"></a></span>
 <span id="cb1-3"><a aria-hidden="true" href="#cb1-3" tabindex="-1"></a>contexto <span class="op">=</span> ts.context(</span>
 <span id="cb1-4"><a aria-hidden="true" href="#cb1-4" tabindex="-1"></a>    ts.SCHEME_TYPE.CKKS,</span>
@@ -205,7 +201,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb1-6"><a aria-hidden="true" href="#cb1-6" tabindex="-1"></a>    coeff_mod_bit_sizes<span class="op">=</span>[<span class="dv">60</span>, <span class="dv">40</span>, <span class="dv">40</span>, <span class="dv">60</span>],</span>
 <span id="cb1-7"><a aria-hidden="true" href="#cb1-7" tabindex="-1"></a>)</span>
 <span id="cb1-8"><a aria-hidden="true" href="#cb1-8" tabindex="-1"></a>contexto.global_scale <span class="op">=</span> <span class="dv">2</span><span class="op">**</span><span class="dv">40</span></span>
-<span id="cb1-9"><a aria-hidden="true" href="#cb1-9" tabindex="-1"></a>contexto.generate_galois_keys()</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<span id="cb1-9"><a aria-hidden="true" href="#cb1-9" tabindex="-1"></a>contexto.generate_galois_keys()</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>For now, here’s what you need to know:</p>
 <ul>
 <li><code>CKKS</code> is the scheme for operating on approximate real numbers. Other schemes work with integers or bits — see <a class="quarto-xref" href="05.html#tbl-fhe-schemes">Table <span>5.2</span></a>.</li>
@@ -218,7 +214,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <section class="level2" data-number="2.1" id="recipe-1-encrypted-mean">
 <h2 class="anchored" data-anchor-id="recipe-1-encrypted-mean" data-number="2.1"><span class="header-section-number">2.1</span> Recipe 1: Encrypted mean</h2>
 <p>Daniel decides to start with the simplest case: computing the mean salary over encrypted data and verifying that the result matches the plaintext calculation. We encrypt the data and, from this point on, all operations run on the ciphertext — the plaintext data is no longer involved:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a aria-hidden="true" href="#cb2-1" tabindex="-1"></a>salarios <span class="op">=</span> [<span class="dv">3200</span>, <span class="dv">4100</span>, <span class="dv">2800</span>, <span class="dv">5500</span>, <span class="dv">3900</span>]</span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a aria-hidden="true" href="#cb2-1" tabindex="-1"></a>salarios <span class="op">=</span> [<span class="dv">3200</span>, <span class="dv">4100</span>, <span class="dv">2800</span>, <span class="dv">5500</span>, <span class="dv">3900</span>]</span>
 <span id="cb2-2"><a aria-hidden="true" href="#cb2-2" tabindex="-1"></a>salarios_cifrados <span class="op">=</span> ts.ckks_vector(contexto, salarios)</span>
 <span id="cb2-3"><a aria-hidden="true" href="#cb2-3" tabindex="-1"></a></span>
 <span id="cb2-4"><a aria-hidden="true" href="#cb2-4" tabindex="-1"></a><span class="co"># In a real deployment, this would run in the cloud,</span></span>
@@ -226,13 +222,13 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb2-6"><a aria-hidden="true" href="#cb2-6" tabindex="-1"></a><span class="co"># (CKKSVector does not implement division `/`,</span></span>
 <span id="cb2-7"><a aria-hidden="true" href="#cb2-7" tabindex="-1"></a><span class="co"># only multiplication `*`, so dividing by n is expressed</span></span>
 <span id="cb2-8"><a aria-hidden="true" href="#cb2-8" tabindex="-1"></a><span class="co"># as a multiplication by the constant 1/n)</span></span>
-<span id="cb2-9"><a aria-hidden="true" href="#cb2-9" tabindex="-1"></a>media_cifrada <span class="op">=</span> salarios_cifrados.<span class="bu">sum</span>() <span class="op">*</span> (<span class="dv">1</span> <span class="op">/</span> <span class="bu">len</span>(salarios))</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<span id="cb2-9"><a aria-hidden="true" href="#cb2-9" tabindex="-1"></a>media_cifrada <span class="op">=</span> salarios_cifrados.<span class="bu">sum</span>() <span class="op">*</span> (<span class="dv">1</span> <span class="op">/</span> <span class="bu">len</span>(salarios))</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>The five salaries are packed into a single ciphertext thanks to <em>packing</em> (<a class="quarto-xref" href="05.html#sec-packing-simd"><span>Section 5.6</span></a>). The <code>sum()</code> operation uses internal rotations to add all the <em>slots</em>, and the division by 5 is a multiplication by a constant — cheap in FHE.</p>
 <p>Finally, we decrypt the result:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a aria-hidden="true" href="#cb3-1" tabindex="-1"></a>media <span class="op">=</span> media_cifrada.decrypt()[<span class="dv">0</span>]</span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a aria-hidden="true" href="#cb3-1" tabindex="-1"></a>media <span class="op">=</span> media_cifrada.decrypt()[<span class="dv">0</span>]</span>
 <span id="cb3-2"><a aria-hidden="true" href="#cb3-2" tabindex="-1"></a>media_claro <span class="op">=</span> <span class="bu">sum</span>(salarios) <span class="op">/</span> <span class="bu">len</span>(salarios)</span>
 <span id="cb3-3"><a aria-hidden="true" href="#cb3-3" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media (FHE):   </span><span class="sc">{</span>media<span class="sc">:.2f}</span><span class="ss"> €"</span>)        <span class="co"># 3900.00 €</span></span>
-<span id="cb3-4"><a aria-hidden="true" href="#cb3-4" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media (claro): </span><span class="sc">{</span>media_claro<span class="sc">:.2f}</span><span class="ss"> €"</span>)  <span class="co"># 3900.00 €</span></span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<span id="cb3-4"><a aria-hidden="true" href="#cb3-4" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Media (claro): </span><span class="sc">{</span>media_claro<span class="sc">:.2f}</span><span class="ss"> €"</span>)  <span class="co"># 3900.00 €</span></span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>The result is practically identical — the absolute difference is on the order of <span class="math inline">\(10^{-7}\)</span>, inherent noise from the CKKS scheme that remains constant regardless of the operands’ magnitude (we’ll see why in <a class="quarto-xref" href="05.html#sec-ruido-niveles"><span>Section 5.4</span></a>), along with the execution time. Our example runs locally, but the operations on the ciphertext would be identical in a real deployment: the cloud provider would have calculated the mean salary without ever seeing a single actual number. Exactly what Elena needed.</p>
 <div class="repaso">
 <div class="pregunta" id="q-sec-manos-fhe-1">
@@ -247,7 +243,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <h2 class="anchored" data-anchor-id="recipe-2-encrypted-variance" data-number="2.2"><span class="header-section-number">2.2</span> Recipe 2: Encrypted variance</h2>
 <p>Daniel sends the mean to Elena, but she wants more: <em>“I need the spread — are the salaries homogeneous or are there outliers?”</em> The population variance is <span class="math inline">\(\text{Var} = E[X^2] - (E[X])^2\)</span>, and computing it over encrypted data forces us to use the most expensive operation in FHE: multiplication between ciphertexts.</p>
 <p>There’s a subtle detail that deserves attention. The <em>naive</em> translation of the formula would be:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a aria-hidden="true" href="#cb4-1" tabindex="-1"></a><span class="co"># ⚠ This does NOT work correctly in CKKS</span></span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a aria-hidden="true" href="#cb4-1" tabindex="-1"></a><span class="co"># ⚠ This does NOT work correctly in CKKS</span></span>
 <span id="cb4-2"><a aria-hidden="true" href="#cb4-2" tabindex="-1"></a>ct <span class="op">=</span> ts.ckks_vector(contexto, salarios)</span>
 <span id="cb4-3"><a aria-hidden="true" href="#cb4-3" tabindex="-1"></a></span>
 <span id="cb4-4"><a aria-hidden="true" href="#cb4-4" tabindex="-1"></a>cuadrados <span class="op">=</span> ct <span class="op">*</span> ct                         <span class="co"># cipher × cipher</span></span>
@@ -256,14 +252,14 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb4-7"><a aria-hidden="true" href="#cb4-7" tabindex="-1"></a>media <span class="op">=</span> ct.<span class="bu">sum</span>() <span class="op">*</span> (<span class="dv">1</span><span class="op">/</span>n)                    <span class="co"># × constant</span></span>
 <span id="cb4-8"><a aria-hidden="true" href="#cb4-8" tabindex="-1"></a>media_al_cuadrado <span class="op">=</span> media <span class="op">*</span> media           <span class="co"># cipher × cipher</span></span>
 <span id="cb4-9"><a aria-hidden="true" href="#cb4-9" tabindex="-1"></a></span>
-<span id="cb4-10"><a aria-hidden="true" href="#cb4-10" tabindex="-1"></a>varianza <span class="op">=</span> media_cuadrados <span class="op">-</span> media_al_cuadrado  <span class="co"># → garbage</span></span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<span id="cb4-10"><a aria-hidden="true" href="#cb4-10" tabindex="-1"></a>varianza <span class="op">=</span> media_cuadrados <span class="op">-</span> media_al_cuadrado  <span class="co"># → garbage</span></span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>The code is mathematically correct, but produces a completely wrong result (in our example, a <em>negative</em> variance). Why? In CKKS, each fresh ciphertext starts at an initial depth of <span class="math inline">\(L\)</span> levels (each 40 bits wide) over a total budget of <code>coeff_mod_bit_sizes</code> bits. Every multiplication, whether between two ciphertexts or by a constant, consumes part of that total budget. This means that when two numbers are combined in addition or subtraction, they must be at the same scale relative to the total budget — they must be <strong>at the same level</strong>.</p>
 <p>Let’s see what level each branch reaches in this example:</p>
 <p><strong>Branch <span class="math inline">\(E[X^2]\)</span>:</strong> <code>ct * ct</code> (consumes 1 level) → <code>.sum()</code> (free) → <code>* (1/n)</code> (consumes 1 level) → reaches level <span class="math inline">\(L-2\)</span>.</p>
 <p><strong>Branch <span class="math inline">\((E[X])^2\)</span>:</strong> <code>ct.sum()</code> (free) → <code>* (1/n)</code> (consumes 1 level) → <code>media * media</code> (consumes 1 level) → reaches level <span class="math inline">\(L-2\)</span>.</p>
 <p>Apparently both end up at the same level, but the order of operations matters. In the second branch, by the time we reach <code>media * media</code>, both factors have already gone through a previous <code>* (1/n)</code>, so the multiplication between ciphertexts operates on <em>degraded</em> operands. The result doesn’t overflow — but the noise and internal scale no longer match those of the first branch. When subtracting, CKKS doesn’t throw an error: it simply combines two ciphertexts whose internal state (effective scale, noise) is incompatible, and returns garbage.</p>
 <p>The practical rule is: <strong>the order and symmetry of operations matters more than the mathematical formula</strong>. The solution is to move all constants to plaintext <em>before</em> encrypting, so that each branch consists of exactly one multiplication between two <em>fresh</em> ciphertexts, both at the initial level <span class="math inline">\(L\)</span>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a aria-hidden="true" href="#cb5-1" tabindex="-1"></a>ct <span class="op">=</span> ts.ckks_vector(contexto, salarios)</span>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a aria-hidden="true" href="#cb5-1" tabindex="-1"></a>ct <span class="op">=</span> ts.ckks_vector(contexto, salarios)</span>
 <span id="cb5-2"><a aria-hidden="true" href="#cb5-2" tabindex="-1"></a>norm <span class="op">=</span> [x <span class="op">/</span> <span class="bu">len</span>(salarios) <span class="cf">for</span> x <span class="kw">in</span> salarios]</span>
 <span id="cb5-3"><a aria-hidden="true" href="#cb5-3" tabindex="-1"></a>ct_n <span class="op">=</span> ts.ckks_vector(contexto, norm)</span>
 <span id="cb5-4"><a aria-hidden="true" href="#cb5-4" tabindex="-1"></a></span>
@@ -276,7 +272,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb5-11"><a aria-hidden="true" href="#cb5-11" tabindex="-1"></a></span>
 <span id="cb5-12"><a aria-hidden="true" href="#cb5-12" tabindex="-1"></a><span class="co"># Both at the same level and scale — the subtraction works</span></span>
 <span id="cb5-13"><a aria-hidden="true" href="#cb5-13" tabindex="-1"></a>varianza_cifrada <span class="op">=</span> media_cuadrados <span class="op">-</span> media_al_cuadrado</span>
-<span id="cb5-14"><a aria-hidden="true" href="#cb5-14" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Varianza (FHE): </span><span class="sc">{</span>varianza_cifrada<span class="sc">.</span>decrypt()[<span class="dv">0</span>]<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<span id="cb5-14"><a aria-hidden="true" href="#cb5-14" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Varianza (FHE): </span><span class="sc">{</span>varianza_cifrada<span class="sc">.</span>decrypt()[<span class="dv">0</span>]<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>This is a real example of what makes FHE programming hard: it’s not enough to translate a mathematically correct formula into code. Every multiplication — between ciphertexts or by a constant — consumes part of the operation budget, and combining two ciphertexts requires that they’ve gone through <em>symmetric</em> sequences. The programmer must design the circuit thinking not just about <em>what</em> it computes, but <em>how</em> it chains operations: the order of operations is part of the algorithm.</p>
 <div class="repaso">
 <div class="pregunta" id="q-sec-manos-fhe-3">
@@ -291,7 +287,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <h2 class="anchored" data-anchor-id="recipe-3-encrypted-linear-regression" data-number="2.3"><span class="header-section-number">2.3</span> Recipe 3: Encrypted linear regression</h2>
 <p>Elena, as always, never stops and now needs something more ambitious: a predictive model that assigns a risk score to each patient. <em>“Can you have it ready for this afternoon? It’s super urgent and we’re drowning in work. The vendor has an already-trained linear regression model (the weights are public), but the patient data is confidential.”</em></p>
 <p>Fortunately, FHE allows exactly this: encrypt the patient data, multiply by the plaintext weights, and sum — a homomorphic dot product.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a aria-hidden="true" href="#cb6-1" tabindex="-1"></a><span class="co"># Patient data (encrypted) — the vendor cannot see it</span></span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a aria-hidden="true" href="#cb6-1" tabindex="-1"></a><span class="co"># Patient data (encrypted) — the vendor cannot see it</span></span>
 <span id="cb6-2"><a aria-hidden="true" href="#cb6-2" tabindex="-1"></a>features <span class="op">=</span> [<span class="fl">1.2</span>, <span class="fl">0.7</span>, <span class="fl">3.1</span>, <span class="fl">0.4</span>, <span class="fl">2.8</span>]</span>
 <span id="cb6-3"><a aria-hidden="true" href="#cb6-3" tabindex="-1"></a>features_cifrados <span class="op">=</span> ts.ckks_vector(contexto, features)</span>
 <span id="cb6-4"><a aria-hidden="true" href="#cb6-4" tabindex="-1"></a></span>
@@ -300,7 +296,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb6-7"><a aria-hidden="true" href="#cb6-7" tabindex="-1"></a></span>
 <span id="cb6-8"><a aria-hidden="true" href="#cb6-8" tabindex="-1"></a><span class="co"># Prediction: homomorphic dot product</span></span>
 <span id="cb6-9"><a aria-hidden="true" href="#cb6-9" tabindex="-1"></a>prediccion <span class="op">=</span> (features_cifrados <span class="op">*</span> pesos).<span class="bu">sum</span>()</span>
-<span id="cb6-10"><a aria-hidden="true" href="#cb6-10" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Riesgo (FHE): </span><span class="sc">{</span>prediccion<span class="sc">.</span>decrypt()[<span class="dv">0</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<span id="cb6-10"><a aria-hidden="true" href="#cb6-10" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Riesgo (FHE): </span><span class="sc">{</span>prediccion<span class="sc">.</span>decrypt()[<span class="dv">0</span>]<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>Note that no multiplicative level is consumed here: <code>features_cifrados * pesos</code> is a multiplication by constants (cheap), and <code>sum()</code> only uses rotations. The same context we already created would serve for a model with thousands of features — thanks to <em>packing</em> (<a class="quarto-xref" href="05.html#sec-packing-simd"><span>Section 5.6</span></a>), the <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots of the ciphertext would process them all in parallel. This is the basis of real-world deployments of <em>ML on encrypted data</em> that we’ll see in the applications section (<a class="quarto-xref" href="03.html"><span>Chapter 3</span></a>).</p>
 <div class="repaso">
 <div class="pregunta" id="q-sec-manos-fhe-5">
@@ -319,7 +315,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <p><em>“Is it possible he added a multiplication to the final result?”.</em></p>
 <p><em>“But what difference does that make? I don’t know how he messed up…”</em></p>
 <p>What happens if we ask for more operations than the modulus chain allows? Let’s create a context with a single multiplicative level and attempt two chained multiplications:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a aria-hidden="true" href="#cb7-1" tabindex="-1"></a>ctx_1nivel <span class="op">=</span> ts.context(</span>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a aria-hidden="true" href="#cb7-1" tabindex="-1"></a>ctx_1nivel <span class="op">=</span> ts.context(</span>
 <span id="cb7-2"><a aria-hidden="true" href="#cb7-2" tabindex="-1"></a>    ts.SCHEME_TYPE.CKKS,</span>
 <span id="cb7-3"><a aria-hidden="true" href="#cb7-3" tabindex="-1"></a>    poly_modulus_degree<span class="op">=</span><span class="dv">8192</span>,</span>
 <span id="cb7-4"><a aria-hidden="true" href="#cb7-4" tabindex="-1"></a>    coeff_mod_bit_sizes<span class="op">=</span>[<span class="dv">60</span>, <span class="dv">40</span>, <span class="dv">60</span>],  <span class="co"># only 1 level</span></span>
@@ -333,7 +329,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb7-12"><a aria-hidden="true" href="#cb7-12" tabindex="-1"></a><span class="bu">print</span>(resultado.decrypt())  <span class="co"># [9.0, 49.0, 4.0] ✓</span></span>
 <span id="cb7-13"><a aria-hidden="true" href="#cb7-13" tabindex="-1"></a></span>
 <span id="cb7-14"><a aria-hidden="true" href="#cb7-14" tabindex="-1"></a>resultado <span class="op">=</span> resultado <span class="op">*</span> resultado  <span class="co"># FAILS — no levels left</span></span>
-<span id="cb7-15"><a aria-hidden="true" href="#cb7-15" tabindex="-1"></a><span class="co"># → Error: scale out of bounds</span></span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<span id="cb7-15"><a aria-hidden="true" href="#cb7-15" tabindex="-1"></a><span class="co"># → Error: scale out of bounds</span></span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>The library throws an exception on the second multiplication. It doesn’t produce “approximate” results or corrupted data: it simply refuses to continue. This is a deliberate design decision — better an explicit error than silent garbage.</p>
 <p>This wall is the practical manifestation of everything we’ll see in <a class="quarto-xref" href="05.html#sec-ruido-niveles"><span>Section 5.4</span></a>: each 40-bit level in <code>coeff_mod_bit_sizes</code> is a link that gets consumed with each multiplication. When they run out, there’s no way forward — unless you resort to <em>bootstrapping</em>, which restores the levels at enormous cost (see <a class="quarto-xref" href="#sec-bootstrapping-receta"><span>Section 2.5</span></a> for a practical example and <a class="quarto-xref" href="05.html"><span>Chapter 5</span></a> for the theoretical explanation).</p>
 <div class="repaso">
@@ -349,7 +345,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <h2 class="anchored" data-anchor-id="sec-bootstrapping-receta" data-number="2.5"><span class="header-section-number">2.5</span> Recipe 5: Breaking through the wall</h2>
 <p>Recipe 4 ended with an error — we ran out of multiplicative levels. But <em>bootstrapping</em> can restore them and let us keep operating. TenSEAL does not expose this functionality, so for this recipe we use <a href="https://github.com/openfheorg/openfhe-development">OpenFHE</a>, another reference library that does implement bootstrapping in CKKS.</p>
 <p>The first step is to configure a CKKS context with bootstrapping enabled. This requires extra levels to evaluate its own internal circuit. To keep the demo fast, we use a small ring (<span class="math inline">\(N = 4096\)</span>) with security validation disabled — with <code>HEStd_128_classic</code> (128-bit security against classical computers, the usual standard), OpenFHE would require <span class="math inline">\(N = 2^{16}\)</span> to support the bootstrapping depth. More demanding levels exist (192, 256 bits) and quantum variants that assume quantum computer attacks and require even larger <span class="math inline">\(N\)</span>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a aria-hidden="true" href="#cb8-1" tabindex="-1"></a><span class="im">import</span> openfhe <span class="im">as</span> fhe</span>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a aria-hidden="true" href="#cb8-1" tabindex="-1"></a><span class="im">import</span> openfhe <span class="im">as</span> fhe</span>
 <span id="cb8-2"><a aria-hidden="true" href="#cb8-2" tabindex="-1"></a></span>
 <span id="cb8-3"><a aria-hidden="true" href="#cb8-3" tabindex="-1"></a>params <span class="op">=</span> fhe.CCParamsCKKSRNS()</span>
 <span id="cb8-4"><a aria-hidden="true" href="#cb8-4" tabindex="-1"></a>params.SetSecretKeyDist(fhe.SecretKeyDist.UNIFORM_TERNARY)</span>
@@ -383,14 +379,14 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb8-32"><a aria-hidden="true" href="#cb8-32" tabindex="-1"></a>keys <span class="op">=</span> cc.KeyGen()</span>
 <span id="cb8-33"><a aria-hidden="true" href="#cb8-33" tabindex="-1"></a>cc.EvalMultKeyGen(keys.secretKey)</span>
 <span id="cb8-34"><a aria-hidden="true" href="#cb8-34" tabindex="-1"></a>cc.EvalBootstrapSetup(level_budget, [<span class="dv">0</span>, <span class="dv">0</span>], num_slots)</span>
-<span id="cb8-35"><a aria-hidden="true" href="#cb8-35" tabindex="-1"></a>cc.EvalBootstrapKeyGen(keys.secretKey, num_slots)</span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<span id="cb8-35"><a aria-hidden="true" href="#cb8-35" tabindex="-1"></a>cc.EvalBootstrapKeyGen(keys.secretKey, num_slots)</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>OpenFHE’s parameterization is different from TenSEAL’s, but the concepts are the same. In TenSEAL we specified the full modulus chain as a list of bit sizes: <code>coeff_mod_bit_sizes=[60, 40, 40, 60]</code> — two intermediate levels of 40 bits each. OpenFHE separates that information: <code>SetMultiplicativeDepth</code> indicates <em>how many</em> levels there are (an integer), and <code>SetScalingModSize(48)</code> indicates <em>how many bits</em> each intermediate level has. <code>SetFirstModSize(60)</code> sets the size of the first link, just like the initial 60 in TenSEAL.</p>
 <p><code>SetBatchSize(num_slots)</code> indicates how many <em>slots</em> the ciphertext occupies. This is needed so the context correctly aligns the bootstrapping’s internal rotations with the ciphertext length.</p>
 <p>The novelty here is <code>level_budget</code> and <code>GetBootstrapDepth</code>. Bootstrapping consumes its own multiplicative levels when internally evaluating the decryption circuit: <code>level_budget = [2, 2]</code> indicates how many levels to dedicate to each of its two internal phases — we’ll see what these phases do in <a class="quarto-xref" href="05.html"><span>Chapter 5</span></a>. <code>GetBootstrapDepth</code> takes these budgets and calculates how many extra levels the bootstrapping circuit needs in total, which are added to the programmer’s <code>niveles_utiles</code>.</p>
 <p><code>EvalBootstrapSetup(level_budget, [0, 0], num_slots)</code> prepares bootstrapping internally. <code>num_slots</code> must match the earlier <code>SetBatchSize</code>. <code>EvalBootstrapKeyGen</code> generates the rotation keys needed for bootstrapping.</p>
 <p>Finally, we enable <code>PKESchemeFeature.FHE</code> (full FHE, not just <em>leveled</em>) — without this, <code>EvalBootstrap</code> would not be available.</p>
 <p>Now we encrypt the same data from Recipe 4 and repeat the experiment:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a aria-hidden="true" href="#cb9-1" tabindex="-1"></a>datos <span class="op">=</span> [<span class="fl">3.0</span>, <span class="fl">7.0</span>, <span class="fl">2.0</span>, <span class="fl">5.0</span>]</span>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a aria-hidden="true" href="#cb9-1" tabindex="-1"></a>datos <span class="op">=</span> [<span class="fl">3.0</span>, <span class="fl">7.0</span>, <span class="fl">2.0</span>, <span class="fl">5.0</span>]</span>
 <span id="cb9-2"><a aria-hidden="true" href="#cb9-2" tabindex="-1"></a>ptxt <span class="op">=</span> cc.MakeCKKSPackedPlaintext(datos)</span>
 <span id="cb9-3"><a aria-hidden="true" href="#cb9-3" tabindex="-1"></a>ctxt <span class="op">=</span> cc.Encrypt(keys.publicKey, ptxt)</span>
 <span id="cb9-4"><a aria-hidden="true" href="#cb9-4" tabindex="-1"></a></span>
@@ -406,7 +402,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb9-14"><a aria-hidden="true" href="#cb9-14" tabindex="-1"></a></span>
 <span id="cb9-15"><a aria-hidden="true" href="#cb9-15" tabindex="-1"></a>result <span class="op">=</span> cc.Decrypt(ctxt, keys.secretKey)</span>
 <span id="cb9-16"><a aria-hidden="true" href="#cb9-16" tabindex="-1"></a>result.SetLength(<span class="bu">len</span>(datos))</span>
-<span id="cb9-17"><a aria-hidden="true" href="#cb9-17" tabindex="-1"></a><span class="co"># → [6561.0, 5764801.0, 256.0, 390625.0]  (3⁸, 7⁸, 2⁸, 5⁸)</span></span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<span id="cb9-17"><a aria-hidden="true" href="#cb9-17" tabindex="-1"></a><span class="co"># → [6561.0, 5764801.0, 256.0, 390625.0]  (3⁸, 7⁸, 2⁸, 5⁸)</span></span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>The call to <code>EvalBootstrap</code> is where the magic happens: it takes the exhausted ciphertext, homomorphically evaluates the decryption circuit (the process we’ll detail in <a class="quarto-xref" href="05.html"><span>Chapter 5</span></a>), and produces a fresh ciphertext with restored levels. The operation takes on the order of one second — compared to the milliseconds of a normal multiplication — and the resulting ciphertext carries somewhat more approximation error. But it works: the multiplication that in Recipe 4 threw “scale out of bounds” now completes without problems, and we can even chain a third one.</p>
 <div class="repaso">
 <div class="pregunta" id="q-sec-manos-fhe-9">
@@ -422,7 +418,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <p>Elena is satisfied with the risk models, but now she has another need: <em>“I need to look up the score of a specific patient in the vendor’s database. But I don’t want them to know which patients I’m interested in — that would reveal clinical information.”</em></p>
 <p>This is a <em>Private Information Retrieval</em> problem: retrieving a record from a database without the server knowing which one was requested. With FHE, the solution is surprisingly simple.</p>
 <p>The trick is to encrypt a <em>one-hot</em> vector — a vector of zeros with a single 1 in the position of the desired record. The server multiplies that encrypted vector by its database (in plaintext) and sums all the products. Since multiplying by an encrypted 0 “nullifies” all positions except the queried one, the encrypted result contains only the sought value. The server has processed <em>all</em> the records, but only one survived the multiplication — and the server doesn’t know which.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a aria-hidden="true" href="#cb10-1" tabindex="-1"></a><span class="co"># Vendor's database (plaintext on their server)</span></span>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a aria-hidden="true" href="#cb10-1" tabindex="-1"></a><span class="co"># Vendor's database (plaintext on their server)</span></span>
 <span id="cb10-2"><a aria-hidden="true" href="#cb10-2" tabindex="-1"></a>scores <span class="op">=</span> [<span class="fl">85.2</span>, <span class="fl">62.0</span>, <span class="fl">91.7</span>, <span class="fl">45.3</span>, <span class="fl">78.9</span>, <span class="fl">33.1</span>, <span class="fl">70.4</span>, <span class="fl">56.8</span>]</span>
 <span id="cb10-3"><a aria-hidden="true" href="#cb10-3" tabindex="-1"></a></span>
 <span id="cb10-4"><a aria-hidden="true" href="#cb10-4" tabindex="-1"></a><span class="co"># Elena wants the score of the patient at position 3,</span></span>
@@ -436,7 +432,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <span id="cb10-12"><a aria-hidden="true" href="#cb10-12" tabindex="-1"></a>resultado_cifrado <span class="op">=</span> (consulta_cifrada <span class="op">*</span> scores).<span class="bu">sum</span>()</span>
 <span id="cb10-13"><a aria-hidden="true" href="#cb10-13" tabindex="-1"></a></span>
 <span id="cb10-14"><a aria-hidden="true" href="#cb10-14" tabindex="-1"></a><span class="co"># Elena decrypts</span></span>
-<span id="cb10-15"><a aria-hidden="true" href="#cb10-15" tabindex="-1"></a><span class="bu">print</span>(resultado_cifrado.decrypt()[<span class="dv">0</span>])  <span class="co"># → 45.3</span></span></code></pre></div><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></div>
+<span id="cb10-15"><a aria-hidden="true" href="#cb10-15" tabindex="-1"></a><span class="bu">print</span>(resultado_cifrado.decrypt()[<span class="dv">0</span>])  <span class="co"># → 45.3</span></span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>The operation <code>consulta_cifrada * scores</code> is a multiplication by constants — it doesn’t consume multiplicative levels, just like in Recipe 3. And <code>sum()</code> uses rotations, just like in Recipe 1. We don’t need any new operations; we just combine the primitives we already know in a different way. This is a pattern that appears over and over in FHE: the same two basic operations (multiplication and addition) give rise to very different applications depending on how the circuit is designed.</p>
 <p>But there’s an inescapable cost: <strong>the server must process all records for each query</strong>. It can’t “skip” the positions that are zero, because it doesn’t know which ones they are — the vector is encrypted. If the database has 10,000 records, the server multiplies and sums all 10,000, even though only one contains useful information. That’s the price of privacy: the query is hidden precisely because it’s indistinguishable from any other. If the server could process only a subset, it could deduce by elimination which position was queried.</p>
 <p>With <span class="math inline">\(N = 8192\)</span>, each ciphertext stores up to <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots — enough for a database of that size without needing multiple ciphertexts. For larger databases, the programmer must divide the records into blocks of <span class="math inline">\(N_{\text{slot}}\)</span>, send one query ciphertext per block, and sum the partial results.</p>
@@ -511,8 +507,8 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <div class="quarto-title-meta">
 </div>
 </header>
-<p>Daniel has already had a chance to experiment with the technology — what he calls, playing it down, “messing around with it” — and for Elena the results are enough to move the project forward: the vendor gets its analysis, and legal gets its confidentiality. But is this level of understanding enough to keep a new technology running in a production system? Daniel and his team will have to maintain it, extend it whenever the business asks, and explain — when something breaks and can’t be fixed right away — the fundamental reasons why it breaks. They’ll also have to keep an eye on which innovations have a real impact on performance or cost, so they don’t get stuck with an obsolete version of the scheme. What do they need to know for all that?</p>
-<p>We’ve seen that the code works and that the potential applications are real, but at the cost of performance between <span class="math inline">\(10^4\)</span> and <span class="math inline">\(10^6\)</span> times worse than plaintext per individual CPU operation — a gap that <em>packing</em> (<a class="quarto-xref" href="#sec-packing-simd"><span>Section 5.6</span></a>), GPUs, and hardware accelerators considerably reduce, as we saw in <a class="quarto-xref" href="04.html"><span>Chapter 4</span></a>. How is it possible that a computer runs calculations on data it can’t see, and why is it so expensive even with these optimizations? Let’s recall the analogy of the glove box for manipulating jewels or cooking without touching the ingredients: Alice puts her materials inside a locked box, and a worker manipulates them through the gloves without ever touching them. In FHE, the data is the materials, the encryption is the box, and the homomorphic operations are the gloves. Let’s see how that “box” is built mathematically, and along the way we’ll understand every parameter from the code we just ran. The key lies in a branch of mathematics that few people associate with cryptography: lattices.</p>
+<p>Daniel has already had a chance to experiment with the technology — what he calls, playing it down, “messing around with it” — and for Elena the results are enough to move the project forward: the vendor gets its analysis, and legal gets its confidentiality. But is this level of understanding enough to keep a new technology running in a production system? Daniel and his team will have to maintain it, extend it whenever the business asks, and explain — when something breaks and can’t be fixed right away — the fundamental reasons why it breaks. Finally, to avoid falling behind, they will need to keep an eye on which innovations can have a real impact on performance, functionality, or cost. What do they need to know for all that?</p>
+<p>We’ve seen that the code works and that the potential applications are real, but at the cost of performance that, for an individual operation on CPU, is between <span class="math inline">\(10^4\)</span> and <span class="math inline">\(10^6\)</span> times worse than plaintext. Although techniques like <em>packing</em> (<a class="quarto-xref" href="#sec-packing-simd"><span>Section 5.6</span></a>), GPUs, and dedicated hardware accelerators can significantly narrow that gap, the overhead remains very high. How is it possible that a computer runs calculations on data it can’t see, and why is it so expensive even with these optimizations? Let’s recall the analogy of the glove box for manipulating jewels or cooking without touching the ingredients: Alice puts her materials inside a locked box, and a worker manipulates them through the gloves without ever touching them. In FHE, the data is the materials, the encryption is the box, and the homomorphic operations are the gloves. Let’s see how that “box” is built mathematically, and along the way we’ll understand every parameter from the code we just ran. The key lies in a branch of mathematics that few people associate with cryptography: lattices.</p>
 <section class="level2" data-number="5.1" id="lattices">
 <h2 class="anchored" data-anchor-id="lattices" data-number="5.1"><span class="header-section-number">5.1</span> Lattices</h2>
 <p>The security of homomorphic encryption schemes — the same security that will let Daniel answer the day legal asks why Elena’s patient data is safe in the cloud — doesn’t depend on integer factorization — like RSA — but on the difficulty of solving geometric problems in structures called <em>lattices</em>. A lattice is a discrete set of points in an <span class="math inline">\(n\)</span>-dimensional space, generated by integer linear combinations of a set of basis vectors <span class="math inline">\(B = \{b_1, \dots, b_n\}\)</span>:</p>
@@ -1026,9 +1022,9 @@ Table 5.2: Main FHE schemes: foundations, capabilities, and trade-offs.
 </header>
 <p>Several weeks have passed since Elena walked into the room with her folder full of sticky notes. The contract with the vendor got signed, the risk analysis now runs every night over encrypted data, and legal — to everyone’s surprise — signed off without asking for a single extra meeting. Daniel has gone from “messing around” with an unfamiliar technology to keeping it running in production, and along the way he’s had to learn far more lattice algebra than he ever expected to need in his career. The Friday Elena called him in a panic because “the numbers were overflowing” made it clear that understanding the <em>what</em> isn’t enough: you need the <em>why</em> to debug what comes next. And what comes next is already on Elena’s wish list — comparing patients to prioritize the risk model, something CKKS doesn’t handle well and that will push Daniel to evaluate TFHE, or to accept the one-second-per-operation cost of bootstrapping. For anyone who wants to go further than this chapter covers, here are the readings that make it possible.</p>
 <p>The best starting point is <span class="citation" data-cites="gentry2010computing">Gentry (<a href="07.html#ref-gentry2010computing" role="doc-biblioref">2010</a>)</span>, where Gentry explains his own breakthrough in accessible language, without heavy formalism; it’s ideal for understanding <em>what</em> FHE solves and <em>why</em> bootstrapping works. As a next step, <span class="citation" data-cites="vaikuntanathan2011computing">Vaikuntanathan (<a href="07.html#ref-vaikuntanathan2011computing" role="doc-biblioref">2011</a>)</span> is an invited talk at FOCS that delves deeper into the mechanics of FHE without requiring advanced cryptography, explaining the evolution from partially homomorphic encryption to full FHE with exceptional clarity. For a comprehensive and up-to-date view of the field, <span class="citation" data-cites="marcolla2022survey">Marcolla et al. (<a href="07.html#ref-marcolla2022survey" role="doc-biblioref">2022</a>)</span> offers an exhaustive review published in <em>Proceedings of the IEEE</em> covering all modern schemes (BGV, BFV, CKKS, TFHE), hardware acceleration, and real-world deployments.</p>
-<p>Although FHE guarantees data confidentiality, it doesn’t guarantee integrity — the second pillar of security (confidentiality, integrity, and availability) —: it doesn’t guarantee that the server computed correctly, or that the result wasn’t tampered with. The natural complement for adding integrity is zero-knowledge proofs <span class="citation" data-cites="goldwasser1989knowledge thaler2022proofs">(<a href="07.html#ref-goldwasser1989knowledge" role="doc-biblioref">Goldwasser et al. 1989</a>; <a href="07.html#ref-thaler2022proofs" role="doc-biblioref">Thaler 2022</a>)</span>.</p>
+<p>Although FHE guarantees data confidentiality, it doesn’t guarantee integrity — the second pillar of security (confidentiality, integrity, and availability) —: it doesn’t guarantee that the server computed correctly, or that the result wasn’t tampered with. The natural complement for adding integrity is zero-knowledge proofs <span class="citation" data-cites="goldwasser1989knowledge thaler2022proofs">(<a href="07.html#ref-goldwasser1989knowledge" role="doc-biblioref">Goldwasser, Micali, and Rackoff 1989</a>; <a href="07.html#ref-thaler2022proofs" role="doc-biblioref">Thaler 2022</a>)</span>.</p>
 <p>However, FHE protects the data but not the program: the server knows what program it’s running. To understand where this technology fits in the broader landscape of private computation, <span class="citation" data-cites="barak2016obfuscation">Barak (<a href="07.html#ref-barak2016obfuscation" role="doc-biblioref">2016</a>)</span> offers an accessible introduction written by one of the field’s most prominent researchers. The paper places FHE alongside two complementary primitives. The first is <em>secure multiparty computation</em> (MPC), where several parties jointly compute without any of them seeing the others’ data; unlike FHE, MPC is deployed in production today — with an overhead on the order of 10–100× over plaintext — and has real applications in fraud detection between banks or genomic data analysis between institutions. The second is <em>indistinguishability obfuscation</em> (iO), which would allow encrypting the program’s logic as well — the scenario where neither the data nor the code is visible to the server —, but today it’s completely impractical (several orders of magnitude slower than FHE itself), which is why it doesn’t have its own chapter in this book.</p>
-<div class="references csl-bib-body hanging-indent" id="refs-7" role="list" style="display: none">
+<div class="references csl-bib-body hanging-indent" data-entry-spacing="0" id="refs-7" role="list" style="display: none">
 <div class="csl-entry" id="ref-barak2016obfuscation" role="listitem">
 Barak, Boaz. 2016. <span>“Hopes, Fears, and Software Obfuscation.”</span> <em>Communications of the ACM</em> 59 (3): 88–96. <a href="https://doi.org/10.1145/2757276">https://doi.org/10.1145/2757276</a>.
 </div>
@@ -1039,13 +1035,13 @@ Gentry, Craig. 2010. <span>“Computing Arbitrary Functions of Encrypted Data.�
 Goldwasser, Shafi, Silvio Micali, and Charles Rackoff. 1989. <span>“The Knowledge Complexity of Interactive Proof Systems.”</span> <em>SIAM Journal on Computing</em> 18 (1): 186–208. <a href="https://doi.org/10.1137/0218012">https://doi.org/10.1137/0218012</a>.
 </div>
 <div class="csl-entry" id="ref-marcolla2022survey" role="listitem">
-Marcolla, Chiara, Victor Sucasas, Marc Manzano, Riccardo Bassoli, Frank H. P. Fitzek, and Najwa Aaraj. 2022. <span>“Survey on Fully Homomorphic Encryption, Theory, and Applications.”</span> <em>Proceedings of the IEEE</em> 110 (10): 1572–609. <a href="https://doi.org/10.1109/JPROC.2022.3205665">https://doi.org/10.1109/JPROC.2022.3205665</a>.
+Marcolla, Chiara, Victor Sucasas, Marc Manzano, Riccardo Bassoli, Frank H. P. Fitzek, and Najwa Aaraj. 2022. <span>“Survey on Fully Homomorphic Encryption, Theory, and Applications.”</span> <em>Proceedings of the IEEE</em> 110 (10): 1572–1609. <a href="https://doi.org/10.1109/JPROC.2022.3205665">https://doi.org/10.1109/JPROC.2022.3205665</a>.
 </div>
 <div class="csl-entry" id="ref-thaler2022proofs" role="listitem">
 Thaler, Justin. 2022. <em>Proofs, Arguments, and Zero-Knowledge</em>. Foundations and Trends in Privacy and Security. Now Publishers. <a href="https://doi.org/10.1561/3300000030">https://doi.org/10.1561/3300000030</a>.
 </div>
 <div class="csl-entry" id="ref-vaikuntanathan2011computing" role="listitem">
-Vaikuntanathan, Vinod. 2011. <span>“Computing Blindfolded: New Developments in Fully Homomorphic Encryption.”</span> <em>Proceedings of the 52nd Annual IEEE Symposium on Foundations of Computer Science (FOCS)</em>, 5–16. <a href="https://doi.org/10.1109/FOCS.2011.98">https://doi.org/10.1109/FOCS.2011.98</a>.
+Vaikuntanathan, Vinod. 2011. <span>“Computing Blindfolded: New Developments in Fully Homomorphic Encryption.”</span> In <em>Proceedings of the 52nd Annual IEEE Symposium on Foundations of Computer Science (FOCS)</em>, 5–16. <a href="https://doi.org/10.1109/FOCS.2011.98">https://doi.org/10.1109/FOCS.2011.98</a>.
 </div>
 </div>
 </section><section class="standalone-merged-section" id="merged-08">
@@ -1056,7 +1052,7 @@ Vaikuntanathan, Vinod. 2011. <span>“Computing Blindfolded: New Developments in
 <div class="quarto-title-meta">
 </div>
 </header>
-<div class="references csl-bib-body hanging-indent" id="refs-8" role="list">
+<div class="references csl-bib-body hanging-indent" data-entry-spacing="0" id="refs-8" role="list">
 <div class="csl-entry" id="ref-barak2016obfuscation-8" role="listitem">
 Barak, Boaz. 2016. <span>“Hopes, Fears, and Software
 Obfuscation.”</span> <em>Communications of the ACM</em> 59 (3): 88–96.
@@ -1067,7 +1063,7 @@ Gentry, Craig. 2009. <span>“A Fully Homomorphic Encryption
 Scheme.”</span> PhD thesis, Stanford University. <a href="https://crypto.stanford.edu/craig/">https://crypto.stanford.edu/craig/</a>.
 </div>
 <div class="csl-entry" id="ref-gentry2010computing-8" role="listitem">
-Gentry, Craig. 2010. <span>“Computing Arbitrary Functions of Encrypted
+———. 2010. <span>“Computing Arbitrary Functions of Encrypted
 Data.”</span> <em>Communications of the ACM</em> 53 (3): 97–105. <a href="https://doi.org/10.1145/1666420.1666444">https://doi.org/10.1145/1666420.1666444</a>.
 </div>
 <div class="csl-entry" id="ref-goldwasser1989knowledge-8" role="listitem">
@@ -1079,7 +1075,7 @@ Journal on Computing</em> 18 (1): 186–208. <a href="https://doi.org/10.1137/02
 Marcolla, Chiara, Victor Sucasas, Marc Manzano, Riccardo Bassoli, Frank
 H. P. Fitzek, and Najwa Aaraj. 2022. <span>“Survey on Fully Homomorphic
 Encryption, Theory, and Applications.”</span> <em>Proceedings of the
-IEEE</em> 110 (10): 1572–609. <a href="https://doi.org/10.1109/JPROC.2022.3205665">https://doi.org/10.1109/JPROC.2022.3205665</a>.
+IEEE</em> 110 (10): 1572–1609. <a href="https://doi.org/10.1109/JPROC.2022.3205665">https://doi.org/10.1109/JPROC.2022.3205665</a>.
 </div>
 <div class="csl-entry" id="ref-rivest1978data-8" role="listitem">
 Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978.
@@ -1092,8 +1088,8 @@ Foundations and Trends in Privacy and Security. Now Publishers. <a href="https:/
 </div>
 <div class="csl-entry" id="ref-vaikuntanathan2011computing-8" role="listitem">
 Vaikuntanathan, Vinod. 2011. <span>“Computing Blindfolded: New
-Developments in Fully Homomorphic Encryption.”</span> <em>Proceedings of
-the 52nd Annual IEEE Symposium on Foundations of Computer Science
+Developments in Fully Homomorphic Encryption.”</span> In <em>Proceedings
+of the 52nd Annual IEEE Symposium on Foundations of Computer Science
 (FOCS)</em>, 5–16. <a href="https://doi.org/10.1109/FOCS.2011.98">https://doi.org/10.1109/FOCS.2011.98</a>.
 </div>
 </div>
@@ -1232,243 +1228,239 @@ the 52nd Annual IEEE Symposium on Foundations of Computer Science
 </div>
 </section></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-  window.document.addEventListener("DOMContentLoaded", function (event) {
-    const icon = "";
-    const anchorJS = new window.AnchorJS();
-    anchorJS.options = {
-      placement: 'right',
-      icon: icon
-    };
-    anchorJS.add('.anchored');
-    const isCodeAnnotation = (el) => {
-      for (const clz of el.classList) {
-        if (clz.startsWith('code-annotation-')) {                     
-          return true;
-        }
-      }
-      return false;
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
     }
-    const onCopySuccess = function(e) {
-      // button target
-      const button = e.trigger;
-      // don't keep focus
-      button.blur();
-      // flash "checked"
-      button.classList.add('code-copy-button-checked');
-      var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
-      let tooltip;
-      if (window.bootstrap) {
-        button.setAttribute("data-bs-toggle", "tooltip");
-        button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
-        tooltip = new bootstrap.Tooltip(button, 
-          { trigger: "manual", 
-            customClass: "code-copy-button-tooltip",
-            offset: [0, -8]});
-        tooltip.show();    
-      }
-      setTimeout(function() {
-        if (tooltip) {
-          tooltip.hide();
-          button.removeAttribute("data-bs-title");
-          button.removeAttribute("data-bs-toggle");
-          button.removeAttribute("data-bs-placement");
-        }
-        button.setAttribute("title", currentTitle);
-        button.classList.remove('code-copy-button-checked');
-      }, 1000);
-      // clear code selection
-      e.clearSelection();
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
     }
-    const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
         }
       }
       return codeEl.innerText;
-    }
-    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-      text: getTextToCopy
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
     });
-    clipboard.on('success', onCopySuccess);
-    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-        text: getTextToCopy,
-        container: window.document.getElementById('quarto-embedded-source-code-modal')
-      });
-      clipboardModal.on('success', onCopySuccess);
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
-      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
-      var isInternal = (href) => {
-          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-      }
-      // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-      for (var i=0; i<links.length; i++) {
-        const link = links[i];
-        if (!isInternal(link.href)) {
-          // undo the damage that might have been done by quarto-nav.js in the case of
-          // links that we want to consider external
-          if (link.dataset.originalHref !== undefined) {
-            link.href = link.dataset.originalHref;
-          }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
         }
       }
-    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-      const config = {
-        allowHTML: true,
-        maxWidth: 500,
-        delay: 100,
-        arrow: false,
-        appendTo: function(el) {
-            return el.parentElement;
-        },
-        interactive: true,
-        interactiveBorder: 10,
-        theme: 'quarto',
-        placement: 'bottom-start',
-      };
-      if (contentFn) {
-        config.content = contentFn;
-      }
-      if (onTriggerFn) {
-        config.onTrigger = onTriggerFn;
-      }
-      if (onUntriggerFn) {
-        config.onUntrigger = onUntriggerFn;
-      }
-      window.tippy(el, config); 
     }
-    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-    for (var i=0; i<noterefs.length; i++) {
-      const ref = noterefs[i];
-      tippyHover(ref, function() {
-        // use id or data attribute instead here
-        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-        try { href = new URL(href).hash; } catch {}
-        const id = href.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note) {
-          return note.innerHTML;
-        } else {
-          return "";
-        }
-      });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
     }
-    const xrefs = window.document.querySelectorAll('a.quarto-xref');
-    const processXRef = (id, note) => {
-      // Strip column container classes
-      const stripColumnClz = (el) => {
-        el.classList.remove("page-full", "page-columns");
-        if (el.children) {
-          for (const child of el.children) {
-            stripColumnClz(child);
-          }
-        }
-      }
-      stripColumnClz(note)
-      if (id === null || id.startsWith('sec-')) {
-        // Special case sections, only their first couple elements
-        const container = document.createElement("div");
-        if (note.children && note.children.length > 2) {
-          container.appendChild(note.children[0].cloneNode(true));
-          for (let i = 1; i < note.children.length; i++) {
-            const child = note.children[i];
-            if (child.tagName === "P" && child.innerText === "") {
-              continue;
-            } else {
-              container.appendChild(child.cloneNode(true));
-              break;
-            }
-          }
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(container);
-          }
-          return container.innerHTML
-        } else {
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(note);
-          }
-          return note.innerHTML;
-        }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
       } else {
-        // Remove any anchor links if they are present
-        const anchorLink = note.querySelector('a.anchorjs-link');
-        if (anchorLink) {
-          anchorLink.remove();
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
         }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        if (note.classList.contains("callout")) {
-          return note.outerHTML;
-        } else {
-          return note.innerHTML;
-        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
       }
     }
-    for (var i=0; i<xrefs.length; i++) {
-      const xref = xrefs[i];
-      tippyHover(xref, undefined, function(instance) {
-        instance.disable();
-        let url = xref.getAttribute('href');
-        let hash = undefined; 
-        if (url.startsWith('#')) {
-          hash = url;
-        } else {
-          try { hash = new URL(url).hash; } catch {}
-        }
-        if (hash) {
-          const id = hash.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note !== null) {
-            try {
-              const html = processXRef(id, note.cloneNode(true));
-              instance.setContent(html);
-            } finally {
-              instance.enable();
-              instance.show();
-            }
-          } else {
-            // See if we can fetch this
-            fetch(url.split('#')[0])
-            .then(res => res.text())
-            .then(html => {
-              const parser = new DOMParser();
-              const htmlDoc = parser.parseFromString(html, "text/html");
-              const note = htmlDoc.getElementById(id);
-              if (note !== null) {
-                const html = processXRef(id, note);
-                instance.setContent(html);
-              } 
-            }).finally(() => {
-              instance.enable();
-              instance.show();
-            });
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
           }
         } else {
-          // See if we can fetch a full url (with no hash to target)
-          // This is a special case and we should probably do some content thinning / targeting
-          fetch(url)
+          // See if we can fetch this
+          fetch(url.split('#')[0])
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.querySelector('main.content');
+            const note = htmlDoc.getElementById(id);
             if (note !== null) {
-              // This should only happen for chapter cross references
-              // (since there is no id in the URL)
-              // remove the first header
-              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-                note.children[0].remove();
-              }
-              const html = processXRef(null, note);
+              const html = processXRef(id, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -1476,164 +1468,188 @@ the 52nd Annual IEEE Symposium on Foundations of Computer Science
             instance.show();
           });
         }
-      }, function(instance) {
-      });
-    }
-        let selectedAnnoteEl;
-        const selectorForAnnotation = ( cell, annotation) => {
-          let cellAttr = 'data-code-cell="' + cell + '"';
-          let lineAttr = 'data-code-annotation="' +  annotation + '"';
-          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-          return selector;
-        }
-        const selectCodeLines = (annoteEl) => {
-          const doc = window.document;
-          const targetCell = annoteEl.getAttribute("data-target-cell");
-          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-          const lineIds = lines.map((line) => {
-            return targetCell + "-" + line;
-          })
-          let top = null;
-          let height = null;
-          let parent = null;
-          if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
-            }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
-            }
-            selectedAnnoteEl = annoteEl;
-          }
-        };
-        const unselectCodeLines = () => {
-          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-          elementsIds.forEach((elId) => {
-            const div = window.document.getElementById(elId);
-            if (div) {
-              div.remove();
-            }
-          });
-          selectedAnnoteEl = undefined;
-        };
-          // Handle positioning of the toggle
-      window.addEventListener(
-        "resize",
-        throttle(() => {
-          elRect = undefined;
-          if (selectedAnnoteEl) {
-            selectCodeLines(selectedAnnoteEl);
-          }
-        }, 10)
-      );
-      function throttle(fn, ms) {
-      let throttle = false;
-      let timer;
-        return (...args) => {
-          if(!throttle) { // first call gets through
-              fn.apply(this, args);
-              throttle = true;
-          } else { // all the others get throttled
-              if(timer) clearTimeout(timer); // cancel #2
-              timer = setTimeout(() => {
-                fn.apply(this, args);
-                timer = throttle = false;
-              }, ms);
-          }
-        };
-      }
-        // Attach click handler to the DT
-        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-        for (const annoteDlNode of annoteDls) {
-          annoteDlNode.addEventListener('click', (event) => {
-            const clickedEl = event.target;
-            if (clickedEl !== selectedAnnoteEl) {
-              unselectCodeLines();
-              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-              if (activeEl) {
-                activeEl.classList.remove('code-annotation-active');
-              }
-              selectCodeLines(clickedEl);
-              clickedEl.classList.add('code-annotation-active');
-            } else {
-              // Unselect the line
-              unselectCodeLines();
-              clickedEl.classList.remove('code-annotation-active');
-            }
-          });
-        }
-    const findCites = (el) => {
-      const parentEl = el.parentElement;
-      if (parentEl) {
-        const cites = parentEl.dataset.cites;
-        if (cites) {
-          return {
-            el,
-            cites: cites.split(' ')
-          };
-        } else {
-          return findCites(el.parentElement)
-        }
       } else {
-        return undefined;
-      }
-    };
-    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-    for (var i=0; i<bibliorefs.length; i++) {
-      const ref = bibliorefs[i];
-      const citeInfo = findCites(ref);
-      if (citeInfo) {
-        tippyHover(citeInfo.el, function() {
-          var popup = window.document.createElement('div');
-          citeInfo.cites.forEach(function(cite) {
-            var citeDiv = window.document.createElement('div');
-            citeDiv.classList.add('hanging-indent');
-            citeDiv.classList.add('csl-entry');
-            var biblioDiv = window.document.getElementById('ref-' + cite);
-            if (biblioDiv) {
-              citeDiv.innerHTML = biblioDiv.innerHTML;
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
             }
-            popup.appendChild(citeDiv);
-          });
-          return popup.innerHTML;
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
         });
       }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
     }
-  });
-  </script>
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
 
 </div> <!-- /content -->
-<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
 const typesetMath = (el) => {
   if (window.MathJax) {
     // MathJax Typeset
@@ -1644,7 +1660,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+      if (mathElements[i].tagName == "SPAN") {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
