@@ -22,7 +22,7 @@ div.resumen {
 }
 
 div.resumen::before {
-  content: "Resumen del Capítulo";
+  content: "Chapter Summary";
   display: block;
   font-weight: bold;
   margin-bottom: 0.5em;
@@ -53,7 +53,7 @@ div.repaso {
 }
 
 div.repaso::before {
-  content: "🎓 Preguntas de repaso";
+  content: "🎓 Review Questions";
   display: block;
   font-weight: bold;
   margin-bottom: 0.5em;
@@ -70,7 +70,7 @@ div.nota {
 }
 
 div.nota::before {
-  content: "🔍 Nota";
+  content: "🔍 Note";
   display: block;
   font-weight: bold;
   margin-bottom: 0.5em;
