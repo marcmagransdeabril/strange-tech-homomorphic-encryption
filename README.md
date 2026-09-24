@@ -16,14 +16,16 @@ Homomorphic encryption allows computations to be performed on encrypted data wit
 
 1. [Preface](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-00)
 2. [Prologue](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-01)
-3. [Introduction](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-02)
-4. [Hands On](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-03)
-5. [Applications](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-04)
-6. [Current Limitations](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-05)
-7. [Foundations](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-06)
-8. [Recommended Readings](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-07)
-9. [References](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-08)
-10. [Solutions](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-09)
+3. [Acknowledgments](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-02)
+4. [Disclaimer](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-03)
+5. [Introduction](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-04)
+6. [Hands On](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-05)
+7. [Applications](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-06)
+8. [Current Limitations](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-07)
+9. [Foundations](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-08)
+10. [Recommended Readings](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-09)
+11. [References](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-10)
+12. [Solutions](https://marcmagransdeabril.github.io/strange-tech-homomorphic-encryption/book/en/index.html#merged-11)
 
 ## Code Examples
 
