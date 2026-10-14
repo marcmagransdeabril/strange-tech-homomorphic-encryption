@@ -1,5 +1,19 @@
 /* Styles for El Arte de Construir Software — HTML & EPUB */
 
+/* EPUB-only "Capítulo N" / "Chapter N" label, injected by
+   filters/custom-envs.lua as its own paragraph right before each numbered
+   chapter's H1 (PDF gets this for free from the LaTeX book class; HTML
+   uses Quarto's own numeral instead). */
+span.epub-chapter-label {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.95em;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 0.3em;
+}
+
 /* Drop cap: first letter of the first paragraph after the summary box */
 .dropcap::first-letter {
   font-size: 3.5em;
