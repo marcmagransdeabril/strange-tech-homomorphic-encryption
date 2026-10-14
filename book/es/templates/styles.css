@@ -14,6 +14,27 @@ span.epub-chapter-label {
   margin-bottom: 0.3em;
 }
 
+/* EPUB-only "N.M" subsection number, injected the same way as
+   epub-chapter-label above, mirroring the "header-section-number" that
+   Quarto's HTML writer generates natively (number-sections is off for
+   epub to avoid double numbering with the reader's own nav list, see
+   nav#toc rule below). */
+span.epub-section-number {
+  font-weight: bold;
+  margin-right: 0.3em;
+}
+
+/* Some EPUB readers render nav.xhtml's <ol> with their own default
+   numbered-list style, which stacks a flat sequential number (1, 2, 3...)
+   in front of every entry regardless of whether it's a numbered chapter,
+   an unnumbered front/back-matter section, or a subsection -- doubling up
+   with (or standing in for) the real numbers above. Suppress it so only
+   the explicit "Capítulo N"/"N.M" text controls what looks numbered. */
+nav#toc ol.toc {
+  list-style: none;
+  padding-left: 1em;
+}
+
 /* Drop cap: first letter of the first paragraph after the summary box */
 .dropcap::first-letter {
   font-size: 3.5em;
