@@ -369,7 +369,7 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <section class="level2" data-number="2.5" id="sec-bootstrapping-receta">
 <h2 class="anchored" data-anchor-id="sec-bootstrapping-receta" data-number="2.5"><span class="header-section-number">2.5</span> Recipe 5: Breaking through the wall</h2>
 <p>Recipe 4 ended with an error — we ran out of multiplicative levels. But <em>bootstrapping</em> can restore them and let us keep operating. TenSEAL does not expose this functionality, so for this recipe we use <a href="https://github.com/openfheorg/openfhe-development">OpenFHE</a>, another reference library that does implement bootstrapping in CKKS.</p>
-<p>The first step is to configure a CKKS context with bootstrapping enabled. This requires extra levels to evaluate its own internal circuit. To keep the demo fast, we use a small ring (<span class="math inline">\(N = 4096\)</span>) with security validation disabled — with <code>HEStd_128_classic</code> (128-bit security against classical computers, the usual standard), OpenFHE would require <span class="math inline">\(N = 2^{16}\)</span> to support the bootstrapping depth. More demanding levels exist (192, 256 bits) and quantum variants that assume quantum computer attacks and require even larger <span class="math inline">\(N\)</span>:</p>
+<p>The first step is to configure a CKKS context with bootstrapping enabled. This requires extra levels to evaluate its own internal circuit. To keep the demo fast, we use a small ring (<span class="math inline">\(N = 4096\)</span>) with security validation disabled — with <code>HEStd_128_classic</code> (128-bit security against classical computers, the usual standard), OpenFHE would require <span class="math inline">\(N = 2^{16}\)</span> to support the bootstrapping depth and keep security at the established level. More demanding levels exist (192, 256 bits) and quantum variants that assume quantum computer attacks and require even larger <span class="math inline">\(N\)</span>:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a aria-hidden="true" href="#cb8-1" tabindex="-1"></a><span class="im">import</span> openfhe <span class="im">as</span> fhe</span>
 <span id="cb8-2"><a aria-hidden="true" href="#cb8-2" tabindex="-1"></a></span>
 <span id="cb8-3"><a aria-hidden="true" href="#cb8-3" tabindex="-1"></a>params <span class="op">=</span> fhe.CCParamsCKKSRNS()</span>
@@ -436,6 +436,9 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <div class="pregunta" id="q-sec-manos-fhe-10">
 <a class="pregunta-num" href="#sol-sec-manos-fhe-10"><strong>2.10.</strong></a> Ask an LLM: <em>“What is circular security in FHE and why is it necessary for bootstrapping?”</em>
 </div>
+<div class="pregunta" id="q-sec-manos-fhe-11">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-11"><strong>2.11.</strong></a> Why do you think TenSEAL doesn’t expose bootstrapping directly, unlike OpenFHE? What trade-off have TenSEAL’s designers faced?
+</div>
 </div>
 </section>
 <section class="level2" data-number="2.6" id="sec-busqueda-cifrada">
@@ -463,14 +466,14 @@ Rivest, Ronald L., Leonard Adleman, and Michael L. Dertouzos. 1978. <span>“On 
 <p>With <span class="math inline">\(N = 8192\)</span>, each ciphertext stores up to <span class="math inline">\(N_{\text{slot}} = 4096\)</span> slots — enough for a database of that size without needing multiple ciphertexts. For larger databases, the programmer must divide the records into blocks of <span class="math inline">\(N_{\text{slot}}\)</span>, send one query ciphertext per block, and sum the partial results.</p>
 <p>Does this scale to databases with millions of records? Not particularly well, and it’s not just an engineering matter — it’s a fundamental limitation of the scheme itself. Splitting the records into more blocks doesn’t reduce the server’s total work, it only redistributes it — the cost still grows linearly with the size of the database, because each additional block requires its own multiplication and sum over <span class="math inline">\(N_{\text{slot}}\)</span> records. With 10,000 records the delay is negligible; with 10 million, each query can take minutes even with the hardware accelerations we’ll see in <a class="quarto-xref" href="06.html"><span>Chapter 4</span></a>. No amount of SIMD <em>packing</em> changes this trend: it only reduces the constant, not the order of growth. This is the price of the server being unable to discard any record without risking a leak of which one was queried. In practice, large-scale private-retrieval systems mitigate the problem by partitioning the database into public categories (say, by hospital or by year), narrowing the pool of candidate records before applying this technique within each partition — at the cost of revealing that category, which is assumed not to be sensitive.</p>
 <div class="repaso">
-<div class="pregunta" id="q-sec-manos-fhe-11">
-<a class="pregunta-num" href="#sol-sec-manos-fhe-11"><strong>2.11.</strong></a> In the encrypted search, why must the server process <em>all</em> records to answer a single query? What information would leak if it processed only a subset?
-</div>
 <div class="pregunta" id="q-sec-manos-fhe-12">
-<a class="pregunta-num" href="#sol-sec-manos-fhe-12"><strong>2.12.</strong></a> If the vendor’s database has 10,000 records and <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, how many ciphertexts does the client need for a query? And how many must the server process?
+<a class="pregunta-num" href="#sol-sec-manos-fhe-12"><strong>2.12.</strong></a> In the encrypted search, why must the server process <em>all</em> records to answer a single query? What information would leak if it processed only a subset?
 </div>
 <div class="pregunta" id="q-sec-manos-fhe-13">
-<a class="pregunta-num" href="#sol-sec-manos-fhe-13"><strong>2.13.</strong></a> Why doesn’t splitting the database into more blocks of <span class="math inline">\(N_{\text{slot}}\)</span> reduce the server’s total cost? What privacy trade-off do private-retrieval systems that partition by public categories accept?
+<a class="pregunta-num" href="#sol-sec-manos-fhe-13"><strong>2.13.</strong></a> If the vendor’s database has 10,000 records and <span class="math inline">\(N_{\text{slot}} = 4096\)</span>, how many ciphertexts does the client need for a query? And how many must the server process?
+</div>
+<div class="pregunta" id="q-sec-manos-fhe-14">
+<a class="pregunta-num" href="#sol-sec-manos-fhe-14"><strong>2.14.</strong></a> Why doesn’t splitting the database into more blocks of <span class="math inline">\(N_{\text{slot}}\)</span> reduce the server’s total cost? What privacy trade-off do private-retrieval systems that partition by public categories accept?
 </div>
 </div>
 </section>
@@ -1273,13 +1276,16 @@ of the 52nd Annual IEEE Symposium on Foundations of Computer Science
 <p><a class="solucion-num" href="#q-sec-manos-fhe-10"><strong>2.10.</strong></a> Bootstrapping homomorphically evaluates the decryption circuit (<span class="math inline">\(b - a \cdot s\)</span>), which requires encrypting the secret key <span class="math inline">\(s\)</span> under itself. <em>Circular security</em> is the assumption that publishing <span class="math inline">\(\text{Enc}_s(s)\)</span> doesn’t weaken the scheme. It isn’t proven in general — it’s an additional assumption that all FHE schemes rely on. Verify that the LLM distinguishes between this assumption and standard IND-CPA security.</p>
 </div>
 <div class="solucion" id="sol-sec-manos-fhe-11">
-<p><a class="solucion-num" href="#q-sec-manos-fhe-11"><strong>2.11.</strong></a> The server must process <em>all</em> records because the query vector is encrypted — it can’t distinguish the zeros from the one. If it processed only a subset, it would reveal by elimination that the queried position is in that subset, breaking the query’s privacy.</p>
+<p><a class="solucion-num" href="#q-sec-manos-fhe-11"><strong>2.11.</strong></a> TenSEAL is built on top of Microsoft SEAL, which for years deliberately focused on <em>leveled</em> encryption (no bootstrapping) to keep its API simple and its codebase easier to audit and maintain. Adding bootstrapping would have required taking on the additional circular-security assumption and managing much more complex level budgets, in exchange for a feature that most of TenSEAL’s use cases (statistics, lightweight ML) don’t need if levels are dimensioned properly from the start. OpenFHE, by contrast, started as a research project aiming to cover the full state of the art in FHE, so it accepts that extra complexity in exchange for supporting circuits of arbitrary depth.</p>
 </div>
 <div class="solucion" id="sol-sec-manos-fhe-12">
-<p><a class="solucion-num" href="#q-sec-manos-fhe-12"><strong>2.12.</strong></a> With <span class="math inline">\(N_{\text{slot}} = N/2 = 4096\)</span> slots per ciphertext and 10,000 records, the client needs <span class="math inline">\(\lceil 10{,}000 / 4096 \rceil = 3\)</span> ciphertexts (one with the 1 in the correct position, the other two with only zeros). The server must process all 3 ciphertexts — it can’t discard any without leaking information about the query.</p>
+<p><a class="solucion-num" href="#q-sec-manos-fhe-12"><strong>2.12.</strong></a> The server must process <em>all</em> records because the query vector is encrypted — it can’t distinguish the zeros from the one. If it processed only a subset, it would reveal by elimination that the queried position is in that subset, breaking the query’s privacy.</p>
 </div>
 <div class="solucion" id="sol-sec-manos-fhe-13">
-<p><a class="solucion-num" href="#q-sec-manos-fhe-13"><strong>2.13.</strong></a> Each additional block requires its own multiplication and sum over <span class="math inline">\(N_{\text{slot}}\)</span> records, so the server’s total work is the sum of the work across all blocks — still the same <span class="math inline">\(O(n)\)</span> as before, just spread across more operations on smaller ciphertexts. Private-retrieval systems that partition by public categories (hospital, year, etc.) narrow the pool of candidate records at the cost of revealing that category to the server, assuming it isn’t sensitive information.</p>
+<p><a class="solucion-num" href="#q-sec-manos-fhe-13"><strong>2.13.</strong></a> With <span class="math inline">\(N_{\text{slot}} = N/2 = 4096\)</span> slots per ciphertext and 10,000 records, the client needs <span class="math inline">\(\lceil 10{,}000 / 4096 \rceil = 3\)</span> ciphertexts (one with the 1 in the correct position, the other two with only zeros). The server must process all 3 ciphertexts — it can’t discard any without leaking information about the query.</p>
+</div>
+<div class="solucion" id="sol-sec-manos-fhe-14">
+<p><a class="solucion-num" href="#q-sec-manos-fhe-14"><strong>2.14.</strong></a> Each additional block requires its own multiplication and sum over <span class="math inline">\(N_{\text{slot}}\)</span> records, so the server’s total work is the sum of the work across all blocks — still the same <span class="math inline">\(O(n)\)</span> as before, just spread across more operations on smaller ciphertexts. Private-retrieval systems that partition by public categories (hospital, year, etc.) narrow the pool of candidate records at the cost of revealing that category to the server, assuming it isn’t sensitive information.</p>
 </div>
 </div>
 <div class="solucion" data-ref="sec-aplicaciones-fhe">
