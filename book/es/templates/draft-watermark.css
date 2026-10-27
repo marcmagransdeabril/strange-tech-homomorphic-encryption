@@ -1,0 +1,16 @@
+/* Big grey "DRAFT" watermark for the HTML and EPUB books.
+
+   The watermark is a repeated background tile (an inline SVG with the word
+   DRAFT rotated -35 degrees), so it shows on every screenful/page of the
+   content no matter how long the document is or how a reader paginates it.
+   An inline data URI is used (instead of a separate image file) so it works
+   unchanged in the single-page HTML book, in the EPUB, and after the book's
+   `templates/` folder is copied into the target repo.
+
+   The PDF has its own equivalent in templates/preamble.tex. */
+html,
+body {
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='640' viewBox='0 0 640 640'%3E%3Ctext x='320' y='320' text-anchor='middle' dominant-baseline='central' transform='rotate(-35 320 320)' font-family='Helvetica,Arial,sans-serif' font-weight='bold' font-size='170' fill='%23808080' fill-opacity='0.16'%3EDRAFT%3C/text%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-position: top left;
+}
