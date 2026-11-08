@@ -31,10 +31,16 @@ Homomorphic encryption allows computations to be performed on encrypted data wit
 
 Executable code accompanying this chapter lives in [`code/cifrado-homomorfico/`](code/cifrado-homomorfico/), with unit tests in [`tests/cifrado-homomorfico/code/`](tests/cifrado-homomorfico/code/).
 
+The code requires **Python 3** (use `python3` and `pip3` if `python` points to Python 2 on your system). Create and activate a virtual environment first so the dependencies don't pollute your system installation:
+
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate        # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 pytest tests/
 ```
+
+When you are done, leave the environment with `deactivate`.
 
 ## About the Series
 
